@@ -5,13 +5,13 @@ package gui;
  * @since 01.12.2017
  */
 public class Message {
-    String text;
+    String message;
 
-    public Message(String text) {
-        this.text = text;
+    public Message(String message) {
+        this.message = message;
     }
 
     public String getText() {
-        return text;
+        return message;
     }
 }
