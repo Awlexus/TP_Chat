@@ -7,6 +7,8 @@ import kotlin.concurrent.thread
  * Created by Awlex on 01.12.2017.
  */
 
+fun DatagramPacket.getTextData(): String = String(data)
+
 class Protocol(val port: Int = 4321, val userName: String = "") {
 
     private val BUFFERSIZE = 1024
@@ -30,13 +32,14 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
             socket.receive(packet)
 
             // Extract Data
-            val text = String(packet.data)
+            val text = packet.getTextData()
 
             // Check whether this is a request or an answer
             when {
                 text.startsWith(HELLO) -> receiveHello(packet)
-                text.startsWith(WORLD) -> receiveWorld(text)
+                text.startsWith(WORLD) -> receiveWorld(packet)
                 text.startsWith(GOODBYE) -> receiveGoodbye(packet)
+                text.startsWith(MESSAGE) -> receiveMessage(packet)
             }
         }
         socket.close()
@@ -47,8 +50,9 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         println("Goodbye ${packet.address.hostAddress}")
     }
 
-    private fun receiveWorld(text: String) {
-        println("Made a new friend called ${text.split(" ")[1]}")
+    private fun receiveWorld(packet: DatagramPacket) {
+        val text = packet.getTextData()
+        println("Made a new friend called ${text.split(" ")[1]} at ${packet.address.hostAddress}")
     }
 
     private fun receiveHello(packet: DatagramPacket) {
@@ -59,12 +63,26 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         socket.send(packet)
     }
 
+    private fun receiveMessage(packet: DatagramPacket) {
+        var message = packet.getTextData()
+        message = message.substring(message.indexOf(' '))
+        println("${packet.address.hostAddress}: $message")
+    }
+
     /**
      * Broadcasts a "Hello"-package
      */
     fun hello() {
-        val message = "$HELLO $userName"
-        socket.send(DatagramPacket(message.toByteArray(), message.length, broadcastAddress, port))
+        send("$HELLO $userName", broadcastAddress)
+    }
+
+    fun message(message: String, ip: InetAddress) {
+        // TODO: add verification
+        send("$MESSAGE $message", ip)
+    }
+
+    fun send(text: String, ip: InetAddress) {
+        socket.send(DatagramPacket(text.toByteArray(), text.length, ip, port))
     }
 
     /**
