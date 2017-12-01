@@ -274,6 +274,7 @@ public class MainWindow extends JFrame {
 
             this.add(this.title);
             this.add(this.exit);
+
         }
     }
 
