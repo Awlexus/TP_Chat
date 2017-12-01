@@ -178,16 +178,16 @@ public class Contacts extends JPanel {
 
         private void setupContactUI() {
             setBorder(BorderFactory.createMatteBorder(
-                    (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+                    0, 0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
             this.setBackground(MainWindow.theme.getPrimaryColorLight());
             name.setFont(new Font(MainWindow.FONT, 0, height / 2));
             name.setSize(name.getPreferredSize());
-            name.setLocation(10, 0);//TODO make 10 dynamic
+            name.setLocation((int) (MainWindow.UI_SCALING*2), 0);
             name.setForeground(Color.BLACK);
 
             lastMessage.setFont(new Font(MainWindow.FONT, 0, height / 4));
             lastMessage.setSize(lastMessage.getPreferredSize());
-            lastMessage.setLocation(30, name.getHeight()); //TODO make 30 dynamic
+            lastMessage.setLocation((int) (MainWindow.UI_SCALING*6), name.getHeight());
             lastMessage.setForeground(MainWindow.theme.getPrimaryColor());
 
             arrow = new JLabel(">");

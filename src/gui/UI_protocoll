@@ -6,10 +6,11 @@ new MainWindow().removeOnContactClickedListener() ->remove
 
 clearContacts(); -> removes all contacts
 
-ChatActionListener -> sende und text changed action
+ChatActionListener -> sende und textChanged action
 
+addMessage() ->füge eine nachricht hinzu
 
 
 //TODO
-addChatNachrichten(Nachricht)
 removeContact(id)
+find a way to resize

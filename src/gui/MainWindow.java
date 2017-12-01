@@ -1,5 +1,7 @@
 package gui;
 
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -15,7 +17,7 @@ public class MainWindow extends JFrame {
     /**
      * Scaling of the UI
      */
-    public static final double UI_SCALING = 3;
+    public static final double UI_SCALING = 4;
 
 
     /**
@@ -45,7 +47,7 @@ public class MainWindow extends JFrame {
     /**
      * Theme for this GUI
      */
-    public static Theme theme = new Theme(Theme.Themes.MILAN);
+    public static Theme theme = new Theme(Theme.Themes.BLUEPINK);
 
     /**
      * Used to drag & drop the top bar
@@ -79,6 +81,8 @@ public class MainWindow extends JFrame {
 
     public MainWindow() {
         setUndecorated(true);
+
+
         //Border
         getRootPane().setBorder(
                 BorderFactory.createMatteBorder(
@@ -175,11 +179,20 @@ public class MainWindow extends JFrame {
         return true;
     }
 
+    /**
+     * adds a new message at the bottom of the screen
+     * @param name name of the user that writes the message
+     * @param message content of the message
+     * @param date optional timestamp
+     * @param type type of the message
+     */
+    public void addMessage(Chat.chatMessageType type, String name, Message message,@Nullable String date){
+        chat.addMessage(type,name, message, date);
+    }
+
     private Contacts setupContactsPanel() {
         Contacts ret = new Contacts();
         ret.setLayout(null);
-        ret.setBorder(BorderFactory.createMatteBorder(
-                (int) UI_SCALING, 0, (int) UI_SCALING, (int) UI_SCALING, theme.getPrimaryColorDark()));
         ret.setLocation(0, topBar.getHeight());
         ret.setSize((int) ((W_WIDTH * UI_SCALING) * SCREEN_SPLITING_RATIO), (int) (W_HEIGHT * UI_SCALING) - topBar.getHeight());
         return ret;
@@ -188,9 +201,7 @@ public class MainWindow extends JFrame {
     private Chat setupChatPanel() {
         Chat ret = new Chat();
         ret.setLayout(null);
-        ret.setBorder(BorderFactory.createMatteBorder(
-                (int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, theme.getPrimaryColorDark()));
-        ret.setLocation(contacts.getWidth(), topBar.getHeight());
+         ret.setLocation(contacts.getWidth(), topBar.getHeight());
         ret.setSize((int) (W_WIDTH * UI_SCALING) - contacts.getWidth(), (int) (W_HEIGHT * UI_SCALING) - topBar.getHeight());
         ret.setupUI();
         return ret;
@@ -200,7 +211,7 @@ public class MainWindow extends JFrame {
     private class TopBar extends JPanel {
 
 
-        static final int TOP_HEIGHT = 20;
+        int TOP_HEIGHT = W_HEIGHT/12;
 
         JLabel title;
         JLabel exit;
@@ -263,11 +274,18 @@ public class MainWindow extends JFrame {
 
             this.add(this.title);
             this.add(this.exit);
+
         }
     }
 
+
     public static void main(String[] args) {
         MainWindow mainWindow = new MainWindow();
-
+        mainWindow.addMessage(Chat.chatMessageType.INFO,"Tom",new Message("hi"),null);
+        mainWindow.addMessage(Chat.chatMessageType.FROM,"Tom",new Message("hi"),null);
+        mainWindow.addMessage(Chat.chatMessageType.TO,"Tom",new Message("hddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddi"),null);
+        mainWindow.addMessage(Chat.chatMessageType.FROM,"Tom",new Message("hi"),null);
+        mainWindow.addMessage(Chat.chatMessageType.TO,"Tom",new Message("hi"),null);
+        mainWindow.chat.repaint();
     }
 }
