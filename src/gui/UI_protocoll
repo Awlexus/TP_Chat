@@ -1,8 +1,12 @@
 
 new MainWindow().addContact(name, lastMessage) -> Add a contact to the contact list
-new MainWindow().addOnContactClickedListener(new OnContactClickedListener(){} -> contact key listener
 
+new MainWindow().addOnContactClickedListener() -> add
+new MainWindow().removeOnContactClickedListener() ->remove
+
+clearContacts(); -> removes all contacts
 
 //TODO
 OnNachrichtSendListener
-addChatNachrichten
+addChatNachrichten(Nachricht)
+removeContact(id)

@@ -6,18 +6,24 @@ package gui;
  */
 public class ContactEvent {
     private String name;
-    private int sourceId;
+    private int id;
+    private Contacts.Contact source;
 
-    public ContactEvent(String name, int sourceId) {
+    public ContactEvent(String name, int id, Contacts.Contact source) {
         this.name = name;
-        this.sourceId = sourceId;
+        this.id = id;
+        this.source=source;
+    }
+
+    public Contacts.Contact getSource() {
+        return source;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getSourceId() {
-        return sourceId;
+    public int getId() {
+        return id;
     }
 }
