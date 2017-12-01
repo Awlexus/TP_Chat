@@ -76,6 +76,7 @@ public class MainWindow extends JFrame {
      */
     public static Container c;
 
+
     public MainWindow() {
         setUndecorated(true);
         //Border
@@ -137,6 +138,31 @@ public class MainWindow extends JFrame {
     }
 
     /**
+     * Removes all contacts
+     */
+    public void clearContacts(){
+        contacts.removeAll();
+        contacts.repaint();
+        contacts.getContactArrayList().clear();
+    }
+
+    public void addOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
+        contacts.addOnContactClickedListener(onContactClickedListener);
+    }
+    public void removeOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
+        contacts.removeOnContactClickedListener(onContactClickedListener);
+    }
+
+    public void addChatActionListener(ChatActionListener chatActionListener) {
+        chat.addChatActionListener(chatActionListener);
+    }
+
+
+    public void removeChatActionListener(ChatActionListener chatActionListener) {
+        chat.removeChatActionListener(chatActionListener);
+    }
+
+    /**
      * Adds a contact to the list
      *
      * @return true if it worked, otherwise false
@@ -156,9 +182,6 @@ public class MainWindow extends JFrame {
                 (int) UI_SCALING, 0, (int) UI_SCALING, (int) UI_SCALING, theme.getPrimaryColorDark()));
         ret.setLocation(0, topBar.getHeight());
         ret.setSize((int) ((W_WIDTH * UI_SCALING) * SCREEN_SPLITING_RATIO), (int) (W_HEIGHT * UI_SCALING) - topBar.getHeight());
-
-        //TODO load contacts from DB
-
         return ret;
     }
 
@@ -244,6 +267,7 @@ public class MainWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        new MainWindow();
+        MainWindow mainWindow = new MainWindow();
+
     }
 }

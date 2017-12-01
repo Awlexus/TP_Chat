@@ -15,24 +15,34 @@ public class Contacts extends JPanel {
     /**
      * Container for the Contacts
      */
-    ArrayList<Contact> contactArrayList = null;
+    private ArrayList<Contact> contactArrayList = null;
 
     /**
      * Used to drag & drop the contacts
      */
-    Point fromCords;
-    Point toCords;
+    private Point fromCords;
+    private Point toCords;
+
+    private ArrayList<OnContactClickedListener> onContactClickedListener;
 
 
     public Contacts() {
         contactArrayList = new ArrayList<>();
+        onContactClickedListener = new ArrayList<>();
         setBackground(MainWindow.theme.getPrimaryColorLight());
-
-
     }
 
+    public void addOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
+        this.onContactClickedListener.add(onContactClickedListener);
+    }
+    public void removeOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
+        this.onContactClickedListener.remove(onContactClickedListener);
+    }
+
+
+
     public void addContact(String name, String lastMessage) {
-        Contact c = new Contact(name, lastMessage, getWidth(), getWidth() / 3);
+        Contact c = new Contact(name, lastMessage, getWidth(), getWidth() / 3, contactArrayList.size());
         c.setLocation(0, (getWidth() / 3) * contactArrayList.size());
         c.addMouseListener(new MouseAdapter() {
             @Override
@@ -46,6 +56,9 @@ public class Contacts extends JPanel {
                 c.setBorder(BorderFactory.createMatteBorder(
                         (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getAccentColor()));
                 c.setSelected(true);
+                for (int i = 0; i < onContactClickedListener.size(); i++) {
+                    onContactClickedListener.get(i).onContactClicked(new ContactEvent(c.getName(), c.getId(),c));
+                }
             }
 
             @Override
@@ -64,22 +77,8 @@ public class Contacts extends JPanel {
             }
 
             public void mouseReleased(MouseEvent e) {
-                //reset location to avoid bugs
-                Contact first = contactArrayList.get(0);
-                int valToCheck = first.getY();
-
-                if (valToCheck > 2) {
-                    Contacts.this.removeAll();
-                    for (int i = 0; i < contactArrayList.size(); i++) {
-                        Contact readd = contactArrayList.get(i);
-                        readd.setLocation(0, (getWidth() / 3) * i);
-                        Contacts.this.add(readd);
-                    }
-                    Contacts.this.repaint();
-                }
-
                 Contact last = contactArrayList.get(contactArrayList.size() - 1);
-                valToCheck = last.getY();
+                int valToCheck = last.getY();
 
                 if (valToCheck + last.getHeight() + 2 < Contacts.this.getHeight()) {
                     Contacts.this.removeAll();
@@ -92,6 +91,20 @@ public class Contacts extends JPanel {
                     }
                     Contacts.this.repaint();
                 }
+
+                Contact first = contactArrayList.get(0);
+                valToCheck = first.getY();
+
+                if (valToCheck > 2) {
+                    Contacts.this.removeAll();
+                    for (int i = 0; i < contactArrayList.size(); i++) {
+                        Contact readd = contactArrayList.get(i);
+                        readd.setLocation(0, (getWidth() / 3) * i);
+                        Contacts.this.add(readd);
+                    }
+                    Contacts.this.repaint();
+                }
+
             }
 
             public void mousePressed(MouseEvent e) {
@@ -118,6 +131,10 @@ public class Contacts extends JPanel {
         this.add(c);
     }
 
+    public ArrayList<Contact> getContactArrayList() {
+        return contactArrayList;
+    }
+
     public boolean isRelocateValid(boolean scrollDown) {
         if (!scrollDown) {
             Contact first = contactArrayList.get(0);
@@ -134,15 +151,19 @@ public class Contacts extends JPanel {
         return true;
     }
 
-    private class Contact extends JPanel {
+
+
+    class Contact extends JPanel {
         JLabel name;
         JLabel lastMessage;
         JLabel arrow;
         int width;
         int height;
+        int id;
         boolean isSelected = false;
 
-        public Contact(String name, String lastMessage, int width, int height) {
+        public Contact(String name, String lastMessage, int width, int height, int id) {
+            this.id = id;
             this.name = new JLabel(name);
             if (lastMessage.length() > 20) {
                 lastMessage = lastMessage.substring(0, 16) + "...";
@@ -184,6 +205,14 @@ public class Contacts extends JPanel {
 
         public void setSelected(boolean selected) {
             isSelected = selected;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getName() {
+            return this.name.getText();
         }
     }
 }
