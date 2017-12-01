@@ -188,7 +188,7 @@ public class Contacts extends JPanel {
             lastMessage.setFont(new Font(MainWindow.FONT, 0, height / 4));
             lastMessage.setSize(lastMessage.getPreferredSize());
             lastMessage.setLocation(30, name.getHeight()); //TODO make 30 dynamic
-            lastMessage.setForeground(MainWindow.theme.getprimaryColor());
+            lastMessage.setForeground(MainWindow.theme.getPrimaryColor());
 
             arrow = new JLabel(">");
 

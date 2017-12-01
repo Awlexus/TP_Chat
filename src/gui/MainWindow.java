@@ -253,7 +253,7 @@ public class MainWindow extends JFrame {
             });
 
 
-            if (theme.isDark()) {
+            if (theme.getDark()) {
                 this.exit.setForeground(Color.white);
                 this.title.setForeground(Color.white);
             } else {

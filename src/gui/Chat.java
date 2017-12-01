@@ -91,7 +91,7 @@ public class Chat extends JPanel {
             send.setSize((int) (width * 2 / 6 - MainWindow.UI_SCALING * 6), textField.getHeight());
             send.setLocation((int) (textField.getWidth() + MainWindow.UI_SCALING * 6), height / 2 - textField.getHeight() / 2);
             send.setBackground(MainWindow.theme.getPrimaryColorDark());
-            if (MainWindow.theme.isDark())
+            if (MainWindow.theme.getDark())
                 send.setForeground(Color.white);
             else
                 send.setForeground(Color.black);
@@ -116,7 +116,7 @@ public class Chat extends JPanel {
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    if (MainWindow.theme.isDark())
+                    if (MainWindow.theme.getDark())
                         send.setForeground(Color.white);
                     else
                         send.setForeground(Color.black);
