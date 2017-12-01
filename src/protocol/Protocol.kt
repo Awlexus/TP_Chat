@@ -1,26 +1,13 @@
 package protocol
 
-import java.net.DatagramPacket
-import java.net.DatagramSocket
-import java.net.InetAddress
-import java.net.NetworkInterface
+import java.net.*
 import kotlin.concurrent.thread
 
 /**
  * Created by Awlex on 01.12.2017.
  */
 
-class AutoDiscovery(private val port: Int = 4322, val userName: String = "") {
-
-    enum class Commands(val text: String) {
-        HELLO("Hello"),
-        WORLD("World"),
-        GOODBYE("Goodbye");
-
-        override fun toString(): String {
-            return text
-        }
-    }
+class Protocol(val port: Int = 4321, val userName: String = "") {
 
     private val BUFFERSIZE = 1024
 
@@ -47,27 +34,36 @@ class AutoDiscovery(private val port: Int = 4322, val userName: String = "") {
 
             // Check whether this is a request or an answer
             when {
-                text.startsWith(Commands.HELLO.text) -> {
-
-                    // Set reply text
-                    packet.data = "${Commands.WORLD} $userName".toByteArray()
-
-                    // Send reply
-                    socket.send(packet)
-                }
-                text.startsWith(Commands.WORLD.text) -> println("Made a new friend called ${text.split(" ")[1]}")
-                text.startsWith(Commands.GOODBYE.text) -> // Goodbye (。･∀･)ﾉ゛
-                    println("Goodbye ${packet.address.hostAddress}")
+                text.startsWith(HELLO) -> receiveHello(packet)
+                text.startsWith(WORLD) -> receiveWorld(text)
+                text.startsWith(GOODBYE) -> receiveGoodbye(packet)
             }
         }
         socket.close()
     })
 
+    private fun receiveGoodbye(packet: DatagramPacket) {
+        // Goodbye (。･∀･)ﾉ゛
+        println("Goodbye ${packet.address.hostAddress}")
+    }
+
+    private fun receiveWorld(text: String) {
+        println("Made a new friend called ${text.split(" ")[1]}")
+    }
+
+    private fun receiveHello(packet: DatagramPacket) {
+        // Set reply text
+        packet.data = "$WORLD $userName".toByteArray()
+
+        // Send reply
+        socket.send(packet)
+    }
+
     /**
      * Broadcasts a "Hello"-package
      */
     fun hello() {
-        val message = "${Commands.HELLO} $userName"
+        val message = "$HELLO $userName"
         socket.send(DatagramPacket(message.toByteArray(), message.length, broadcastAddress, port))
     }
 
@@ -75,7 +71,8 @@ class AutoDiscovery(private val port: Int = 4322, val userName: String = "") {
      * Stops the auto-discovery protocol and broadcasts a Goodbye
      */
     fun stop() {
-        socket.send(DatagramPacket(Commands.GOODBYE.text.toByteArray(), Commands.GOODBYE.name.length, broadcastAddress, port))
+        socket.send(DatagramPacket(GOODBYE.toByteArray(), GOODBYE.length, broadcastAddress, port))
         discoveryThread.interrupt()
     }
+
 }
