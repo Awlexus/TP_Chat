@@ -136,7 +136,20 @@ public class MainWindow extends JFrame {
         setVisible(true);
     }
 
-    public Contacts setupContactsPanel() {
+    /**
+     * Adds a contact to the list
+     *
+     * @return true if it worked, otherwise false
+     */
+    public boolean addContact(String name, String lastMessage) {
+        if (contacts == null) {
+            return false;
+        }
+        contacts.addContact(name,lastMessage);
+        return true;
+    }
+
+    private Contacts setupContactsPanel() {
         Contacts ret = new Contacts();
         ret.setLayout(null);
         ret.setBorder(BorderFactory.createMatteBorder(
@@ -149,7 +162,7 @@ public class MainWindow extends JFrame {
         return ret;
     }
 
-    public Chat setupChatPanel() {
+    private Chat setupChatPanel() {
         Chat ret = new Chat();
         ret.setLayout(null);
         ret.setBorder(BorderFactory.createMatteBorder(
@@ -161,15 +174,15 @@ public class MainWindow extends JFrame {
     }
 
 
-    class TopBar extends JPanel {
+    private class TopBar extends JPanel {
 
 
-        public static final int TOP_HEIGHT = 20;
+        static final int TOP_HEIGHT = 20;
 
         JLabel title;
         JLabel exit;
 
-        public TopBar(String title) {
+        TopBar(String title) {
             setSize((int) (W_WIDTH * UI_SCALING), (int) (TOP_HEIGHT * TOP_SCALE * UI_SCALING));
             setBackground(theme.getPrimaryColorDark());
             setLayout(null);

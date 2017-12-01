@@ -1,0 +1,2 @@
+
+new MainWindow().addContact(name, lastMessage) -> Add a contact to the contact list
