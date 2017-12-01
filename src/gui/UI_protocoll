@@ -1,2 +1,8 @@
 
 new MainWindow().addContact(name, lastMessage) -> Add a contact to the contact list
+new MainWindow().addOnContactClickedListener(new OnContactClickedListener(){} -> contact key listener
+
+
+//TODO
+OnNachrichtSendListener
+addChatNachrichten

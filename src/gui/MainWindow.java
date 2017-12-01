@@ -45,7 +45,7 @@ public class MainWindow extends JFrame {
     /**
      * Theme for this GUI
      */
-    public static Theme theme = new Theme(Theme.Themes.MILAN);
+    public static Theme theme = new Theme(Theme.Themes.GRAYPINK);
 
     /**
      * Used to drag & drop the top bar
@@ -75,6 +75,7 @@ public class MainWindow extends JFrame {
      * Main Container
      */
     public static Container c;
+
 
     public MainWindow() {
         setUndecorated(true);
@@ -134,6 +135,10 @@ public class MainWindow extends JFrame {
 
 
         setVisible(true);
+    }
+
+    public void addOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
+        contacts.setOnContactClickedListener(onContactClickedListener);
     }
 
     /**
@@ -244,6 +249,13 @@ public class MainWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        new MainWindow();
+        new MainWindow().addOnContactClickedListener(new OnContactClickedListener() {
+            @Override
+            public void onContactClicked(ContactEvent e) {
+                System.out.println("clicked");
+            }
+
+
+        });
     }
 }

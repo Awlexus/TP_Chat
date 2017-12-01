@@ -23,16 +23,20 @@ public class Contacts extends JPanel {
     Point fromCords;
     Point toCords;
 
+    OnContactClickedListener onContactClickedListener;
+
 
     public Contacts() {
         contactArrayList = new ArrayList<>();
         setBackground(MainWindow.theme.getPrimaryColorLight());
+    }
 
-
+    public void setOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
+        this.onContactClickedListener = onContactClickedListener;
     }
 
     public void addContact(String name, String lastMessage) {
-        Contact c = new Contact(name, lastMessage, getWidth(), getWidth() / 3);
+        Contact c = new Contact(name, lastMessage, getWidth(), getWidth() / 3,contactArrayList.size());
         c.setLocation(0, (getWidth() / 3) * contactArrayList.size());
         c.addMouseListener(new MouseAdapter() {
             @Override
@@ -46,6 +50,7 @@ public class Contacts extends JPanel {
                 c.setBorder(BorderFactory.createMatteBorder(
                         (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getAccentColor()));
                 c.setSelected(true);
+                onContactClickedListener.onContactClicked(new ContactEvent(c.getName(),c.getId()));
             }
 
             @Override
@@ -140,9 +145,11 @@ public class Contacts extends JPanel {
         JLabel arrow;
         int width;
         int height;
+        int id;
         boolean isSelected = false;
 
-        public Contact(String name, String lastMessage, int width, int height) {
+        public Contact(String name, String lastMessage, int width, int height,int id) {
+            this.id=id;
             this.name = new JLabel(name);
             if (lastMessage.length() > 20) {
                 lastMessage = lastMessage.substring(0, 16) + "...";
@@ -184,6 +191,13 @@ public class Contacts extends JPanel {
 
         public void setSelected(boolean selected) {
             isSelected = selected;
+        }
+
+        public int getId() {
+            return id;
+        }
+        public String getName() {
+            return this.name.getText();
         }
     }
 }
