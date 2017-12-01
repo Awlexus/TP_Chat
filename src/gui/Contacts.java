@@ -39,6 +39,8 @@ public class Contacts extends JPanel {
         this.onContactClickedListener.remove(onContactClickedListener);
     }
 
+
+
     public void addContact(String name, String lastMessage) {
         Contact c = new Contact(name, lastMessage, getWidth(), getWidth() / 3, contactArrayList.size());
         c.setLocation(0, (getWidth() / 3) * contactArrayList.size());

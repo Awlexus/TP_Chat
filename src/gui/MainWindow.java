@@ -45,7 +45,7 @@ public class MainWindow extends JFrame {
     /**
      * Theme for this GUI
      */
-    public static Theme theme = new Theme(Theme.Themes.GRAYPINK);
+    public static Theme theme = new Theme(Theme.Themes.MILAN);
 
     /**
      * Used to drag & drop the top bar
@@ -151,6 +151,15 @@ public class MainWindow extends JFrame {
     }
     public void removeOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
         contacts.removeOnContactClickedListener(onContactClickedListener);
+    }
+
+    public void addChatActionListener(ChatActionListener chatActionListener) {
+        chat.addChatActionListener(chatActionListener);
+    }
+
+
+    public void removeChatActionListener(ChatActionListener chatActionListener) {
+        chat.removeChatActionListener(chatActionListener);
     }
 
     /**
@@ -259,7 +268,19 @@ public class MainWindow extends JFrame {
 
     public static void main(String[] args) {
         MainWindow mainWindow = new MainWindow();
+        mainWindow.addChatActionListener(new ChatActionListener() {
+            @Override
+            public void onSendPressed(SendEvent e) {
+                System.out.println(e.getMessage().getText());
+            }
 
+            @Override
+            public void onEditTextChanged(TextChangedEvent e) {
+                System.out.println(e.getText());
+            }
+
+
+        });
 
     }
 }
