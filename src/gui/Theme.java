@@ -115,7 +115,7 @@ public class Theme {
                 primaryColor = hex2Color("303030");
                 primaryColorDark = hex2Color("000000");
                 primaryColorLight = hex2Color("888888");
-                accentColor = hex2Color("29B6F6");
+                accentColor = hex2Color("0936A6");
                 dark = true;
                 break;
 
