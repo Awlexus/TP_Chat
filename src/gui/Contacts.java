@@ -77,8 +77,6 @@ public class Contacts extends JPanel {
             }
 
             public void mouseReleased(MouseEvent e) {
-                //TODO contains bug if there is only one contact
-
                 Contact last = contactArrayList.get(contactArrayList.size() - 1);
                 int valToCheck = last.getY();
 
