@@ -268,19 +268,6 @@ public class MainWindow extends JFrame {
 
     public static void main(String[] args) {
         MainWindow mainWindow = new MainWindow();
-        mainWindow.addChatActionListener(new ChatActionListener() {
-            @Override
-            public void onSendPressed(SendEvent e) {
-                System.out.println(e.getMessage().getText());
-            }
-
-            @Override
-            public void onEditTextChanged(TextChangedEvent e) {
-                System.out.println(e.getText());
-            }
-
-
-        });
 
     }
 }
