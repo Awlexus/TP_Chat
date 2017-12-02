@@ -35,14 +35,25 @@ public class Contacts extends JPanel {
     public void addOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
         this.onContactClickedListener.add(onContactClickedListener);
     }
+
     public void removeOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
         this.onContactClickedListener.remove(onContactClickedListener);
     }
 
+    /**
+     * checks if the id exists
+     */
+    public boolean alreadyExistsContactId(int id) {
+        boolean ret = false;
+        for (Contact contact : contactArrayList) {
+            if (contact.getId() == id)
+                return true;
+        }
+        return ret;
+    }
 
-
-    public void addContact(String name, String lastMessage) {
-        Contact c = new Contact(name, lastMessage, getWidth(), getWidth() / 3, contactArrayList.size());
+    public void addContact(String name, String lastMessage, int id) {
+        Contact c = new Contact(name, lastMessage, getWidth(), getWidth() / 3, id);
         c.setLocation(0, (getWidth() / 3) * contactArrayList.size());
         c.addMouseListener(new MouseAdapter() {
             @Override
@@ -57,7 +68,7 @@ public class Contacts extends JPanel {
                         (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getAccentColor()));
                 c.setSelected(true);
                 for (int i = 0; i < onContactClickedListener.size(); i++) {
-                    onContactClickedListener.get(i).onContactClicked(new ContactEvent(c.getName(), c.getId(),c));
+                    onContactClickedListener.get(i).onContactClicked(new ContactEvent(c.getName(), c.getId(), c));
                 }
             }
 
@@ -72,7 +83,7 @@ public class Contacts extends JPanel {
             public void mouseExited(MouseEvent e) {
                 if (!c.isSelected)
                     c.setBorder(BorderFactory.createMatteBorder(
-                            (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+                            0, 0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
 
             }
 
@@ -131,6 +142,10 @@ public class Contacts extends JPanel {
         this.add(c);
     }
 
+    public void addContact(String name, String lastMessage) {
+        this.addContact(name, lastMessage, contactArrayList.size());
+    }
+
     public ArrayList<Contact> getContactArrayList() {
         return contactArrayList;
     }
@@ -150,7 +165,6 @@ public class Contacts extends JPanel {
         }
         return true;
     }
-
 
 
     class Contact extends JPanel {
@@ -182,12 +196,12 @@ public class Contacts extends JPanel {
             this.setBackground(MainWindow.theme.getPrimaryColorLight());
             name.setFont(new Font(MainWindow.FONT, 0, height / 2));
             name.setSize(name.getPreferredSize());
-            name.setLocation((int) (MainWindow.UI_SCALING*2), 0);
+            name.setLocation((int) (MainWindow.UI_SCALING * 2), 0);
             name.setForeground(Color.BLACK);
 
             lastMessage.setFont(new Font(MainWindow.FONT, 0, height / 4));
             lastMessage.setSize(lastMessage.getPreferredSize());
-            lastMessage.setLocation((int) (MainWindow.UI_SCALING*6), name.getHeight());
+            lastMessage.setLocation((int) (MainWindow.UI_SCALING * 6), name.getHeight());
             lastMessage.setForeground(MainWindow.theme.getPrimaryColor());
 
             arrow = new JLabel(">");

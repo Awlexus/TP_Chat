@@ -31,6 +31,8 @@ public class Chat extends JPanel {
     private ChatContent chatContent;
     private ChatControls chatControls;
 
+
+
     private ArrayList<ChatActionListener> chatActionListeners;
 
     /**
@@ -63,14 +65,17 @@ public class Chat extends JPanel {
 
     /**
      * adds a new message at the bottom of the screen
-     *
-     * @param name    name of the user that writes the message
-     * @param message content of the message
-     * @param date    optional timestamp
-     * @param type    type of the message
      */
-    public void addMessage(chatMessageType type, String name, Message message, @Nullable String date) {
-        chatContent.addChatMessage(type, name, message, date);
+    public void addMessage(ChatMessageBlueprint blueprint) {
+        chatContent.addChatMessage(blueprint);
+    }
+
+    /**
+     *see Mainwindow description
+     * @param blueprints
+     */
+    public void addMessages(ChatMessageBlueprint[] blueprints) {
+        chatContent.addChatMessages(blueprints);
     }
 
     public void addChatActionListener(ChatActionListener chatActionListener) {
@@ -81,6 +86,12 @@ public class Chat extends JPanel {
         this.chatActionListeners.remove(chatActionListener);
     }
 
+    /**
+     * removes all chat messages
+     */
+    public void clearChat() {
+        chatContent.removeAllChatMessages();
+    }
 
     private class ChatControls extends JPanel {
         int width;
@@ -96,7 +107,7 @@ public class Chat extends JPanel {
             this.setSize(width, height);
             setBackground(MainWindow.theme.getPrimaryColorLight());
             setBorder(BorderFactory.createMatteBorder(
-                    (int) UI_SCALING,0 , (int) UI_SCALING, (int) UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+                    (int) UI_SCALING, 0, (int) UI_SCALING, (int) UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
 
 
             textField = new JTextField();
@@ -179,18 +190,25 @@ public class Chat extends JPanel {
 
         /**
          * adds a new message at the bottom of the screen
-         *
-         * @param name    name of the user that writes the message
-         * @param message content of the message
-         * @param date    optional timestamp
-         * @param type    type of the message
          */
-        public void addChatMessage(chatMessageType type, String name, Message message, @Nullable String date) {
-            ChatMessage chatMessage = new ChatMessage(type, name, message, date);
+        public void addChatMessage(ChatMessageBlueprint blueprint) {
+            ChatMessage chatMessage = new ChatMessage(blueprint.getType(),blueprint.getName(),blueprint.getMessage(),blueprint.getDate());
             chatMessages.add(0, chatMessage);
             //TODO 4 add scroll listener (like the contacts) to move the chat up and down
             repaintChatContent();
         }
+
+
+        public void addChatMessages(ChatMessageBlueprint[] blueprints) {
+            for (ChatMessageBlueprint blueprint:blueprints) {
+                ChatMessage chatMessage = new ChatMessage(blueprint.getType(),blueprint.getName(),blueprint.getMessage(),blueprint.getDate());
+                chatMessages.add(0, chatMessage);
+                //TODO 4 add scroll listener (like the contacts) to move the chat up and down
+            }
+            repaintChatContent();
+        }
+
+
 
         /**
          * repaint the chat gui
@@ -262,18 +280,18 @@ public class Chat extends JPanel {
 
                 Font messageFont = new Font(MainWindow.FONT, 0, (int) (UI_SCALING * 10 / 2));
                 textArea = new JTextArea();
-                textArea.setText(formatTextForChat(message.getText(),messageFont,this.width- (int)(UI_SCALING * 8)));
+                textArea.setText(formatTextForChat(message.getText(), messageFont, this.width - (int) (UI_SCALING * 8)-margin*4));
                 textArea.setEditable(false);
                 textArea.setBackground(MainWindow.theme.getPrimaryColorLight());
                 textArea.setFont(messageFont);
-                //TODO 3 calc Height from message length
                 textArea.setSize(textArea.getPreferredSize());
-                textArea.setLocation(nameLabel.getX(), nameLabel.getY() + nameLabel.getHeight() + margin);
+                textArea.setLocation(nameLabel.getX()+margin*2, nameLabel.getY() + nameLabel.getHeight() + margin);
 
                 timestamp = new JLabel(date);
                 //TODO 7 positioning
 
 
+                //calc Height from message length
                 height = margin * 3 + nameLabel.getHeight() + textArea.getHeight() + timestamp.getHeight();
                 this.setSize(width, height);
 
@@ -286,10 +304,10 @@ public class Chat extends JPanel {
                         borderColor = MainWindow.theme.getPrimaryColorDark();
                 }
 
-               this.setBackground(MainWindow.theme.getPrimaryColorLight());
+                this.setBackground(MainWindow.theme.getPrimaryColorLight());
                 this.setOpaque(false);
 
-                AbstractBorder brdr = new BubbleBorder(this.type, borderColor, (int) (UI_SCALING ), (int) (UI_SCALING*2), (int) (UI_SCALING * 4));
+                AbstractBorder brdr = new BubbleBorder(this.type, borderColor, (int) (UI_SCALING), (int) (UI_SCALING * 2), (int) (UI_SCALING * 4));
                 this.setBorder(brdr);
 
 
@@ -300,25 +318,81 @@ public class Chat extends JPanel {
                 this.repaint();
             }
 
-            private String formatTextForChat(String message,Font fontUsed,int goalWidth) {
+            private String formatTextForChat(String message, Font fontUsed, int goalWidth) {
                 String ret = message;
-                //TODO 2 better formatting
-                Rectangle2D rectangle2D=textArea.getFontMetrics(fontUsed).getStringBounds(ret,textArea.getGraphics());
-                while (rectangle2D.getWidth()>goalWidth){
-                    ret=splitLongest(ret);
-                    rectangle2D=textArea.getFontMetrics(fontUsed).getStringBounds(ret,textArea.getGraphics());
+                boolean allsplited = false;
+                while (!allsplited) {
+                    ret = splitLongest(ret, goalWidth, fontUsed);
+                    allsplited=true;
+                    String[] strings = ret.split("\n");
+                    for (int i = 0; i < strings.length; i++) {
+                        //if text exceeds limit
+                        int length = (int) textArea.getFontMetrics(fontUsed).getStringBounds(strings[i], textArea.getGraphics()).getWidth();
+                        if(length>goalWidth)
+                            allsplited=false;
+                    }
+
                 }
+                ret = appendSmallest(ret, goalWidth);
                 return ret;
             }
+
+            private String appendSmallest(String ret, int goalWidth) {
+                //TODO optional final formatting
+                //zum beispiel \n nicht zu ignorieren
+                return ret;
+            }
+
             /**
              * split the line that is the longest in the most appropriate way
              */
-            private String splitLongest(String message) {
+            private String splitLongest(String message, int goalWidth, Font fontUsed) {
                 String ret = message;
-                String []strings = ret.split("\n");
+                String[] strings = ret.split("\n");
+
+                StringBuilder builder = new StringBuilder();
+                //find longest
                 for (int i = 0; i < strings.length; i++) {
-                    //TODO 1 find the longest string and split it in a good way
+                    //if text exceeds limit
+                    int length = (int) textArea.getFontMetrics(fontUsed).getStringBounds(strings[i], textArea.getGraphics()).getWidth();
+                    if (length > goalWidth) {
+                        String split1, split2;
+                        double ratio = goalWidth / (length + 0.0);
+                        int indexToSplit = (int) (strings[i].toCharArray().length * ratio);
+                        if (ret.contains(" ")) {
+                            //find the next space downwards or upwards
+                            int splitindex = -1;
+                            for (int j = indexToSplit; j > 0; j--) {
+                                if (strings[i].charAt(j) == ' ') {
+                                    splitindex = j;
+                                    break;
+                                }
+                            }
+                            //split
+                            if (splitindex > 0) {
+                                split1 = strings[i].substring(0, splitindex);
+                                split2 = strings[i].substring(splitindex + 1, strings[i].length());
+                            } else {
+                                split1 = strings[i].substring(0, indexToSplit - 1);
+                                split2 = strings[i].substring(indexToSplit, strings[i].length());
+                            }
+                            if(goalWidth>(int) textArea.getFontMetrics(fontUsed).getStringBounds(split2, textArea.getGraphics()).getWidth())
+                                builder.append(split1 + "\n" + split2 + "");
+                                //TODO wenn ein user enter drükt wird das ignoriert
+                            else
+                                builder.append(split1 + "\n" + split2 + "\n");
+
+                        } else {
+                            split1 = strings[i].substring(0, indexToSplit - 1);
+                            split2 = strings[i].substring(indexToSplit, strings[i].length());
+                            builder.append(split1 + "\n" + split2 + "\n");
+                        }
+                    } else {
+                        //no limit break
+                        builder.append(strings[i] + "\n");
+                    }
                 }
+                ret = builder.toString();
                 return ret;
             }
 
