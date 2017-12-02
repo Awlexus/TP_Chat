@@ -262,7 +262,7 @@ public class Chat extends JPanel {
 
                 Font messageFont = new Font(MainWindow.FONT, 0, (int) (UI_SCALING * 10 / 2));
                 textArea = new JTextArea();
-                textArea.setText(formatTextForChat(message.getMessage(),messageFont,this.width- (int)(UI_SCALING * 8)));
+                textArea.setText(formatTextForChat(message.getText(),messageFont,this.width- (int)(UI_SCALING * 8)));
                 textArea.setEditable(false);
                 textArea.setBackground(MainWindow.theme.getPrimaryColorLight());
                 textArea.setFont(messageFont);
