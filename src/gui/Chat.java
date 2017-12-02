@@ -1,12 +1,18 @@
 package gui;
 
+import com.sun.deploy.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import static gui.MainWindow.UI_SCALING;
 
 /**
  * @author Matteo Cosi
@@ -90,14 +96,14 @@ public class Chat extends JPanel {
             this.setSize(width, height);
             setBackground(MainWindow.theme.getPrimaryColorLight());
             setBorder(BorderFactory.createMatteBorder(
-                    (int) MainWindow.UI_SCALING,0 , (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+                    (int) UI_SCALING,0 , (int) UI_SCALING, (int) UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
 
 
             textField = new JTextField();
-            textField.setFont(new Font(MainWindow.FONT, 0, (int) (this.height * 4 / 5 - MainWindow.UI_SCALING * 6)));
-            textField.setSize((int) (width * 4 / 6 - MainWindow.UI_SCALING * 6), textField.getPreferredSize().height);
-            textField.setLocation((int) MainWindow.UI_SCALING * 3, height / 2 - textField.getHeight() / 2);
-            textField.setBorder(BorderFactory.createMatteBorder((int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+            textField.setFont(new Font(MainWindow.FONT, 0, (int) (this.height * 4 / 5 - UI_SCALING * 6)));
+            textField.setSize((int) (width * 4 / 6 - UI_SCALING * 6), textField.getPreferredSize().height);
+            textField.setLocation((int) UI_SCALING * 3, height / 2 - textField.getHeight() / 2);
+            textField.setBorder(BorderFactory.createMatteBorder((int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
             textField.setBackground(MainWindow.theme.getPrimaryColorLight());
             textField.setForeground(Color.BLACK);
             textField.addKeyListener(new KeyAdapter() {
@@ -111,9 +117,9 @@ public class Chat extends JPanel {
 
 
             send = new JButton("SENDE");
-            send.setFont(new Font(MainWindow.FONT, 0, (int) (this.height * 3 / 5 - MainWindow.UI_SCALING * 8)));
-            send.setSize((int) (width * 2 / 6 - MainWindow.UI_SCALING * 6), textField.getHeight());
-            send.setLocation((int) (textField.getWidth() + MainWindow.UI_SCALING * 6), height / 2 - textField.getHeight() / 2);
+            send.setFont(new Font(MainWindow.FONT, 0, (int) (this.height * 3 / 5 - UI_SCALING * 8)));
+            send.setSize((int) (width * 2 / 6 - UI_SCALING * 6), textField.getHeight());
+            send.setLocation((int) (textField.getWidth() + UI_SCALING * 6), height / 2 - textField.getHeight() / 2);
             send.setBackground(MainWindow.theme.getPrimaryColorDark());
             if (MainWindow.theme.getDark())
                 send.setForeground(Color.white);
@@ -130,7 +136,7 @@ public class Chat extends JPanel {
 
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    //TODO find a way to controll the button color on press
+                    //TODO 6 find a way to controll the button color on press
                 }
 
                 @Override
@@ -180,9 +186,9 @@ public class Chat extends JPanel {
          * @param type    type of the message
          */
         public void addChatMessage(chatMessageType type, String name, Message message, @Nullable String date) {
-            //TODO calc Height from message length
             ChatMessage chatMessage = new ChatMessage(type, name, message, date);
             chatMessages.add(0, chatMessage);
+            //TODO 4 add scroll listener (like the contacts) to move the chat up and down
             repaintChatContent();
         }
 
@@ -191,8 +197,8 @@ public class Chat extends JPanel {
          */
         private void repaintChatContent() {
             removeAll();
-            //TODO effizienz: nicht allealle zeichnen sondern bei 20 oder so stoppen
-            int margin = (int) (MainWindow.UI_SCALING * 3);
+            //TODO 5 effizienz: nicht allealle zeichnen sondern bei 20 oder so stoppen
+            int margin = (int) (UI_SCALING * 3);
             int currentY = this.height - margin;
             for (int i = 0; i < chatMessages.size(); i++) {
                 ChatMessage message = chatMessages.get(i);
@@ -231,7 +237,7 @@ public class Chat extends JPanel {
             Message message;
             String date;
             JLabel nameLabel;
-            JTextArea textLabel;
+            JTextArea textArea;
             JLabel timestamp;
             chatMessageType type;
 
@@ -245,29 +251,30 @@ public class Chat extends JPanel {
                 this.setLayout(null);
 
                 //width and height berechnen
-                int margin = (int) MainWindow.UI_SCALING;
+                int margin = (int) UI_SCALING;
                 nameLabel = new JLabel(name);
-                nameLabel.setFont(new Font(MainWindow.FONT, 1, (int) (MainWindow.UI_SCALING * 16 / 2)));
+                nameLabel.setFont(new Font(MainWindow.FONT, 1, (int) (UI_SCALING * 16 / 2)));
                 nameLabel.setSize(nameLabel.getPreferredSize());
                 if (type == chatMessageType.FROM)
-                    nameLabel.setLocation((int) (MainWindow.UI_SCALING * 6), (int) (MainWindow.UI_SCALING * 2));
+                    nameLabel.setLocation((int) (UI_SCALING * 6), (int) (UI_SCALING * 2));
                 else
-                    nameLabel.setLocation((int) (MainWindow.UI_SCALING * 2), (int) (MainWindow.UI_SCALING * 2));
+                    nameLabel.setLocation((int) (UI_SCALING * 2), (int) (UI_SCALING * 2));
 
-                textLabel = new JTextArea(message.getText());
-                textLabel.setEditable(false);
-                textLabel.setBackground(MainWindow.theme.getPrimaryColorLight());
-                textLabel.setFont(new Font(MainWindow.FONT, 0, (int) (MainWindow.UI_SCALING * 10 / 2)));
-                textLabel.setSize(width-(int) (MainWindow.UI_SCALING * 8),100);
-
-                textLabel.setLocation(nameLabel.getX(), nameLabel.getY() + nameLabel.getHeight() + margin);
+                Font messageFont = new Font(MainWindow.FONT, 0, (int) (UI_SCALING * 10 / 2));
+                textArea = new JTextArea();
+                textArea.setText(formatTextForChat(message.getMessage(),messageFont,this.width- (int)(UI_SCALING * 8)));
+                textArea.setEditable(false);
+                textArea.setBackground(MainWindow.theme.getPrimaryColorLight());
+                textArea.setFont(messageFont);
+                //TODO 3 calc Height from message length
+                textArea.setSize(textArea.getPreferredSize());
+                textArea.setLocation(nameLabel.getX(), nameLabel.getY() + nameLabel.getHeight() + margin);
 
                 timestamp = new JLabel(date);
+                //TODO 7 positioning
 
-                //TODO  positioning
 
-
-                height = margin * 3 + nameLabel.getHeight() + textLabel.getHeight() + timestamp.getHeight();
+                height = margin * 3 + nameLabel.getHeight() + textArea.getHeight() + timestamp.getHeight();
                 this.setSize(width, height);
 
                 Color borderColor;
@@ -282,15 +289,37 @@ public class Chat extends JPanel {
                this.setBackground(MainWindow.theme.getPrimaryColorLight());
                 this.setOpaque(false);
 
-                AbstractBorder brdr = new BubbleBorder(this.type, borderColor, (int) (MainWindow.UI_SCALING ), (int) (MainWindow.UI_SCALING*2), (int) (MainWindow.UI_SCALING * 4));
+                AbstractBorder brdr = new BubbleBorder(this.type, borderColor, (int) (UI_SCALING ), (int) (UI_SCALING*2), (int) (UI_SCALING * 4));
                 this.setBorder(brdr);
 
 
                 this.add(nameLabel);
-                this.add(textLabel);
+                this.add(textArea);
                 this.add(timestamp);
                 Chat.this.repaint();
                 this.repaint();
+            }
+
+            private String formatTextForChat(String message,Font fontUsed,int goalWidth) {
+                String ret = message;
+                //TODO 2 better formatting
+                Rectangle2D rectangle2D=textArea.getFontMetrics(fontUsed).getStringBounds(ret,textArea.getGraphics());
+                while (rectangle2D.getWidth()>goalWidth){
+                    ret=splitLongest(ret);
+                    rectangle2D=textArea.getFontMetrics(fontUsed).getStringBounds(ret,textArea.getGraphics());
+                }
+                return ret;
+            }
+            /**
+             * split the line that is the longest in the most appropriate way
+             */
+            private String splitLongest(String message) {
+                String ret = message;
+                String []strings = ret.split("\n");
+                for (int i = 0; i < strings.length; i++) {
+                    //TODO 1 find the longest string and split it in a good way
+                }
+                return ret;
             }
 
             public chatMessageType getType() {

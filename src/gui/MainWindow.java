@@ -285,7 +285,7 @@ public class MainWindow extends JFrame {
         mainWindow.addMessage(Chat.chatMessageType.FROM,"Tom",new Message("hi"),null);
         mainWindow.addMessage(Chat.chatMessageType.TO,"Tom",new Message("hddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddi"),null);
         mainWindow.addMessage(Chat.chatMessageType.FROM,"Tom",new Message("hi"),null);
-        mainWindow.addMessage(Chat.chatMessageType.TO,"Tom",new Message("hi"),null);
+        mainWindow.addMessage(Chat.chatMessageType.TO,"Tom",new Message("ddddddddddgggggggggghhhhhhhhhhjjjjjjjjjj"),null);
         mainWindow.chat.repaint();
     }
 }
