@@ -1,14 +1,49 @@
+HOW TO USE MainWindow
 
-new MainWindow().addContact(name, lastMessage) -> Add a contact to the contact list
+1. instantiate
+        MainWindow mainWindow = new MainWindow();
 
-new MainWindow().addOnContactClickedListener() -> add
-new MainWindow().removeOnContactClickedListener() ->remove
+2. add Listeners
+    a)  mainWindow.addOnContactClickedListener(new OnContactClickedListener() {
+            @Override
+            public void onContactClicked(ContactEvent e) {
+                The ContactEvent contains:
+                    name...of the clicked contact
+                    id..of the clicked contact
+                    source...the JPanel that was clicked
+            }
+        });
+    b)  mainWindow.addChatActionListener(new ChatActionListener() {
+            @Override
+            public void onSendPressed(SendEvent e) {
+                The SendEvent contains:
+                    message...the message that I want to send
+                    source...the JButton that was clicked
+            }
 
-clearContacts(); -> removes all contacts
+            @Override
+            public void onEditTextChanged(TextChangedEvent e) {
+            The SendEvent contains:
+                text...the new Text inside the JEditText
+                source...the JEditText that was clicked
+            }
+        });
+3.Use the other functions that MainWindow offers
+    addContact(name, lastMessage) -> Add a contact to the contact list
+    clearContacts(); -> removes all contacts
 
-ChatActionListener -> sende und textChanged action
+    addMessage() -> add one message at the bottom of the screen
+    addMessages() -> add N messages at the bottom of the screen WITHOUT repainting each time
 
-addMessage() ->füge eine nachricht hinzu
+    clearChat(); -> delete all messages from the chat panel
+
+4.HELP
+    a)What is the ChatMessageBlueprint?
+        it is used to describe what the Message to display looks like
+
+    b)Why a separate Message class?
+        this is done in oder to send more complex Messages in future(Images, Audios, etc...)
+
 
 
 //TODO

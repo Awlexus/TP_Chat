@@ -106,16 +106,7 @@ public class MainWindow extends JFrame {
         c.add(chat);
 
         //debug only
-        contacts.addContact("Test1", "hallo1fffff");
-        contacts.addContact("Test2", "hallo2ffffffffffffffffaaaaabbbbbbbbbbsssssss");
-        contacts.addContact("Test3", "hallo3ffffff");
-        contacts.addContact("Test4", "hallo4");
-        contacts.addContact("Test5", "hallo5");
-        contacts.addContact("Test6", "hallo6");
-        contacts.addContact("Test7", "hallo6");
-        contacts.addContact("Test8", "hallo6");
-        contacts.addContact("Test9", "hallo6");
-        contacts.addContact("Test10", "hallo6");
+
 
 
         topBarCords = null;
@@ -150,18 +141,44 @@ public class MainWindow extends JFrame {
         contacts.getContactArrayList().clear();
     }
 
+    /**
+     * removes all messages from the chat
+     */
+    public void clearChat(){
+        chat.clearChat();
+    }
+
+    /**
+     * adds a contact click listener
+     * @param onContactClickedListener to add
+     */
     public void addOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
         contacts.addOnContactClickedListener(onContactClickedListener);
     }
+
+
+    /**
+     * removes a contact click listener
+     * @param onContactClickedListener to remove
+     */
     public void removeOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
         contacts.removeOnContactClickedListener(onContactClickedListener);
     }
 
+
+    /**
+     * adds a chat action listener
+     * @param chatActionListener to add
+     */
     public void addChatActionListener(ChatActionListener chatActionListener) {
         chat.addChatActionListener(chatActionListener);
     }
 
 
+    /**
+     * removes a chat action listener
+     * @param chatActionListener to remove
+     */
     public void removeChatActionListener(ChatActionListener chatActionListener) {
         chat.removeChatActionListener(chatActionListener);
     }
@@ -176,18 +193,42 @@ public class MainWindow extends JFrame {
             return false;
         }
         contacts.addContact(name,lastMessage);
+        this.repaint();
+        return true;
+    }
+    /**
+     * Adds a contact to the list
+     *
+     * @return true if it worked, otherwise false
+     */
+    public boolean addContact(String name, String lastMessage,int id) {
+        if (contacts == null) {
+            return false;
+        }
+        if(contacts.alreadyExistsContactId(id)){
+            return false;
+        }
+        contacts.addContact(name,lastMessage,id);
+        this.repaint();
         return true;
     }
 
+
     /**
      * adds a new message at the bottom of the screen
-     * @param name name of the user that writes the message
-     * @param message content of the message
-     * @param date optional timestamp
-     * @param type type of the message
+     * @param blueprint blueprint of all chat attributes
      */
-    public void addMessage(Chat.chatMessageType type, String name, Message message,@Nullable String date){
-        chat.addMessage(type,name, message, date);
+    public void addMessage(ChatMessageBlueprint blueprint){
+        chat.addMessage(blueprint);
+    }
+
+
+    /**
+     * adds n Messages without repainting every time, but only at the end
+     * @param blueprints blueprint of all chat attributes
+     */
+    public void addMessages(ChatMessageBlueprint[] blueprints){
+        chat.addMessages(blueprints);
     }
 
     private Contacts setupContactsPanel() {
@@ -281,11 +322,17 @@ public class MainWindow extends JFrame {
 
     public static void main(String[] args) {
         MainWindow mainWindow = new MainWindow();
-        mainWindow.addMessage(Chat.chatMessageType.INFO,"Tom",new Message("hi"),null);
-        mainWindow.addMessage(Chat.chatMessageType.FROM,"Tom",new Message("hi"),null);
-        mainWindow.addMessage(Chat.chatMessageType.TO,"Tom",new Message("hddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddi"),null);
-        mainWindow.addMessage(Chat.chatMessageType.FROM,"Tom",new Message("hi"),null);
-        mainWindow.addMessage(Chat.chatMessageType.TO,"Tom",new Message("ddddddddddgggggggggghhhhhhhhhhjjjjjjjjjj"),null);
+        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Tom",new Message("Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"),null));
+        mainWindow.addContact("Test1", "hallo1fffff");
+        mainWindow.addContact("Test2", "hallo2ffffffffffffffffaaaaabbbbbbbbbbsssssss");
+        mainWindow.addContact("Test3", "hallo3ffffff");
+        mainWindow.addContact("Test4", "hallo4");
+        mainWindow.addContact("Test5", "hallo5");
+        mainWindow.addContact("Test6", "hallo6");
+        mainWindow.addContact("Test7", "hallo6");
+        mainWindow.addContact("Test8", "hallo6");
+        mainWindow.addContact("Test9", "hallo6");
+        mainWindow.addContact("Test10", "hallo6");
         mainWindow.chat.repaint();
     }
 }
