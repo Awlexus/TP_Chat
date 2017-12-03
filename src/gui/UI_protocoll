@@ -1,8 +1,9 @@
 HOW TO USE MainWindow
 
 1. instantiate
-        MainWindow mainWindow = new MainWindow();
-
+        MainWindow mainWindow = new MainWindow(Settings s);
+        Settings can be null or contain stored settings of the user
+        //TODO Settings menu, with OnSettingAppliedListener
 2. add Listeners
     a)  mainWindow.addOnContactClickedListener(new OnContactClickedListener() {
             @Override
@@ -28,6 +29,7 @@ HOW TO USE MainWindow
                 source...the JEditText that was clicked
             }
         });
+    c)OnSettingAppliedListener //TODO
 3.Use the other functions that MainWindow offers
     addContact(name, lastMessage) -> Add a contact to the contact list
     clearContacts(); -> removes all contacts
@@ -50,4 +52,4 @@ HOW TO USE MainWindow
 
 //TODO
 expandable JEditText
-Settings
+smileys

@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @author Matteo Cosi
  * @since 30.11.2017
  */
-public class Contacts extends JPanel {
+class Contacts extends JPanel {
 
     /**
      * Container for the Contacts
@@ -22,7 +22,7 @@ public class Contacts extends JPanel {
     ArrayList<OnContactClickedListener> onContactClickedListener;
 
 
-    public Contacts() {
+    Contacts() {
         contactArrayList = new ArrayList<>();
         onContactClickedListener = new ArrayList<>();
         setBackground(MainWindow.theme.getPrimaryColorLight());
@@ -129,7 +129,7 @@ public class Contacts extends JPanel {
 
         private void setupContactUI() {
             setBorder(BorderFactory.createMatteBorder(
-                    0, 0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+                    0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
             this.setBackground(MainWindow.theme.getPrimaryColorLight());
             name.setFont(new Font(MainWindow.FONT, 0, height / 2));
             name.setSize(name.getPreferredSize());

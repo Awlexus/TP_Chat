@@ -9,17 +9,16 @@ import java.awt.event.MouseEvent;
  * @author Matteo Cosi
  * @since 03.12.2017
  */
-public class ContactScrolling extends MouseAdapter {
-    Contacts.Contact c;
-    Contacts contacts;
+ class ContactScrolling extends MouseAdapter {
+    private Contacts.Contact c;
+    private Contacts contacts;
 
     /**
      * Used to drag & drop the contacts
      */
     private Point fromCords;
-    private Point toCords;
 
-    public ContactScrolling(Contacts.Contact c,Contacts contacts) {
+    ContactScrolling(Contacts.Contact c, Contacts contacts) {
         this.c=c;
         this.contacts=contacts;
     }
@@ -50,7 +49,7 @@ public class ContactScrolling extends MouseAdapter {
     public void mouseExited(MouseEvent e) {
         if (!c.isSelected)
             c.setBorder(BorderFactory.createMatteBorder(
-                    0, 0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+                    0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
 
     }
 
@@ -93,7 +92,7 @@ public class ContactScrolling extends MouseAdapter {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        toCords = e.getPoint();
+        Point toCords = e.getPoint();
         int offset = toCords.y - fromCords.y;
         boolean scrollDown = true;
         if (offset > 0)

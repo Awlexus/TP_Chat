@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
  * @author Matteo Cosi
  * @since 03.12.2017
  */
-public class ChatScrolling extends MouseAdapter {
+class ChatScrolling extends MouseAdapter {
     Chat.ChatContent content;
 
     /**
