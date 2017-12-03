@@ -143,7 +143,11 @@ public class Contacts extends JPanel {
     }
 
     public void addContact(String name, String lastMessage) {
-        this.addContact(name, lastMessage, contactArrayList.size());
+        int id=contactArrayList.size();
+        while (alreadyExistsContactId(id)){
+            id++;
+        }
+        this.addContact(name, lastMessage,id);
     }
 
     public ArrayList<Contact> getContactArrayList() {
@@ -164,6 +168,23 @@ public class Contacts extends JPanel {
                 return false;
         }
         return true;
+    }
+
+    public void removeContact(int id) {
+        boolean found=false;
+        for (int i = 0; i < contactArrayList.size(); i++) {
+            Contact c = contactArrayList.get(i);
+            if(found){
+                c.setLocation(c.getX(),c.getY()-c.getHeight());
+            }
+            if(c.getId()==id){
+                contactArrayList.remove(i);
+                this.remove(c);
+                found=true;
+                i--;
+            }
+        }
+        this.repaint();
     }
 
 

@@ -213,6 +213,19 @@ public class MainWindow extends JFrame {
         return true;
     }
 
+    public boolean removeContact(int id){
+        if (contacts == null) {
+            return false;
+        }
+        //schau ob es die gibt
+        if(!contacts.alreadyExistsContactId(id)){
+            return false;
+        }
+        contacts.removeContact(id);
+        this.repaint();
+        return true;
+    }
+
 
     /**
      * adds a new message at the bottom of the screen
@@ -327,12 +340,13 @@ public class MainWindow extends JFrame {
         mainWindow.addContact("Test2", "hallo2ffffffffffffffffaaaaabbbbbbbbbbsssssss");
         mainWindow.addContact("Test3", "hallo3ffffff");
         mainWindow.addContact("Test4", "hallo4");
-        mainWindow.addContact("Test5", "hallo5");
+        mainWindow.addContact("Test5", "hallo5",5);
         mainWindow.addContact("Test6", "hallo6");
         mainWindow.addContact("Test7", "hallo6");
         mainWindow.addContact("Test8", "hallo6");
         mainWindow.addContact("Test9", "hallo6");
         mainWindow.addContact("Test10", "hallo6");
-        mainWindow.chat.repaint();
+
+        mainWindow.removeContact(5);
     }
 }
