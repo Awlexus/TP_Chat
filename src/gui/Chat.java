@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static gui.MainWindow.UI_SCALING;
+import static gui.MainWindow.theme;
 
 /**
  * @author Matteo Cosi
@@ -32,8 +33,11 @@ public class Chat extends JPanel {
     private ChatControls chatControls;
 
 
-
     private ArrayList<ChatActionListener> chatActionListeners;
+
+
+    JProgressBar chatMessagesLoadingProgress = new JProgressBar();
+    //TODO JProgressbarstyling
 
     /**
      * describes the direction of the message
@@ -46,7 +50,7 @@ public class Chat extends JPanel {
     }
 
     public Chat() {
-        setBackground(MainWindow.theme.getPrimaryColorLight());
+        setBackground(theme.getPrimaryColorLight());
         chatActionListeners = new ArrayList<>();
 
     }
@@ -61,6 +65,9 @@ public class Chat extends JPanel {
 
         add(chatContent);
         add(chatControls);
+
+        //add the scrolling for the chat. EXPORTED to make it more readable
+
     }
 
     /**
@@ -71,7 +78,8 @@ public class Chat extends JPanel {
     }
 
     /**
-     *see Mainwindow description
+     * see Mainwindow description
+     *
      * @param blueprints
      */
     public void addMessages(ChatMessageBlueprint[] blueprints) {
@@ -105,17 +113,17 @@ public class Chat extends JPanel {
             this.width = width;
             this.height = height;
             this.setSize(width, height);
-            setBackground(MainWindow.theme.getPrimaryColorLight());
+            setBackground(theme.getPrimaryColorLight());
             setBorder(BorderFactory.createMatteBorder(
-                    (int) UI_SCALING, 0, (int) UI_SCALING, (int) UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+                    (int) UI_SCALING, 0, (int) UI_SCALING, (int) UI_SCALING, theme.getPrimaryColorDark()));
 
 
             textField = new JTextField();
             textField.setFont(new Font(MainWindow.FONT, 0, (int) (this.height * 4 / 5 - UI_SCALING * 6)));
             textField.setSize((int) (width * 4 / 6 - UI_SCALING * 6), textField.getPreferredSize().height);
             textField.setLocation((int) UI_SCALING * 3, height / 2 - textField.getHeight() / 2);
-            textField.setBorder(BorderFactory.createMatteBorder((int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
-            textField.setBackground(MainWindow.theme.getPrimaryColorLight());
+            textField.setBorder(BorderFactory.createMatteBorder((int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, theme.getPrimaryColorDark()));
+            textField.setBackground(theme.getPrimaryColorLight());
             textField.setForeground(Color.BLACK);
             textField.addKeyListener(new KeyAdapter() {
                 @Override
@@ -131,8 +139,8 @@ public class Chat extends JPanel {
             send.setFont(new Font(MainWindow.FONT, 0, (int) (this.height * 3 / 5 - UI_SCALING * 8)));
             send.setSize((int) (width * 2 / 6 - UI_SCALING * 6), textField.getHeight());
             send.setLocation((int) (textField.getWidth() + UI_SCALING * 6), height / 2 - textField.getHeight() / 2);
-            send.setBackground(MainWindow.theme.getPrimaryColorDark());
-            if (MainWindow.theme.getDark())
+            send.setBackground(theme.getPrimaryColorDark());
+            if (theme.getDark())
                 send.setForeground(Color.white);
             else
                 send.setForeground(Color.black);
@@ -152,12 +160,12 @@ public class Chat extends JPanel {
 
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    send.setForeground(MainWindow.theme.getAccentColor());
+                    send.setForeground(theme.getAccentColor());
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    if (MainWindow.theme.getDark())
+                    if (theme.getDark())
                         send.setForeground(Color.white);
                     else
                         send.setForeground(Color.black);
@@ -171,7 +179,7 @@ public class Chat extends JPanel {
 
     }
 
-    private class ChatContent extends JPanel {
+    class ChatContent extends JPanel {
         int width;
         int height;
 
@@ -183,8 +191,21 @@ public class Chat extends JPanel {
             this.width = width;
             this.height = height;
             this.setSize(width, height);
-            setBackground(MainWindow.theme.getPrimaryColorLight());
+            setBackground(theme.getPrimaryColorLight());
             chatMessages = new ArrayList<>();
+
+            setBorder(BorderFactory.createMatteBorder(
+                    0,0,0, (int) UI_SCALING, theme.getPrimaryColorDark()));
+
+
+            ChatScrolling scrolling = new ChatScrolling(this);
+            this.addMouseListener(scrolling);
+            this.addMouseMotionListener(scrolling);
+
+            chatMessagesLoadingProgress.setSize(width / 2, (int) (10 * UI_SCALING));
+            chatMessagesLoadingProgress.setLocation(width / 4, height / 2 - (int) (10 * UI_SCALING) / 2);
+            chatMessagesLoadingProgress.setVisible(false);
+            this.add(chatMessagesLoadingProgress);
 
         }
 
@@ -192,22 +213,36 @@ public class Chat extends JPanel {
          * adds a new message at the bottom of the screen
          */
         public void addChatMessage(ChatMessageBlueprint blueprint) {
-            ChatMessage chatMessage = new ChatMessage(blueprint.getType(),blueprint.getName(),blueprint.getMessage(),blueprint.getDate());
+            ChatMessage chatMessage = new ChatMessage(blueprint.getType(), blueprint.getName(), blueprint.getMessage(), blueprint.getDate());
             chatMessages.add(0, chatMessage);
-            //TODO 4 add scroll listener (like the contacts) to move the chat up and down
+            ChatScrolling scrolling = new ChatScrolling(ChatContent.this);
+            chatMessage.addMouseListener(scrolling);
+            chatMessage.addMouseMotionListener(scrolling);
             repaintChatContent();
         }
 
 
         public void addChatMessages(ChatMessageBlueprint[] blueprints) {
-            for (ChatMessageBlueprint blueprint:blueprints) {
-                ChatMessage chatMessage = new ChatMessage(blueprint.getType(),blueprint.getName(),blueprint.getMessage(),blueprint.getDate());
+            chatMessagesLoadingProgress.setVisible(true);
+            chatMessagesLoadingProgress.setMinimum(0);
+            chatMessagesLoadingProgress.setValue(0);
+            chatMessagesLoadingProgress.setMaximum(blueprints.length);
+            int i = 0;
+            for (ChatMessageBlueprint blueprint : blueprints) {
+                ChatMessage chatMessage = new ChatMessage(blueprint.getType(), blueprint.getName(), blueprint.getMessage(), blueprint.getDate());
                 chatMessages.add(0, chatMessage);
-                //TODO 4 add scroll listener (like the contacts) to move the chat up and down
+                ChatScrolling scrolling = new ChatScrolling(ChatContent.this);
+                chatMessage.addMouseListener(scrolling);
+                chatMessage.addMouseMotionListener(scrolling);
+                if (i % 2 == 0) {
+                    chatMessagesLoadingProgress.setValue(i);
+                    chatMessagesLoadingProgress.repaint();
+                }
+                i++;
             }
+            chatMessagesLoadingProgress.setVisible(false);
             repaintChatContent();
         }
-
 
 
         /**
@@ -248,7 +283,27 @@ public class Chat extends JPanel {
             this.chatMessages.clear();
         }
 
-        private class ChatMessage extends JPanel {
+        /**
+         * checks if scrolling is alowed
+         */
+        public boolean isRelocateValid(boolean scrollDown) {
+            if (!scrollDown) {
+                ChatMessage first = chatMessages.get(chatMessages.size() - 1);
+                int valToCheck = first.getY();
+
+                if (valToCheck > 0)
+                    return false;
+            } else {
+                ChatMessage last = chatMessages.get(0);
+                int valToCheck = last.getY();
+                if (valToCheck + last.getHeight() < this.getHeight())
+                    return false;
+            }
+            return true;
+        }
+
+
+        class ChatMessage extends JPanel {
             int width;
             int height;
             String name;
@@ -280,12 +335,15 @@ public class Chat extends JPanel {
 
                 Font messageFont = new Font(MainWindow.FONT, 0, (int) (UI_SCALING * 10 / 2));
                 textArea = new JTextArea();
-                textArea.setText(formatTextForChat(message.getText(), messageFont, this.width - (int) (UI_SCALING * 8)-margin*4));
+                textArea.setText(formatTextForChat(message.getText(), messageFont, this.width - (int) (UI_SCALING * 8) - margin * 4));
                 textArea.setEditable(false);
-                textArea.setBackground(MainWindow.theme.getPrimaryColorLight());
+                textArea.setBackground(theme.getPrimaryColorLight());
                 textArea.setFont(messageFont);
                 textArea.setSize(textArea.getPreferredSize());
-                textArea.setLocation(nameLabel.getX()+margin*2, nameLabel.getY() + nameLabel.getHeight() + margin);
+                textArea.setLocation(nameLabel.getX() + margin * 2, nameLabel.getY() + nameLabel.getHeight() + margin);
+                ChatScrolling scrolling = new ChatScrolling(ChatContent.this);
+                textArea.addMouseListener(scrolling);
+                textArea.addMouseMotionListener(scrolling);
 
                 timestamp = new JLabel(date);
                 //TODO 7 positioning
@@ -298,13 +356,13 @@ public class Chat extends JPanel {
                 Color borderColor;
                 switch (this.getType()) {
                     case INFO:
-                        borderColor = MainWindow.theme.getAccentColor();
+                        borderColor = theme.getAccentColor();
                         break;
                     default:
-                        borderColor = MainWindow.theme.getPrimaryColorDark();
+                        borderColor = theme.getPrimaryColorDark();
                 }
 
-                this.setBackground(MainWindow.theme.getPrimaryColorLight());
+                this.setBackground(theme.getPrimaryColorLight());
                 this.setOpaque(false);
 
                 AbstractBorder brdr = new BubbleBorder(this.type, borderColor, (int) (UI_SCALING), (int) (UI_SCALING * 2), (int) (UI_SCALING * 4));
@@ -323,13 +381,13 @@ public class Chat extends JPanel {
                 boolean allsplited = false;
                 while (!allsplited) {
                     ret = splitLongest(ret, goalWidth, fontUsed);
-                    allsplited=true;
+                    allsplited = true;
                     String[] strings = ret.split("\n");
                     for (int i = 0; i < strings.length; i++) {
                         //if text exceeds limit
                         int length = (int) textArea.getFontMetrics(fontUsed).getStringBounds(strings[i], textArea.getGraphics()).getWidth();
-                        if(length>goalWidth)
-                            allsplited=false;
+                        if (length > goalWidth)
+                            allsplited = false;
                     }
 
                 }
@@ -376,7 +434,7 @@ public class Chat extends JPanel {
                                 split1 = strings[i].substring(0, indexToSplit - 1);
                                 split2 = strings[i].substring(indexToSplit, strings[i].length());
                             }
-                            if(goalWidth>(int) textArea.getFontMetrics(fontUsed).getStringBounds(split2, textArea.getGraphics()).getWidth())
+                            if (goalWidth > (int) textArea.getFontMetrics(fontUsed).getStringBounds(split2, textArea.getGraphics()).getWidth())
                                 builder.append(split1 + "\n" + split2 + "");
                                 //TODO wenn ein user enter drükt wird das ignoriert
                             else
