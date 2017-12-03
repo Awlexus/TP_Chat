@@ -9,6 +9,7 @@ import protocol.Protocol
 fun main(args: Array<String>) {
     val auto = Protocol(userName = "Awlex")
     auto.hello()
+
     Thread.sleep(1000)
     auto.stop()
 }
