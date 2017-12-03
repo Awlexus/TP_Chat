@@ -18,7 +18,7 @@ public class MainWindow extends JFrame {
     /**
      * Scaling of the UI
      */
-    public static double UI_SCALING = 4;
+    public static double UI_SCALING = 2;
 
 
     /**
@@ -42,13 +42,13 @@ public class MainWindow extends JFrame {
      * @example 0.15 means 15% of the width is reserved for the
      * contacts and 85% is the size of the actual chat
      */
-    public static final double SCREEN_SPLITING_RATIO = 0.30;
+    public static final double SCREEN_SPLITING_RATIO = 0.20;
 
 
     /**
      * Theme for this GUI
      */
-    public static Theme theme = new Theme(Theme.Themes.BLUEPINK);
+    public static Theme theme = new Theme(Theme.Themes.GRAY_TEAL);
 
     /**
      * Used to drag & drop the top bar
@@ -245,7 +245,7 @@ public class MainWindow extends JFrame {
 
 
     /**
-     * adds a new message at the bottom of the screen
+     * adds a new text at the bottom of the screen
      *
      * @param blueprint blueprint of all chat attributes
      */

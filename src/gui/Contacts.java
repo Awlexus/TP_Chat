@@ -26,6 +26,9 @@ class Contacts extends JPanel {
         contactArrayList = new ArrayList<>();
         onContactClickedListener = new ArrayList<>();
         setBackground(MainWindow.theme.getPrimaryColorLight());
+        setBorder(BorderFactory.createMatteBorder(
+                0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+
     }
 
     public void addOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
