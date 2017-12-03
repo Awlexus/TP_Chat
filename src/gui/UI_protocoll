@@ -34,7 +34,8 @@ HOW TO USE MainWindow
     removeContact(id); -> removes a specific contact
 
     addMessage() -> add one message at the bottom of the screen
-    addMessages() -> add N messages at the bottom of the screen WITHOUT repainting each time
+    addMessages() -> add N messages at the bottom of the screen WITHOUT repainting each time.
+                    USE it if you load many messages at once
 
     clearChat(); -> delete all messages from the chat panel
 
@@ -48,5 +49,5 @@ HOW TO USE MainWindow
 
 
 //TODO
-removeContact(id)
-find a way to resize
+expandable JEditText
+Settings
