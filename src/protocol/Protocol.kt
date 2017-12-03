@@ -9,7 +9,10 @@ import kotlin.concurrent.thread
  * Created by Awlex on 01.12.2017.
  */
 
-fun DatagramPacket.getTextData(): String = String(data).substring(0, data.indexOf(0))
+fun DatagramPacket.getTextData(): String {
+    val index = data.indexOf(0)
+    return String(data).substring(0, if (index == -1) data.size else index)
+}
 
 fun DatagramPacket.getMessage(): String {
     return getTextData().split(Regex("\\s+"), 2)[1]
