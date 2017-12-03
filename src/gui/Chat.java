@@ -40,7 +40,7 @@ public class Chat extends JPanel {
     //TODO JProgressbarstyling
 
     /**
-     * describes the direction of the message
+     * describes the direction of the text
      * FROM...an other user is the autor
      * TO... I am the autor
      * INFO...a text for information purposes only
@@ -71,7 +71,7 @@ public class Chat extends JPanel {
     }
 
     /**
-     * adds a new message at the bottom of the screen
+     * adds a new text at the bottom of the screen
      */
     public void addMessage(ChatMessageBlueprint blueprint) {
         chatContent.addChatMessage(blueprint);
@@ -131,8 +131,15 @@ public class Chat extends JPanel {
                     for (int i = 0; i < chatActionListeners.size(); i++) {
                         chatActionListeners.get(i).onEditTextChanged(new TextChangedEvent(textField));
                     }
+                    if(e.getKeyCode()==KeyEvent.VK_ENTER){
+                        for (int i = 0; i < chatActionListeners.size(); i++) {
+                            chatActionListeners.get(i).onSendPressed(new SendEvent(send, new Message(textField.getText())));
+                        }
+                        chatContent.addChatMessage(new ChatMessageBlueprint(chatMessageType.TO,"ICH",new Message(textField.getText()),null));
+                        textField.setText("");                    }
                 }
             });
+
 
 
             send = new JButton("SENDE");
@@ -151,6 +158,8 @@ public class Chat extends JPanel {
                     for (int i = 0; i < chatActionListeners.size(); i++) {
                         chatActionListeners.get(i).onSendPressed(new SendEvent(send, new Message(textField.getText())));
                     }
+                    chatContent.addChatMessage(new ChatMessageBlueprint(chatMessageType.TO,"ICH",new Message(textField.getText()),null));
+                    textField.setText("");
                 }
 
                 @Override
@@ -210,7 +219,7 @@ public class Chat extends JPanel {
         }
 
         /**
-         * adds a new message at the bottom of the screen
+         * adds a new text at the bottom of the screen
          */
         public void addChatMessage(ChatMessageBlueprint blueprint) {
             ChatMessage chatMessage = new ChatMessage(blueprint.getType(), blueprint.getName(), blueprint.getMessage(), blueprint.getDate());
@@ -349,7 +358,7 @@ public class Chat extends JPanel {
                 //TODO 7 positioning
 
 
-                //calc Height from message length
+                //calc Height from text length
                 height = margin * 3 + nameLabel.getHeight() + textArea.getHeight() + timestamp.getHeight();
                 this.setSize(width, height);
 

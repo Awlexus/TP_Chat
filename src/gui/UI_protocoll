@@ -18,7 +18,7 @@ HOW TO USE MainWindow
             @Override
             public void onSendPressed(SendEvent e) {
                 The SendEvent contains:
-                    message...the message that I want to send
+                    text...the text that I want to send
                     source...the JButton that was clicked
             }
 
@@ -35,7 +35,7 @@ HOW TO USE MainWindow
     clearContacts(); -> removes all contacts
     removeContact(id); -> removes a specific contact
 
-    addMessage() -> add one message at the bottom of the screen
+    addMessage() -> add one text at the bottom of the screen
     addMessages() -> add N messages at the bottom of the screen WITHOUT repainting each time.
                     USE it if you load many messages at once
 
