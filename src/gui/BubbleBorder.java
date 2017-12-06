@@ -9,7 +9,7 @@ import java.awt.geom.RoundRectangle2D;
  * @author Matteo Cosi
  * @since 01.12.2017
  */
-public class BubbleBorder extends AbstractBorder {
+class BubbleBorder extends AbstractBorder {
 
 
     private Color color;

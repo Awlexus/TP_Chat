@@ -10,26 +10,25 @@ import java.util.ArrayList;
  * @author Matteo Cosi
  * @since 30.11.2017
  */
-public class Contacts extends JPanel {
+class Contacts extends JPanel {
 
     /**
      * Container for the Contacts
      */
-    private ArrayList<Contact> contactArrayList = null;
-
-    /**
-     * Used to drag & drop the contacts
-     */
-    private Point fromCords;
-    private Point toCords;
-
-    private ArrayList<OnContactClickedListener> onContactClickedListener;
+    ArrayList<Contact> contactArrayList = null;
 
 
-    public Contacts() {
+
+    ArrayList<OnContactClickedListener> onContactClickedListener;
+
+
+    Contacts() {
         contactArrayList = new ArrayList<>();
         onContactClickedListener = new ArrayList<>();
         setBackground(MainWindow.theme.getPrimaryColorLight());
+        setBorder(BorderFactory.createMatteBorder(
+                0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+
     }
 
     public void addOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
@@ -55,95 +54,19 @@ public class Contacts extends JPanel {
     public void addContact(String name, String lastMessage, int id) {
         Contact c = new Contact(name, lastMessage, getWidth(), getWidth() / 3, id);
         c.setLocation(0, (getWidth() / 3) * contactArrayList.size());
-        c.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                for (int i = 0; i < contactArrayList.size(); i++) {
-                    Contact reset = contactArrayList.get(i);
-                    reset.setSelected(false);
-                    reset.setBorder(BorderFactory.createMatteBorder(
-                            (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
-                }
-                c.setBorder(BorderFactory.createMatteBorder(
-                        (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getAccentColor()));
-                c.setSelected(true);
-                for (int i = 0; i < onContactClickedListener.size(); i++) {
-                    onContactClickedListener.get(i).onContactClicked(new ContactEvent(c.getName(), c.getId(), c));
-                }
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                c.setBorder(BorderFactory.createMatteBorder(
-                        (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getAccentColor()));
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                if (!c.isSelected)
-                    c.setBorder(BorderFactory.createMatteBorder(
-                            0, 0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
-
-            }
-
-            public void mouseReleased(MouseEvent e) {
-                Contact last = contactArrayList.get(contactArrayList.size() - 1);
-                int valToCheck = last.getY();
-
-                if (valToCheck + last.getHeight() + 2 < Contacts.this.getHeight()) {
-                    Contacts.this.removeAll();
-                    int reverse = contactArrayList.size() - 1;
-                    for (int i = 0; i < contactArrayList.size(); i++) {
-                        Contact readd = contactArrayList.get(reverse);
-                        reverse--;
-                        readd.setLocation(0, (getHeight() - getWidth() / 3) - (getWidth() / 3) * i);
-                        Contacts.this.add(readd);
-                    }
-                    Contacts.this.repaint();
-                }
-
-                Contact first = contactArrayList.get(0);
-                valToCheck = first.getY();
-
-                if (valToCheck > 2) {
-                    Contacts.this.removeAll();
-                    for (int i = 0; i < contactArrayList.size(); i++) {
-                        Contact readd = contactArrayList.get(i);
-                        readd.setLocation(0, (getWidth() / 3) * i);
-                        Contacts.this.add(readd);
-                    }
-                    Contacts.this.repaint();
-                }
-
-            }
-
-            public void mousePressed(MouseEvent e) {
-                fromCords = e.getPoint();
-            }
-        });
-        c.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                toCords = e.getPoint();
-                int offset = toCords.y - fromCords.y;
-                boolean scrollDown = true;
-                if (offset > 0)
-                    scrollDown = false;
-                if (isRelocateValid(scrollDown)) {
-                    for (int i = 0; i < contactArrayList.size(); i++) {
-                        Contact relocate = contactArrayList.get(i);
-                        relocate.setLocation(relocate.getX(), relocate.getY() + offset);
-                    }
-                }
-            }
-        });
+        ContactScrolling scrolling=new ContactScrolling(c,this);
+        c.addMouseListener(scrolling);
+        c.addMouseMotionListener(scrolling);
         contactArrayList.add(c);
         this.add(c);
     }
 
     public void addContact(String name, String lastMessage) {
-        this.addContact(name, lastMessage, contactArrayList.size());
+        int id=contactArrayList.size();
+        while (alreadyExistsContactId(id)){
+            id++;
+        }
+        this.addContact(name, lastMessage,id);
     }
 
     public ArrayList<Contact> getContactArrayList() {
@@ -164,6 +87,23 @@ public class Contacts extends JPanel {
                 return false;
         }
         return true;
+    }
+
+    public void removeContact(int id) {
+        boolean found=false;
+        for (int i = 0; i < contactArrayList.size(); i++) {
+            Contact c = contactArrayList.get(i);
+            if(found){
+                c.setLocation(c.getX(),c.getY()-c.getHeight());
+            }
+            if(c.getId()==id){
+                contactArrayList.remove(i);
+                this.remove(c);
+                found=true;
+                i--;
+            }
+        }
+        this.repaint();
     }
 
 
@@ -192,7 +132,7 @@ public class Contacts extends JPanel {
 
         private void setupContactUI() {
             setBorder(BorderFactory.createMatteBorder(
-                    0, 0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+                    0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
             this.setBackground(MainWindow.theme.getPrimaryColorLight());
             name.setFont(new Font(MainWindow.FONT, 0, height / 2));
             name.setSize(name.getPreferredSize());

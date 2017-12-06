@@ -1,8 +1,9 @@
 HOW TO USE MainWindow
 
 1. instantiate
-        MainWindow mainWindow = new MainWindow();
-
+        MainWindow mainWindow = new MainWindow(Settings s);
+        Settings can be null or contain stored settings of the user
+        //TODO Settings menu, with OnSettingAppliedListener
 2. add Listeners
     a)  mainWindow.addOnContactClickedListener(new OnContactClickedListener() {
             @Override
@@ -17,7 +18,7 @@ HOW TO USE MainWindow
             @Override
             public void onSendPressed(SendEvent e) {
                 The SendEvent contains:
-                    message...the message that I want to send
+                    text...the text that I want to send
                     source...the JButton that was clicked
             }
 
@@ -28,12 +29,15 @@ HOW TO USE MainWindow
                 source...the JEditText that was clicked
             }
         });
+    c)OnSettingAppliedListener //TODO
 3.Use the other functions that MainWindow offers
     addContact(name, lastMessage) -> Add a contact to the contact list
     clearContacts(); -> removes all contacts
+    removeContact(id); -> removes a specific contact
 
-    addMessage() -> add one message at the bottom of the screen
-    addMessages() -> add N messages at the bottom of the screen WITHOUT repainting each time
+    addMessage() -> add one text at the bottom of the screen
+    addMessages() -> add N messages at the bottom of the screen WITHOUT repainting each time.
+                    USE it if you load many messages at once
 
     clearChat(); -> delete all messages from the chat panel
 
@@ -47,5 +51,5 @@ HOW TO USE MainWindow
 
 
 //TODO
-removeContact(id)
-find a way to resize
+expandable JEditText
+smileys

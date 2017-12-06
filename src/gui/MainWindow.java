@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.Vector;
 
 /**
  * @author Matteo Cosi
@@ -17,13 +18,13 @@ public class MainWindow extends JFrame {
     /**
      * Scaling of the UI
      */
-    public static final double UI_SCALING = 4;
+    public static double UI_SCALING = 2;
 
 
     /**
      * SCALING of the top bar
      */
-    public static final double TOP_SCALE = 1;
+    public static double TOP_SCALE = 1;
 
     /**
      * WIDTH of the main window
@@ -41,13 +42,13 @@ public class MainWindow extends JFrame {
      * @example 0.15 means 15% of the width is reserved for the
      * contacts and 85% is the size of the actual chat
      */
-    public static final double SCREEN_SPLITING_RATIO = 0.30;
+    public static final double SCREEN_SPLITING_RATIO = 0.20;
 
 
     /**
      * Theme for this GUI
      */
-    public static Theme theme = new Theme(Theme.Themes.BLUEPINK);
+    public static Theme theme = new Theme(Theme.Themes.GRAY_TEAL);
 
     /**
      * Used to drag & drop the top bar
@@ -57,8 +58,16 @@ public class MainWindow extends JFrame {
 
     /**
      * Font of the whole chat
+     * Available:
+     *  Dialog.plain
+     DialogInput.plain
+     Monospaced.plain
+     SansSerif.plain
+     Segoe UI Emoji
+     Segoe UI Symbol
+     Serif.plain
      */
-    public static final String FONT = "Arial";
+    public static String FONT = "Segoe UI Emoji";
 
     /**
      * top bar
@@ -79,14 +88,17 @@ public class MainWindow extends JFrame {
     public static Container c;
 
 
-    public MainWindow() {
+    public MainWindow(@Nullable Settings settings) {
+        //load settings if not null
+        if(settings!=null){
+            UI_SCALING=settings.getUiScaling();
+            TOP_SCALE=settings.getTopScaling();
+            FONT=settings.getFont();
+            theme = settings.getTheme();
+        }
+
         setUndecorated(true);
-
-
         //Border
-        getRootPane().setBorder(
-                BorderFactory.createMatteBorder(
-                        (int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, theme.getPrimaryColorDark()));
 
         setBounds(0, 0, (int) (W_WIDTH * UI_SCALING), (int) (W_HEIGHT * UI_SCALING));
         //Center in the desktop
@@ -106,7 +118,6 @@ public class MainWindow extends JFrame {
         c.add(chat);
 
         //debug only
-
 
 
         topBarCords = null;
@@ -130,12 +141,13 @@ public class MainWindow extends JFrame {
 
 
         setVisible(true);
+        topBar.repaint();
     }
 
     /**
      * Removes all contacts
      */
-    public void clearContacts(){
+    public void clearContacts() {
         contacts.removeAll();
         contacts.repaint();
         contacts.getContactArrayList().clear();
@@ -144,12 +156,13 @@ public class MainWindow extends JFrame {
     /**
      * removes all messages from the chat
      */
-    public void clearChat(){
+    public void clearChat() {
         chat.clearChat();
     }
 
     /**
      * adds a contact click listener
+     *
      * @param onContactClickedListener to add
      */
     public void addOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
@@ -159,6 +172,7 @@ public class MainWindow extends JFrame {
 
     /**
      * removes a contact click listener
+     *
      * @param onContactClickedListener to remove
      */
     public void removeOnContactClickedListener(OnContactClickedListener onContactClickedListener) {
@@ -168,6 +182,7 @@ public class MainWindow extends JFrame {
 
     /**
      * adds a chat action listener
+     *
      * @param chatActionListener to add
      */
     public void addChatActionListener(ChatActionListener chatActionListener) {
@@ -177,6 +192,7 @@ public class MainWindow extends JFrame {
 
     /**
      * removes a chat action listener
+     *
      * @param chatActionListener to remove
      */
     public void removeChatActionListener(ChatActionListener chatActionListener) {
@@ -192,43 +208,61 @@ public class MainWindow extends JFrame {
         if (contacts == null) {
             return false;
         }
-        contacts.addContact(name,lastMessage);
+        contacts.addContact(name, lastMessage);
         this.repaint();
         return true;
     }
+
     /**
      * Adds a contact to the list
      *
      * @return true if it worked, otherwise false
      */
-    public boolean addContact(String name, String lastMessage,int id) {
+    public boolean addContact(String name, String lastMessage, int id) {
         if (contacts == null) {
             return false;
         }
-        if(contacts.alreadyExistsContactId(id)){
+        if (contacts.alreadyExistsContactId(id)) {
             return false;
         }
-        contacts.addContact(name,lastMessage,id);
+        contacts.addContact(name, lastMessage, id);
+        this.repaint();
+        return true;
+    }
+
+    public boolean removeContact(int id) {
+        if (contacts == null) {
+            return false;
+        }
+        //schau ob es die gibt
+        if (!contacts.alreadyExistsContactId(id)) {
+            return false;
+        }
+        contacts.removeContact(id);
         this.repaint();
         return true;
     }
 
 
     /**
-     * adds a new message at the bottom of the screen
+     * adds a new text at the bottom of the screen
+     *
      * @param blueprint blueprint of all chat attributes
      */
-    public void addMessage(ChatMessageBlueprint blueprint){
+    public void addMessage(ChatMessageBlueprint blueprint) {
         chat.addMessage(blueprint);
+        repaint();
     }
 
 
     /**
      * adds n Messages without repainting every time, but only at the end
+     *
      * @param blueprints blueprint of all chat attributes
      */
-    public void addMessages(ChatMessageBlueprint[] blueprints){
+    public void addMessages(ChatMessageBlueprint[] blueprints) {
         chat.addMessages(blueprints);
+        repaint();
     }
 
     private Contacts setupContactsPanel() {
@@ -242,7 +276,7 @@ public class MainWindow extends JFrame {
     private Chat setupChatPanel() {
         Chat ret = new Chat();
         ret.setLayout(null);
-         ret.setLocation(contacts.getWidth(), topBar.getHeight());
+        ret.setLocation(contacts.getWidth(), topBar.getHeight());
         ret.setSize((int) (W_WIDTH * UI_SCALING) - contacts.getWidth(), (int) (W_HEIGHT * UI_SCALING) - topBar.getHeight());
         ret.setupUI();
         return ret;
@@ -252,7 +286,7 @@ public class MainWindow extends JFrame {
     private class TopBar extends JPanel {
 
 
-        int TOP_HEIGHT = W_HEIGHT/12;
+        int TOP_HEIGHT = W_HEIGHT / 12;
 
         JLabel title;
         JLabel exit;
@@ -265,7 +299,7 @@ public class MainWindow extends JFrame {
             this.title = new JLabel(title);
             int titleFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT / 6) * TOP_SCALE * UI_SCALING);
             this.title.setFont(new Font(FONT, 0, titleFontSize));
-            this.title.setLocation((int) (5 * UI_SCALING), (int) -UI_SCALING);
+            this.title.setLocation((int) (5 * UI_SCALING), (int) +UI_SCALING*2);
             this.title.setSize(this.title.getPreferredSize());
             this.title.addMouseListener(new MouseAdapter() {
                 @Override
@@ -284,7 +318,7 @@ public class MainWindow extends JFrame {
             this.exit = new JLabel("X");
             int exitFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT / 6) * TOP_SCALE * UI_SCALING);
             this.exit.setFont(new Font(FONT, 0, exitFontSize));
-            this.exit.setLocation((int) (((W_WIDTH * UI_SCALING) - exitFontSize)), (int) -UI_SCALING);
+            this.exit.setLocation((int) (((W_WIDTH * UI_SCALING) - exitFontSize)), (int) +UI_SCALING*2);
             this.exit.setSize(this.exit.getPreferredSize());
             this.exit.addMouseListener(new MouseAdapter() {
                 @Override
@@ -317,22 +351,10 @@ public class MainWindow extends JFrame {
             this.add(this.exit);
 
         }
+
+
     }
 
 
-    public static void main(String[] args) {
-        MainWindow mainWindow = new MainWindow();
-        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Tom",new Message("Lorem ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"),null));
-        mainWindow.addContact("Test1", "hallo1fffff");
-        mainWindow.addContact("Test2", "hallo2ffffffffffffffffaaaaabbbbbbbbbbsssssss");
-        mainWindow.addContact("Test3", "hallo3ffffff");
-        mainWindow.addContact("Test4", "hallo4");
-        mainWindow.addContact("Test5", "hallo5");
-        mainWindow.addContact("Test6", "hallo6");
-        mainWindow.addContact("Test7", "hallo6");
-        mainWindow.addContact("Test8", "hallo6");
-        mainWindow.addContact("Test9", "hallo6");
-        mainWindow.addContact("Test10", "hallo6");
-        mainWindow.chat.repaint();
-    }
+
 }

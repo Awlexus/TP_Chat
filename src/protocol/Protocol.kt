@@ -1,13 +1,23 @@
 package protocol
 
+import java.lang.Math.abs
 import java.net.*
+import java.util.*
 import kotlin.concurrent.thread
 
 /**
  * Created by Awlex on 01.12.2017.
  */
 
-fun DatagramPacket.getTextData(): String = String(data)
+fun DatagramPacket.getTextData(): String {
+    val index = data.indexOf(0)
+    return String(data).substring(0, if (index == -1) data.size else index)
+}
+
+fun DatagramPacket.getMessage(): String {
+    return getTextData().split(Regex("\\s+"), 2)[1]
+}
+
 
 class Protocol(val port: Int = 4321, val userName: String = "") {
 
@@ -40,20 +50,21 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
                 text.startsWith(WORLD) -> receiveWorld(packet)
                 text.startsWith(GOODBYE) -> receiveGoodbye(packet)
                 text.startsWith(MESSAGE) -> receiveMessage(packet)
+                text.startsWith(TYPING) -> receiveTyping(packet)
+                text.startsWith(GROUP_EXISTSGROUP) -> receiveGroupExistsGroup(packet)
+                text.startsWith(GROUP_CREATEGROUP) -> receiveGroupCreateGroup(packet)
+                text.startsWith(GROUP_DENYGROUP) -> receiveGroupDenyGroup(packet)
+                text.startsWith(GROUP_MESSAGE) -> receiveGroupMessage(packet)
+                else -> println(packet.getTextData()) // For debugging purposes
             }
         }
         socket.close()
     })
 
-    private fun receiveGoodbye(packet: DatagramPacket) {
-        // Goodbye (。･∀･)ﾉ゛
-        println("Goodbye ${packet.address.hostAddress}")
-    }
-
-    private fun receiveWorld(packet: DatagramPacket) {
-        val text = packet.getTextData()
-        println("Made a new friend called ${text.split(" ")[1]} at ${packet.address.hostAddress}")
-    }
+    // Group creation
+    private var randId = -1
+    private var reply = false
+    private var acceptDeny = false
 
     private fun receiveHello(packet: DatagramPacket) {
         // Set reply text
@@ -63,10 +74,42 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         socket.send(packet)
     }
 
+    private fun receiveWorld(packet: DatagramPacket) {
+        val text = packet.getTextData()
+        println("Made a new friend called ${packet.getMessage()} at ${packet.address.hostAddress}")
+    }
+
+    private fun receiveGoodbye(packet: DatagramPacket) {
+        // Goodbye (。･∀･)ﾉ゛
+        println("Goodbye ${packet.address.hostAddress}")
+    }
+
+    private fun receiveTyping(packet: DatagramPacket) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     private fun receiveMessage(packet: DatagramPacket) {
         var message = packet.getTextData()
         message = message.substring(message.indexOf(' '))
         println("${packet.address.hostAddress}: $message")
+    }
+
+    private fun receiveGroupExistsGroup(packet: DatagramPacket) {
+        println("Request for creating a group with ID ${packet.getMessage()} by ${packet.address.hostAddress}")
+    }
+
+    private fun receiveGroupCreateGroup(packet: DatagramPacket) {
+        println("group with ID ${packet.getMessage().split(" ")[0]} created by ${packet.address.hostAddress}")
+        println("Members: ${packet.getMessage().split(Regex("\\s+"), 2)[1]}")
+    }
+
+    private fun receiveGroupDenyGroup(packet: DatagramPacket) {
+        if (acceptDeny)
+            reply = false
+    }
+
+    private fun receiveGroupMessage(packet: DatagramPacket) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     /**
@@ -81,7 +124,41 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         send("$MESSAGE $message", ip)
     }
 
-    fun send(text: String, ip: InetAddress) {
+    fun createGroup(vararg others: InetAddress = arrayOf(localhost)) {
+        val rand = Random()
+
+        do {
+            // Reset State
+            reply = false
+            acceptDeny = false
+
+            // Generate Random number
+            randId = abs(rand.nextInt() % Short.MAX_VALUE)
+
+            // Ask if a group this ID is known
+            acceptDeny = true
+            send("EG $randId", broadcastAddress)
+
+            // Wait for replies
+            Thread.sleep(500)
+        } while (reply)
+
+        // Generate message
+        val text = "CG $randId ${
+        others.joinToString(separator = " ", transform = { it.hostAddress }) // Join each IP
+        }"
+
+        // Send to all
+        others.forEach {
+            send(text, it)
+        }
+    }
+
+
+    /**
+     * Send a text to a IP-Adress
+     */
+    fun send(text: String, ip: InetAddress = broadcastAddress) {
         socket.send(DatagramPacket(text.toByteArray(), text.length, ip, port))
     }
 
