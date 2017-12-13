@@ -1,7 +1,10 @@
 package protocol
 
 import java.lang.Math.abs
-import java.net.*
+import java.net.DatagramPacket
+import java.net.DatagramSocket
+import java.net.InetAddress
+import java.net.NetworkInterface
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -72,10 +75,11 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
 
         // Send reply
         socket.send(packet)
+
+        // TODO: Save Ip and username
     }
 
     private fun receiveWorld(packet: DatagramPacket) {
-        val text = packet.getTextData()
         println("Made a new friend called ${packet.getMessage()} at ${packet.address.hostAddress}")
     }
 
@@ -119,11 +123,20 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         send("$HELLO $userName", broadcastAddress)
     }
 
+    /**
+     * Sends a message to the target ip
+     */
     fun message(message: String, ip: InetAddress) {
         // TODO: add verification
         send("$MESSAGE $message", ip)
     }
 
+    /**
+     * Creates a new group
+     *
+     * Research this here
+     * https://docs.google.com/document/d/1Rlr0l2YYXf594fVcFG7vmmmJhar2uk9tj4fGYFio3Jc/edit?usp=sharing
+     */
     fun createGroup(vararg others: InetAddress = arrayOf(localhost)) {
         val rand = Random()
 
@@ -152,6 +165,15 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         others.forEach {
             send(text, it)
         }
+    }
+
+    /**
+     * Sends a message to a defined group
+     */
+    fun sendGroupMessage(message: String, groupId: Int) {
+        val text = "$GROUP_MESSAGE $groupId $message"
+        for (ip in arrayOf(localhost)) // TODO: replace with ids for groups
+            send(text, ip)
     }
 
 
