@@ -1,7 +1,10 @@
 package protocol
 
 import java.lang.Math.abs
-import java.net.*
+import java.net.DatagramPacket
+import java.net.DatagramSocket
+import java.net.InetAddress
+import java.net.NetworkInterface
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -75,7 +78,6 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
     }
 
     private fun receiveWorld(packet: DatagramPacket) {
-        val text = packet.getTextData()
         println("Made a new friend called ${packet.getMessage()} at ${packet.address.hostAddress}")
     }
 
@@ -152,6 +154,12 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         others.forEach {
             send(text, it)
         }
+    }
+
+    fun sendGroupMessage(message: String, groupId: Int) {
+        val text = "$GROUP_MESSAGE $groupId $message"
+        for (ip in arrayOf(localhost)) // replace with ids for groups
+            send(text, ip)
     }
 
 
