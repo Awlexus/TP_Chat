@@ -6,6 +6,8 @@ import java.net.DatagramSocket
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 
 /**
@@ -65,9 +67,9 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
     })
 
     // Group creation
-    private var randId = -1
-    private var reply = false
-    private var acceptDeny = false
+    private var randId = AtomicInteger(-1)
+    private var reply = AtomicBoolean(false)
+    private var acceptDeny = AtomicBoolean(false)
 
     private fun receiveHello(packet: DatagramPacket) {
         // Set reply text
@@ -108,8 +110,10 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
     }
 
     private fun receiveGroupDenyGroup(packet: DatagramPacket) {
-        if (acceptDeny)
-            reply = false
+        if (acceptDeny.get() && packet.getMessage().toInt() == randId.get()) {
+            reply.set(false)
+            discoveryThread.interrupt()
+        }
     }
 
     private fun receiveGroupMessage(packet: DatagramPacket) {
@@ -142,19 +146,21 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
 
         do {
             // Reset State
-            reply = false
-            acceptDeny = false
+            reply.set(false)
 
             // Generate Random number
-            randId = abs(rand.nextInt() % Short.MAX_VALUE)
+            randId.set(abs(rand.nextInt() % Short.MAX_VALUE))
 
             // Ask if a group this ID is known
-            acceptDeny = true
+            acceptDeny.set(true)
             send("EG $randId", broadcastAddress)
 
             // Wait for replies
-            Thread.sleep(500)
-        } while (reply)
+            try {
+                Thread.sleep(500)
+            } catch (ignored: InterruptedException) {
+            }
+        } while (reply.get())
 
         // Generate message
         val text = "CG $randId ${
@@ -165,6 +171,7 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         others.forEach {
             send(text, it)
         }
+        acceptDeny.set(false)
     }
 
     /**
