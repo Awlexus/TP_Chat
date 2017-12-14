@@ -15,8 +15,7 @@ import kotlin.concurrent.thread
  */
 
 fun DatagramPacket.getTextData(): String {
-    val index = data.indexOf(0)
-    return String(data).substring(0, if (index == -1) data.size else index)
+    return String(this.data, this.offset, this.length)
 }
 
 fun DatagramPacket.getMessage(): String {
@@ -39,7 +38,8 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
     private val discoveryThread = thread(start = true, isDaemon = true, name = "Discovery-Thread", block = {
 
         // This package serves as buffer
-        val packet = DatagramPacket(kotlin.ByteArray(BUFFERSIZE), BUFFERSIZE)
+        val buffer = kotlin.ByteArray(BUFFERSIZE)
+        val packet = DatagramPacket(buffer, BUFFERSIZE)
 
         while (!Thread.interrupted()) {
 
@@ -50,6 +50,7 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
             val text = packet.getTextData()
 
             // Check whether this is a request or an answer
+
             when {
                 text.startsWith(HELLO) -> receiveHello(packet)
                 text.startsWith(WORLD) -> receiveWorld(packet)
@@ -62,8 +63,7 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
                 text.startsWith(GROUP_MESSAGE) -> receiveGroupMessage(packet)
                 else -> println(packet.getTextData()) // For debugging purposes
             }
-
-
+            Arrays.fill(buffer, 0)
         }
         socket.close()
     })
