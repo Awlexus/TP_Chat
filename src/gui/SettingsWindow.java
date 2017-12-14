@@ -53,7 +53,7 @@ public class SettingsWindow extends JDialog implements ActionListener {
         dispose();
     }
 
-
+//TODO setting
     public JPanel getSettingsContent() {
         JPanel ret = new JPanel();
         ret.setLayout(null);

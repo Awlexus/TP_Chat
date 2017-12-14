@@ -22,7 +22,6 @@ import static gui.MainWindow.theme;
 public class Chat extends JPanel {
 
 
-    // TODO: 14.12.2017 store chat contents in cmbination to a
     /**
      * SCREEN_SPLITING_RATIO tells how to split the screen.
      *
