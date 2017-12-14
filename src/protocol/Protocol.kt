@@ -22,8 +22,7 @@ fun DatagramPacket.getMessage(): String {
     return getTextData().split(Regex("\\s+"), 2)[1]
 }
 
-
-class Protocol(val port: Int = 4321, val userName: String = "") {
+class Protocol(val port: Int = 4321, val userName: String = "", val callback: ProtocolCallback?) {
 
     private val BUFFERSIZE = 1024
 
@@ -74,7 +73,8 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
 
     private fun receiveHello(packet: DatagramPacket) {
 
-        println("Hello from ${packet.getMessage()} at ${packet.address.hostAddress}")
+        val username = packet.getMessage()
+        println("Hello from $username at ${packet.address.hostAddress}")
 
         // Set reply text
         packet.data = "$WORLD $userName".toByteArray()
@@ -83,34 +83,46 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         socket.send(packet)
 
         // TODO: Save Ip and username
+        callback?.hello(packet, username)
     }
 
     private fun receiveWorld(packet: DatagramPacket) {
-        println("Made a new friend called ${packet.getMessage()} at ${packet.address.hostAddress}")
+        val username = packet.getMessage()
+        println("Made a new friend called $username at ${packet.address.hostAddress}")
+        callback?.world(packet, username)
     }
 
     private fun receiveGoodbye(packet: DatagramPacket) {
         // Goodbye (。･∀･)ﾉ゛
         println("Goodbye ${packet.address.hostAddress}")
+        callback?.goodbye(packet)
     }
 
     private fun receiveTyping(packet: DatagramPacket) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        callback?.typing(packet, packet.getMessage().toBoolean())
     }
 
     private fun receiveMessage(packet: DatagramPacket) {
-        var message = packet.getTextData()
-        message = message.substring(message.indexOf(' '))
+        val message = packet.getMessage()
         println("${packet.address.hostAddress}: $message")
+        callback?.message(packet, message)
     }
 
     private fun receiveGroupExistsGroup(packet: DatagramPacket) {
-        println("Request for creating a group with ID ${packet.getMessage()} by ${packet.address.hostAddress}")
+        val id = packet.getMessage()
+        println("Request for creating a group with ID $id by ${packet.address.hostAddress}")
+        if (callback != null && callback.existsGroupWithId(packet, id.toInt()))
+            send("$GROUP_DENYGROUP $id")
     }
 
     private fun receiveGroupCreateGroup(packet: DatagramPacket) {
-        println("group with ID ${packet.getMessage().split(" ")[0]} created by ${packet.address.hostAddress}")
-        println("Members: ${packet.getMessage().split(Regex("\\s+"), 2)[1]}")
+        val data = packet.getMessage().split(Regex("\\s+"))
+        val id = data[0]
+        val members = Array<InetAddress>(data.size - 1, { index -> InetAddress.getByName(data[index + 1])})
+
+        println("group with ID $id created by ${packet.address.hostAddress}")
+        // println("Members: $members")
+        callback?.createGroup(packet, id.toInt(), members)
     }
 
     private fun receiveGroupDenyGroup(packet: DatagramPacket) {
@@ -118,10 +130,15 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
             reply.set(false)
             discoveryThread.interrupt()
         }
+        callback?.denyGroup(packet)
     }
 
     private fun receiveGroupMessage(packet: DatagramPacket) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val data = packet.getMessage().split(Regex("\\s+"), 2)
+        val groupId = data[0]
+        val message = data[1]
+
+        callback?.groupMessage(packet, groupId.toInt(), message)
     }
 
     /**
@@ -203,4 +220,7 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         discoveryThread.interrupt()
     }
 
+    constructor(userName: String) : this(4321, userName, null)
+
+    constructor(userName: String, protocolCallback: ProtocolCallback) : this(4321, userName, protocolCallback)
 }
