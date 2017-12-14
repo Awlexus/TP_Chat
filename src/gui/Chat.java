@@ -149,7 +149,7 @@ public class Chat extends JPanel {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     for (int i = 0; i < chatActionListeners.size(); i++) {
-                        chatActionListeners.get(i).onSendPressed(new SendEvent(send, new Message(textField.getText())));
+                        chatActionListeners.get(i).onSendPressed(new SendEvent(send, new Message(textField.getText()),textField));
                     }
                 }
 

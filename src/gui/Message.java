@@ -17,6 +17,7 @@ public class Message {
         return EmojiParser.parseToUnicode(text);
     }
 
+
     public void setText(String text) {
         this.text = text;
     }
