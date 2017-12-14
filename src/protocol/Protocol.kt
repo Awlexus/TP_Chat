@@ -38,12 +38,12 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
     private val discoveryThread = thread(start = true, isDaemon = true, name = "Discovery-Thread", block = {
 
         // This package serves as buffer
-        val buffer = kotlin.ByteArray(BUFFERSIZE)
-        val packet = DatagramPacket(buffer, BUFFERSIZE)
+        val byteArray = ByteArray(BUFFERSIZE)
 
         while (!Thread.interrupted()) {
 
             // Wait until we receive a package
+            val packet = DatagramPacket(byteArray, BUFFERSIZE)
             socket.receive(packet)
 
             // Extract Data
@@ -63,7 +63,6 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
                 text.startsWith(GROUP_MESSAGE) -> receiveGroupMessage(packet)
                 else -> println(packet.getTextData()) // For debugging purposes
             }
-            Arrays.fill(buffer, 0)
         }
         socket.close()
     })
