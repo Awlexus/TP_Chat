@@ -1,6 +1,7 @@
 package tests
 
 import protocol.Protocol
+import java.util.*
 
 /**
  * Created by Awlex on 01.12.2017.
@@ -8,8 +9,9 @@ import protocol.Protocol
 
 fun main(args: Array<String>) {
     val auto = Protocol(userName = "Awlex")
+
     auto.hello()
 
-    Thread.sleep(1000)
+    Scanner(System.`in`).nextLine()
     auto.stop()
 }

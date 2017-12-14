@@ -62,6 +62,8 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
                 text.startsWith(GROUP_MESSAGE) -> receiveGroupMessage(packet)
                 else -> println(packet.getTextData()) // For debugging purposes
             }
+
+
         }
         socket.close()
     })
@@ -72,6 +74,9 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
     private var acceptDeny = AtomicBoolean(false)
 
     private fun receiveHello(packet: DatagramPacket) {
+
+        println("Hello from ${packet.getMessage()} at ${packet.address.hostAddress}")
+
         // Set reply text
         packet.data = "$WORLD $userName".toByteArray()
 
