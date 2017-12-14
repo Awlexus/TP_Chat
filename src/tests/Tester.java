@@ -15,36 +15,24 @@ public class Tester {
 
        MainWindow mainWindow = new MainWindow(null);
 
-        mainWindow.addContact("Test1", "hallo1fffff",Color.BLUE);
-        mainWindow.addContact("Test2", "hallo2ffffffffffffffffaaaaabbbbbbbbbbsssssss",Color.RED);
-        mainWindow.addContact("Test3", "d",Color.PINK);
-        mainWindow.addContact("Test4", "hallo4",Color.YELLOW);
-        mainWindow.addContact("Test5", "hallo5", 5,Color.cyan);
-        mainWindow.addContact("Test6", "hallo6",Color.ORANGE);
-        mainWindow.addContact("Test6", "hallo6",Color.ORANGE);
-        for (int i = 0; i < 1000; i++) {
-            mainWindow.addContact("Test"+i, "hallo6",new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
-        }
+        mainWindow.addContact("Test1", "hallo1fffff",Color.BLUE,1);
+        mainWindow.addContact("Test2", "hallo1fffff",Color.BLUE,2);
 
-        ChatMessageBlueprint[] blueprints = new ChatMessageBlueprint[102];
-        for (int i = 0; i < 102; i++) {
-            blueprints[i] = new ChatMessageBlueprint(Chat.chatMessageType.TO, "Tom"+i, new Message("smod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad" +
-                    "oluptate velit esse cillum dolore eu smod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"), null,Color.BLUE);
-            i++;
-            blueprints[i] = new ChatMessageBlueprint(Chat.chatMessageType.FROM, "Tom"+i, new Message("dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"), null,Color.cyan);
+        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test",new Message("hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo"),null,Color.cyan),0);
+        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test",new Message("hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo"),null,Color.cyan),0);
 
-        }
-        mainWindow.addMessages(blueprints);
-        mainWindow.removeContact(5);
+
+        mainWindow.addNewChatById(1);
+        mainWindow.addNewChatById(2);
+        mainWindow.setChatByUserId(2);
 
         mainWindow.addOnContactClickedListener(new OnContactClickedListener() {
             @Override
             public void onContactClicked(ContactEvent e) {
-
+                mainWindow.setChatByUserId(e.getId());
+                mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test"+e.getId(),new Message("hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo"),null,Color.cyan),e.getId());
             }
         });
-
-
 
 
 /*

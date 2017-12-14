@@ -119,8 +119,11 @@ class Contacts extends JPanel {
         boolean isSelected = false;
         Color nameColor=theme.getAccentColor();
 
-        public Contact(String name, String lastMessage, int width, int height, int id, Color color) {
+        public Contact(String name, String lastMessage, int width, int height, int id, Color color){
             this.id = id;
+            if(id<=0){
+                throw new RuntimeException("ID VON KONTAKT KLEINER 0");
+            }
             this.name = new JLabel(name);
             if (lastMessage.length() > 20) {
                 lastMessage = lastMessage.substring(0, 16) + "...";
