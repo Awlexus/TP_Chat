@@ -103,19 +103,19 @@ class BubbleBorder extends AbstractBorder {
                     height,
                     radii,
                     radii);
-            pointer.addPoint(width  -pointerSize- strokePad,
+            pointer.addPoint((int) bubble.getWidth(),
                     (int) (2+MainWindow.UI_SCALING*3));
             // right point
-            pointer.addPoint(width - strokePad -pointerSize,
+            pointer.addPoint((int) bubble.getWidth(),
                     (int) (10+MainWindow.UI_SCALING*4));
             // bottom point
-            pointer.addPoint(width - strokePad,
+            pointer.addPoint((int) bubble.getWidth()+pointerSize,
                     (int) (2+MainWindow.UI_SCALING*3));
         }else{
              bubble = new RoundRectangle2D.Double(
                     strokePad ,
                     strokePad,
-                    width ,
+                    width -thickness-1,
                     height,
                     radii,
                     radii);

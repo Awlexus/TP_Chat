@@ -27,11 +27,9 @@ import java.awt.event.MouseEvent;
         for (int i = 0; i < this.contacts.contactArrayList.size(); i++) {
             Contacts.Contact reset = this.contacts.contactArrayList.get(i);
             reset.setSelected(false);
-            reset.setBorder(BorderFactory.createMatteBorder(
-                    (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+            reset.removeColorName();
         }
-        c.setBorder(BorderFactory.createMatteBorder(
-                (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getAccentColor()));
+        c.colorName();
         c.setSelected(true);
         for (int i = 0; i < this.contacts.onContactClickedListener.size(); i++) {
             this.contacts.onContactClickedListener.get(i).onContactClicked(new ContactEvent(c.getName(), c.getId(), c));
@@ -40,17 +38,13 @@ import java.awt.event.MouseEvent;
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        c.setBorder(BorderFactory.createMatteBorder(
-                (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getAccentColor()));
-
+        c.colorName();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         if (!c.isSelected)
-            c.setBorder(BorderFactory.createMatteBorder(
-                    0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
-
+            c.removeColorName();
     }
 
     public void mouseReleased(MouseEvent e) {

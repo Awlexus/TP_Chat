@@ -18,7 +18,7 @@ public class MainWindow extends JFrame {
     /**
      * Scaling of the UI
      */
-    public static double UI_SCALING = 2;
+    public static double UI_SCALING = 4;
 
 
     /**
@@ -48,7 +48,7 @@ public class MainWindow extends JFrame {
     /**
      * Theme for this GUI
      */
-    public static Theme theme = new Theme(Theme.Themes.GRAY_TEAL);
+    public static Theme theme = new Theme(Theme.Themes.MILAN);
 
     /**
      * Used to drag & drop the top bar
@@ -97,8 +97,11 @@ public class MainWindow extends JFrame {
             theme = settings.getTheme();
         }
 
+
         setUndecorated(true);
         //Border
+
+
 
         setBounds(0, 0, (int) (W_WIDTH * UI_SCALING), (int) (W_HEIGHT * UI_SCALING));
         //Center in the desktop
@@ -204,11 +207,11 @@ public class MainWindow extends JFrame {
      *
      * @return true if it worked, otherwise false
      */
-    public boolean addContact(String name, String lastMessage) {
+    public boolean addContact(String name, String lastMessage,Color color) {
         if (contacts == null) {
             return false;
         }
-        contacts.addContact(name, lastMessage);
+        contacts.addContact(name, lastMessage,color);
         this.repaint();
         return true;
     }
@@ -218,14 +221,14 @@ public class MainWindow extends JFrame {
      *
      * @return true if it worked, otherwise false
      */
-    public boolean addContact(String name, String lastMessage, int id) {
+    public boolean addContact(String name, String lastMessage, int id,Color color) {
         if (contacts == null) {
             return false;
         }
         if (contacts.alreadyExistsContactId(id)) {
             return false;
         }
-        contacts.addContact(name, lastMessage, id);
+        contacts.addContact(name, lastMessage, id,color);
         this.repaint();
         return true;
     }
@@ -263,6 +266,16 @@ public class MainWindow extends JFrame {
     public void addMessages(ChatMessageBlueprint[] blueprints) {
         chat.addMessages(blueprints);
         repaint();
+    }
+
+    public Chat getChat() {
+        return chat;
+    }
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
+        repaint();
+        this.chat.repaint();
     }
 
     private Contacts setupContactsPanel() {
