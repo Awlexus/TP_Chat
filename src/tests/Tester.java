@@ -1,13 +1,9 @@
 package tests;
 
-import com.vdurmont.emoji.Emoji;
-import com.vdurmont.emoji.EmojiManager;
-import com.vdurmont.emoji.EmojiParser;
-import gui.Chat;
-import gui.ChatMessageBlueprint;
-import gui.MainWindow;
-import gui.Message;
 
+import gui.*;
+
+import java.awt.*;
 import java.util.Collection;
 
 /**
@@ -16,26 +12,40 @@ import java.util.Collection;
  */
 public class Tester {
     public static void main(String[] args) {
-        MainWindow mainWindow = new MainWindow(null);
 
-        mainWindow.addContact("Test1", "hallo1fffff");
-        mainWindow.addContact("Test2", "hallo2ffffffffffffffffaaaaabbbbbbbbbbsssssss");
-        mainWindow.addContact("Test3", "d");
-        mainWindow.addContact("Test4", "hallo4");
-        mainWindow.addContact("Test5", "hallo5", 5);
-        mainWindow.addContact("Test6", "hallo6");
-        mainWindow.addContact("Test7", "hallo6");
-        mainWindow.addContact("Test8", "hallo6");
-        mainWindow.addContact("Test9", "hallo6");
-        ChatMessageBlueprint[] blueprints = new ChatMessageBlueprint[12];
-        for (int i = 0; i < 12; i++) {
-            blueprints[i] = new ChatMessageBlueprint(Chat.chatMessageType.TO, "Tom"+i, new Message("Lorem :joy: ipsum dolor sit amet, consectetur adipisci elit, sed eiusmod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"), null);
+       MainWindow mainWindow = new MainWindow(null);
+
+        mainWindow.addContact("Test1", "hallo1fffff",Color.BLUE);
+        mainWindow.addContact("Test2", "hallo2ffffffffffffffffaaaaabbbbbbbbbbsssssss",Color.RED);
+        mainWindow.addContact("Test3", "d",Color.PINK);
+        mainWindow.addContact("Test4", "hallo4",Color.YELLOW);
+        mainWindow.addContact("Test5", "hallo5", 5,Color.cyan);
+        mainWindow.addContact("Test6", "hallo6",Color.ORANGE);
+        mainWindow.addContact("Test6", "hallo6",Color.ORANGE);
+        for (int i = 0; i < 1000; i++) {
+            mainWindow.addContact("Test"+i, "hallo6",new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255)));
+        }
+
+        ChatMessageBlueprint[] blueprints = new ChatMessageBlueprint[102];
+        for (int i = 0; i < 102; i++) {
+            blueprints[i] = new ChatMessageBlueprint(Chat.chatMessageType.TO, "Tom"+i, new Message("smod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad" +
+                    "oluptate velit esse cillum dolore eu smod tempor incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"), null,Color.BLUE);
             i++;
-            blueprints[i] = new ChatMessageBlueprint(Chat.chatMessageType.FROM, "Tom"+i, new Message("Lorem ipsum :smile: dolor sit amet, consectetur adipisci elit,:beer: sed eiusmod tempor :man:incidunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"), null);
+            blueprints[i] = new ChatMessageBlueprint(Chat.chatMessageType.FROM, "Tom"+i, new Message("dolore magna aliqua. Ut enim ad minim veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint obcaecat cupiditat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"), null,Color.cyan);
 
         }
         mainWindow.addMessages(blueprints);
         mainWindow.removeContact(5);
+
+        mainWindow.addOnContactClickedListener(new OnContactClickedListener() {
+            @Override
+            public void onContactClicked(ContactEvent e) {
+
+            }
+        });
+
+
+
 
 /*
         String[] fontFamilies = GraphicsEnvironment.
@@ -47,7 +57,7 @@ public class Tester {
                 System.out.println(font.getFontName());
             }
         }
-
+/*
 
         Collection<Emoji> emojis =EmojiManager.getAll();
         for (Emoji e :
