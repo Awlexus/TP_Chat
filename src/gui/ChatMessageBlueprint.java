@@ -11,11 +11,11 @@ import java.awt.*;
 public class ChatMessageBlueprint {
     Chat.chatMessageType type;
     String name;
-    Message message;
+    String message;
     String date;
     Color color;
 
-    public ChatMessageBlueprint(Chat.chatMessageType type, String name, Message message, String date,Color color) {
+    public ChatMessageBlueprint(Chat.chatMessageType type, String name, String message, String date,Color color) {
         this.type = type;
         this.name = name;
         this.message = message;
@@ -47,11 +47,11 @@ public class ChatMessageBlueprint {
         this.name = name;
     }
 
-    public Message getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(Message message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 

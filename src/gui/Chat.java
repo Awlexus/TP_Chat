@@ -158,7 +158,7 @@ public class Chat extends JPanel {
                     }
                     if(e.getKeyCode() == KeyEvent.VK_ENTER){
                         for (int i = 0; i < chatActionListeners.size(); i++) {
-                            chatActionListeners.get(i).onSendPressed(new SendEvent(textField,new Message(textField.getText()),textField));
+                            chatActionListeners.get(i).onSendPressed(new SendEvent(textField,textField.getText(),textField));
                         }
                     }
                 }
@@ -179,7 +179,7 @@ public class Chat extends JPanel {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     for (int i = 0; i < chatActionListeners.size(); i++) {
-                        chatActionListeners.get(i).onSendPressed(new SendEvent(send, new Message(textField.getText()), textField));
+                        chatActionListeners.get(i).onSendPressed(new SendEvent(send, textField.getText(), textField));
                     }
                 }
 
@@ -339,7 +339,7 @@ public class Chat extends JPanel {
             int width;
             int height;
             String name;
-            Message message;
+            String message;
             String date;
             JLabel nameLabel;
             JTextArea textArea;
@@ -347,7 +347,7 @@ public class Chat extends JPanel {
             chatMessageType type;
             Color nameColor = Color.BLACK;
 
-            public ChatMessage(chatMessageType type, String name, Message message, @Nullable String date, Color color) {
+            public ChatMessage(chatMessageType type, String name, String message, @Nullable String date, Color color) {
                 this.name = name;
                 this.message = message;
                 this.date = date;
@@ -372,7 +372,7 @@ public class Chat extends JPanel {
                 }
                 Font messageFont = new Font(MainWindow.FONT, 0, (int) (UI_SCALING * 10 / 2));
                 textArea = new JTextArea();
-                textArea.setText(formatTextForChat(message.getText(), messageFont, this.width - (int) (UI_SCALING * 8) - margin * 4));
+                textArea.setText(formatTextForChat(message, messageFont, this.width - (int) (UI_SCALING * 8) - margin * 4));
                 textArea.setEditable(false);
                 textArea.setBackground(theme.getPrimaryColorLight());
                 textArea.setFont(messageFont);
@@ -531,11 +531,11 @@ public class Chat extends JPanel {
                 this.name = name;
             }
 
-            public Message getMessage() {
+            public String getMessage() {
                 return message;
             }
 
-            public void setMessage(Message message) {
+            public void setMessage(String message) {
                 this.message = message;
             }
 
