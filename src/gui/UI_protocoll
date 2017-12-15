@@ -30,6 +30,7 @@ HOW TO USE MainWindow
             }
         });
     c)OnSettingAppliedListener
+
 3.Use the other functions that MainWindow offers
     addContact(name, lastMessage) -> Add a contact to the contact list @Deprecated
     addContact(name, lastMessage,id) -> Add a contact to the contact list WARNING: id >0

@@ -156,6 +156,11 @@ public class Chat extends JPanel {
                     for (int i = 0; i < chatActionListeners.size(); i++) {
                         chatActionListeners.get(i).onEditTextChanged(new TextChangedEvent(textField));
                     }
+                    if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                        for (int i = 0; i < chatActionListeners.size(); i++) {
+                            chatActionListeners.get(i).onSendPressed(new SendEvent(textField,new Message(textField.getText()),textField));
+                        }
+                    }
                 }
             });
 
