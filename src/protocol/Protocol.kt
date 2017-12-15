@@ -1,5 +1,6 @@
 package protocol
 
+import com.vdurmont.emoji.EmojiParser
 import java.lang.Math.abs
 import java.net.DatagramPacket
 import java.net.DatagramSocket
@@ -14,13 +15,11 @@ import kotlin.concurrent.thread
  * Created by Awlex on 01.12.2017.
  */
 
-fun DatagramPacket.getTextData(): String {
-    return String(this.data, this.offset, this.length)
-}
+fun DatagramPacket.getTextData(): String = String(this.data, this.offset, this.length)
 
-fun DatagramPacket.getMessage(): String {
-    return getTextData().split(Regex("\\s+"), 2)[1]
-}
+
+fun DatagramPacket.getMessage(): String = getTextData().split(Regex("\\s+"), 2)[1]
+
 
 class Protocol(val port: Int = 4321, val userName: String = "", val callback: ProtocolCallback?) {
 
@@ -105,7 +104,9 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
     private fun receiveMessage(packet: DatagramPacket) {
         val message = packet.getMessage()
-        println("${packet.address.hostAddress}: $message")
+        println(EmojiParser.parseFromUnicode("${packet.address.hostAddress}: $message", { unicodeCandidate ->
+            ":${unicodeCandidate.emoji.aliases[0]}:"
+        }))
         callback?.message(packet, message)
     }
 

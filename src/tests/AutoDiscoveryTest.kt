@@ -8,7 +8,7 @@ import java.util.*
  */
 
 fun main(args: Array<String>) {
-    val auto = Protocol(userName = "Tom")
+    val auto = Protocol(userName = "Awlex")
 
     auto.hello()
 
