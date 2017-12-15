@@ -106,6 +106,9 @@ public class MainWindow extends JFrame {
             TOP_SCALE = settings.getTopScaling();
             FONT = settings.getFont();
             theme = settings.getTheme();
+        }else{
+            Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+            UI_SCALING= (dimension.width-200)/W_WIDTH;
         }
         settingsActionListeners = new ArrayList<>();
         onExitListeners = new ArrayList<>();

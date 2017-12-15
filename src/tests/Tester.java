@@ -15,14 +15,14 @@ import java.util.Collection;
  */
 public class Tester {
     public static void main(String[] args) {
-/*
+
        MainWindow mainWindow = new MainWindow(null);
 
         mainWindow.addContact("Test1", "hallo1fffff",Color.BLUE,1);
         mainWindow.addContact("Test2", "hallo1fffff",Color.BLUE,2);
 
-        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test",new Message("hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo"),null,Color.cyan),0);
-        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test",new Message("hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo"),null,Color.cyan),0);
+        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test","hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo",null,Color.cyan),0);
+        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test","hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo",null,Color.cyan),0);
 
 
         mainWindow.addNewChatById(1);
@@ -33,7 +33,7 @@ public class Tester {
             @Override
             public void onContactClicked(ContactEvent e) {
                 mainWindow.setChatByUserId(e.getId());
-                mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test"+e.getId(),new Message("hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo"),null,Color.cyan),e.getId());
+                mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test"+e.getId(),"hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo",null,Color.cyan),e.getId());
             }
         });
 
