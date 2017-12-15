@@ -9,11 +9,10 @@ fun main(args: Array<String>) {
     val prot = Protocol("Matteo")
     prot.hello()
     do {
-        val line = readLine()
+        val line = readLine()!!
         if (line == "exit")
             continue
-        if (line != null)
-            prot.message(line, prot.broadcastAddress)
+        prot.message(line, prot.broadcastAddress)
     } while (line != "exit")
 
     prot.stop()
