@@ -11,6 +11,7 @@ import java.net.InetAddress
 fun main(args: Array<String>) {
     val set = HashMap<InetAddress, String>()
     val prot = Protocol("Matteo", object : ProtocolCallback {
+
         override fun hello(packet: DatagramPacket, username: String) {
             set[packet.address] = username
 
@@ -24,7 +25,8 @@ fun main(args: Array<String>) {
         }
 
         override fun goodbye(packet: DatagramPacket) {
-            println("${set[packet.address]} left")
+
+            println("${set[packet.address]?:"You"} left")
 
             set.remove(packet.address)
 
