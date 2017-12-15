@@ -91,13 +91,11 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
     private fun receiveWorld(packet: DatagramPacket) {
         val username = packet.getMessage()
-        println("Made a new friend called $username at ${packet.address.hostAddress}")
         callback?.world(packet, username)
     }
 
     private fun receiveGoodbye(packet: DatagramPacket) {
         // Goodbye (。･∀･)ﾉ゛
-        println("Goodbye ${packet.address.hostAddress}")
         callback?.goodbye(packet)
     }
 
@@ -107,13 +105,11 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
     private fun receiveMessage(packet: DatagramPacket) {
         val message = EmojiParser.parseToUnicode(packet.getMessage())
-        println("${packet.address.hostAddress}: $message")
         callback?.message(packet, message)
     }
 
     private fun receiveGroupExistsGroup(packet: DatagramPacket) {
         val id = packet.getMessage()
-        println("Request for creating a group with ID $id by ${packet.address.hostAddress}")
         if (callback != null && callback.existsGroupWithId(packet, id.toInt()))
             send("$GROUP_DENYGROUP $id")
     }
@@ -123,8 +119,6 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
         val id = data[0]
         val members = Array<InetAddress>(data.size - 1, { index -> InetAddress.getByName(data[index + 1]) })
 
-        println("group with ID $id created by ${packet.address.hostAddress}")
-        // println("Members: $members")
         callback?.createGroup(packet, id.toInt(), members)
     }
 
