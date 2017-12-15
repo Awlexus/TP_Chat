@@ -28,7 +28,8 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
     // Addresses
     private val localhost = InetAddress.getLocalHost()
-    private val broadcastAddress = NetworkInterface.getByInetAddress(localhost).interfaceAddresses[0].broadcast
+    val broadcastAddress = NetworkInterface.getByInetAddress(localhost).interfaceAddresses[0].broadcast
+        get
 
     // This socket is responsible for sending and receiving discovery packages
     private val socket = DatagramSocket(port)
@@ -118,7 +119,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
     private fun receiveGroupCreateGroup(packet: DatagramPacket) {
         val data = packet.getMessage().split(Regex("\\s+"))
         val id = data[0]
-        val members = Array<InetAddress>(data.size - 1, { index -> InetAddress.getByName(data[index + 1])})
+        val members = Array<InetAddress>(data.size - 1, { index -> InetAddress.getByName(data[index + 1]) })
 
         println("group with ID $id created by ${packet.address.hostAddress}")
         // println("Members: $members")
