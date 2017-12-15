@@ -73,6 +73,9 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
     private fun receiveHello(packet: DatagramPacket) {
 
+        if (packet.address.hostAddress == localhost.hostAddress)
+            return
+
         val username = packet.getMessage()
         println("Hello from $username at ${packet.address.hostAddress}")
 
@@ -103,10 +106,8 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
     }
 
     private fun receiveMessage(packet: DatagramPacket) {
-        val message = packet.getMessage()
-        println(EmojiParser.parseFromUnicode("${packet.address.hostAddress}: $message", { unicodeCandidate ->
-            ":${unicodeCandidate.emoji.aliases[0]}:"
-        }))
+        val message = EmojiParser.parseToUnicode(packet.getMessage())
+        println("${packet.address.hostAddress}: $message")
         callback?.message(packet, message)
     }
 
