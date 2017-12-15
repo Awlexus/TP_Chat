@@ -35,7 +35,7 @@ fun main(args: Array<String>) {
         }
 
         override fun message(packet: DatagramPacket, message: String) {
-            println("${set[packet.address]}: $message")
+            println("${set[packet.address]?:"Du"}: $message")
         }
 
         override fun existsGroupWithId(packet: DatagramPacket, id: Int): Boolean {
