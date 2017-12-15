@@ -389,7 +389,6 @@ public class Chat extends JPanel {
                 timestamp = new JLabel(date);
                 //TODO 7 positioning
 
-
                 //calc Height from text length
                 height = textArea.getLocation().y + textArea.getHeight() + timestamp.getHeight();
                 this.setSize(width, height);
