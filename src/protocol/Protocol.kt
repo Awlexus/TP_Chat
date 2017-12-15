@@ -212,7 +212,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
      * Send a text to a IP-Adress
      */
     fun send(text: String, ip: InetAddress = broadcastAddress) {
-        socket.send(DatagramPacket(text.toByteArray(), text.length, ip, port))
+        socket.send(DatagramPacket(text.toByteArray(), text.toByteArray().size, ip, port))
     }
 
     /**
