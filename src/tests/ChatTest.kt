@@ -6,7 +6,7 @@ import protocol.Protocol
  * Created by Awlex on 15.12.2017.
  */
 fun main(args: Array<String>) {
-    val prot = Protocol("Awlex")
+    val prot = Protocol("Matteo")
     prot.hello()
     do {
         val line = readLine()

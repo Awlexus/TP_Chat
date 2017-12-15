@@ -1,7 +1,13 @@
 package tests;
 
 
+import com.vdurmont.emoji.Emoji;
+import com.vdurmont.emoji.EmojiManager;
 import com.vdurmont.emoji.EmojiParser;
+import gui.*;
+
+import java.awt.*;
+import java.util.Collection;
 
 /**
  * @author Matteo Cosi
@@ -44,15 +50,11 @@ public class Tester {
         }
 /*
 
-        Collection<Emoji> emojis =EmojiManager.getAll();
-        for (Emoji e :
-                emojis) {
-            System.out.println(e.getAliases());
-
-        }
         */
+
         String str = "An :man_in_tuxedo:awesome :beer:string &#128516;with a few :wink:emojis!";
         String result = EmojiParser.parseToUnicode(str);
+
         System.out.println(result);
 
     }

@@ -91,6 +91,7 @@ public class MainWindow extends JFrame {
 
     SettingsWindow settingsWindow;
     private ArrayList<SettingsActionListener> settingsActionListeners;
+    private ArrayList<OnExitListener> onExitListeners;
 
 
     public MainWindow(@Nullable Settings settings) {
@@ -107,6 +108,7 @@ public class MainWindow extends JFrame {
             theme = settings.getTheme();
         }
         settingsActionListeners = new ArrayList<>();
+        onExitListeners = new ArrayList<>();
 
         try {
             setUndecorated(true);
@@ -232,6 +234,13 @@ public class MainWindow extends JFrame {
         this.settingsActionListeners.remove(settingsActionListener);
     }
 
+    public void addOnExitListener(OnExitListener exitListener) {
+        this.onExitListeners.add(exitListener);
+    }
+
+    public void removeOnExitListener(OnExitListener exitListener) {
+        this.onExitListeners.remove(exitListener);
+    }
 
     /**
      * Adds a contact to the list
@@ -305,7 +314,7 @@ public class MainWindow extends JFrame {
     }
 
 
-    public void addNewChatById(int id){
+    public void addNewChatById(int id) {
         chat.addNewUserChat(id);
     }
 
@@ -387,6 +396,9 @@ public class MainWindow extends JFrame {
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    for (int i = 0; i < onExitListeners.size(); i++) {
+                        onExitListeners.get(i).onExitClicked();
+                    }
                     System.exit(0);
                 }
 
