@@ -110,7 +110,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
     private fun receiveGroupExistsGroup(packet: DatagramPacket) {
         val id = packet.getMessage()
-        if (callback != null && callback.existsGroupWithId(packet, id.toInt()))
+        if (callback?.existsGroupWithId(packet, id.toInt()) == true)
             send("$GROUP_DENYGROUP $id")
     }
 
