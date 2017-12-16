@@ -50,7 +50,7 @@ public class MainWindow extends JFrame {
     /**
      * Theme for this GUI
      */
-    public static Theme theme = new Theme(Theme.Themes.MILAN);
+    public static Theme theme = new Theme(Theme.Themes.DEEP_PURPLE);
 
     /**
      * Used to drag & drop the top bar
@@ -289,6 +289,21 @@ public class MainWindow extends JFrame {
         return true;
     }
 
+
+    public void setContactWriting(int id){
+        contacts.setContactWriting(id);
+    }
+
+    public void removeContactWriting(int id){
+        contacts.removeContactWriting(id);
+    }
+
+    public void toggleContactWriting(int id){
+        contacts.toggleContactWriting(id);
+    }
+    public void setLastMessageText(String text,int id){
+        contacts.setLastMessageText(text,id);
+    }
 
     /**
      * adds a new text at the bottom of the screen

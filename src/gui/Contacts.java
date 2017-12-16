@@ -91,6 +91,33 @@ class Contacts extends JPanel {
         return true;
     }
 
+    public void setContactWriting(int id) {
+        for (Contact contact : contactArrayList) {
+            if (contact.getId() == id)
+                contact.setContactWriting();
+        }
+    }
+
+    public void removeContactWriting(int id) {
+        for (Contact contact : contactArrayList) {
+            if (contact.getId() == id)
+                contact.removeContactWriting();
+        }
+    }
+
+    public void toggleContactWriting(int id) {
+        for (Contact contact : contactArrayList) {
+            if (contact.getId() == id)
+                contact.toggleContactWriting();
+        }
+    }
+    public void setLastMessageText(String text,int id) {
+        for (Contact contact : contactArrayList) {
+            if (contact.getId() == id)
+                contact.setLastMessageText(text);
+        }
+    }
+
     public void removeContact(int id) {
         boolean found = false;
         for (int i = 0; i < contactArrayList.size(); i++) {
@@ -117,11 +144,12 @@ class Contacts extends JPanel {
         int height;
         int id;
         boolean isSelected = false;
-        Color nameColor=theme.getAccentColor();
+        Color nameColor = theme.getAccentColor();
+        boolean isWriting = false;
 
-        public Contact(String name, String lastMessage, int width, int height, int id, Color color){
+        public Contact(String name, String lastMessage, int width, int height, int id, Color color) {
             this.id = id;
-            if(id<=0){
+            if (id <= 0) {
                 throw new RuntimeException("ID VON KONTAKT KLEINER 0");
             }
             this.name = new JLabel(name);
@@ -166,6 +194,37 @@ class Contacts extends JPanel {
             this.add(name);
             this.add(lastMessage);
             this.add(arrow);
+        }
+
+        public void setContactWriting() {
+            isWriting = true;
+            updateWriting();
+        }
+
+        public void removeContactWriting() {
+            isWriting = false;
+            updateWriting();
+        }
+
+        public void toggleContactWriting() {
+            isWriting = !isWriting;
+            updateWriting();
+        }
+
+        public void updateWriting() {
+            if (isWriting) {
+                lastMessage.setForeground(Color.GREEN);
+                lastMessage.setText("Schreibt...");
+            } else {
+                lastMessage.setForeground(theme.getPrimaryColor());
+                lastMessage.setText("");
+            }
+            repaint();
+        }
+
+        public void setLastMessageText(String text){
+            lastMessage.setText(text);
+            repaint();
         }
 
         public void setSelected(boolean selected) {
