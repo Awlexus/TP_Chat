@@ -71,15 +71,15 @@ public class CallbackListener implements ProtocolCallback {
 
     @Override
     public void message(@NotNull DatagramPacket packet, @NotNull String message) {
-        System.out.println(currentChatId);
-        Contact contact = contacts.getByID(currentChatId);
-        // TODO: 19.12.2017 FIX THIS!
+        Contact contact = contacts.getByIP(packet.getAddress());
+        // todo debug output
         if (contact == null)
             System.out.println("NULL_message");
         mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,
                 contact.getUsername(),
                 message,
                 "", contact.getColor()), contact.getId());
+
         System.out.println("Message");
     }
 

@@ -10,7 +10,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 class Contacts {
 
-    private ArrayList<Contact> contactList = new ArrayList<>();
+    // todo make private
+    public ArrayList<Contact> contactList = new ArrayList<>();
 
     private final AtomicInteger ai;
     private final DataRepository dataRepository;
@@ -86,7 +87,7 @@ class Contacts {
 
     Contact getByIP(InetAddress ip) {
         for (Object o : this.contactList) {
-            if (((Contact) o).getIp() == ip)
+            if (((Contact) o).getIp().equals(ip))
                 return ((Contact) o);
         }
         return null;

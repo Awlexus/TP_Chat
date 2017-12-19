@@ -57,7 +57,8 @@ public class Main {
                                 "Me", e.getMessage(),
                                 null, Color.GREEN), 1);
                 e.getTextField().setText("");
-                protocol.send(e.getMessage(), contacts.getByID(callbackListener.currentChatId).getIp());
+                //protocol.send(e.getMessage(), contacts.getByID(callbackListener.currentChatId).getIp());
+                protocol.message(e.getMessage(), contacts.getByID(callbackListener.currentChatId).getIp());
             }
 
             @Override
