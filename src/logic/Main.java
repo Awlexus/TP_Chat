@@ -13,7 +13,7 @@ public class Main {
     private static MainWindow mainWindow;
     private static Contacts contacts;
     private static Groups groups;
-    private static int currentChatId = -1;
+    private static CallbackListener callbackListener;
     private static Protocol protocol;
 
     public static void main(String[] args) {
@@ -28,13 +28,14 @@ public class Main {
         contacts.readContacts();
         groups.readGroups();
 
-        protocol = new Protocol("Me", new CallbackListener(mainWindow, contacts, groups));
+        callbackListener = new CallbackListener(mainWindow, contacts, groups);
+        protocol = new Protocol("Me", callbackListener);
 
         protocol.hello();
 
         mainWindow.addOnContactClickedListener(e -> {
             mainWindow.setChatByUserId(e.getId());
-            currentChatId = e.getId();
+            callbackListener.currentChatId = e.getId();
         });
 
         mainWindow.addOnExitListener(() -> {
@@ -46,7 +47,7 @@ public class Main {
         mainWindow.addChatActionListener(new ChatActionListener() {
             @Override
             public void onSendPressed(SendEvent e) {
-                if (e.getMessage().equals("") || currentChatId == -1)
+                if (e.getMessage().equals("") || callbackListener.currentChatId == -1)
                     return;
                 mainWindow.addMessage(
                         new ChatMessageBlueprint(
@@ -54,7 +55,7 @@ public class Main {
                                 "Me", e.getMessage(),
                                 null, Color.GREEN), 1);
                 e.getTextField().setText("");
-                protocol.send(e.getMessage(), contacts.getByID(currentChatId).getIp());
+                protocol.send(e.getMessage(), contacts.getByID(callbackListener.currentChatId).getIp());
             }
 
             @Override

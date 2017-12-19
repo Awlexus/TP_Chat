@@ -26,6 +26,7 @@ public class Groups {
         try {
             // TODO: 15.12.2017 Might throw an exception when File doesn't exist
             dataRepository.deleteFile("Groups.ser");
+            System.out.println("Beep");
             dataRepository.print("Groups.ser", this.groupList);
         } catch (DataRepository.DataException e) {
             System.out.println("Printing failed");
