@@ -19,6 +19,10 @@ public class CallbackListener implements ProtocolCallback {
 
     public CallbackListener(MainWindow mainWindow, Contacts contacts, Groups groups) {
         this.mainWindow = mainWindow;
+
+        contacts.setParent(this);
+        groups.setParent(this);
+
         this.contacts = contacts;
         this.groups = groups;
     }
@@ -47,10 +51,12 @@ public class CallbackListener implements ProtocolCallback {
 
     @Override
     public void goodbye(@NotNull DatagramPacket packet) {
+        /*
         Contact contact = contacts.getByIP(packet.getAddress());
         mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM, contact.getUsername(),
                 "left the room", "",
                 contact.getColor()), contact.getId());
+                */
         System.out.println("Goodbye");
     }
 
@@ -100,5 +106,9 @@ public class CallbackListener implements ProtocolCallback {
         mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,
                 contacts.getByIP(packet.getAddress()).getUsername(), message,
                 "", contacts.getByIP(packet.getAddress()).getColor()), correspondingChatID);
+    }
+
+    public boolean isUsedID(int id) {
+        return (contacts.getByID(id) != null || groups.getByID(id) != null);
     }
 }

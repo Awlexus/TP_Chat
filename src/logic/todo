@@ -7,9 +7,9 @@ TODO: 15.12.2017 try to read from files before creating
 
 TODO: send "typing"
 
-TODO: don't react to hello, world or goodbye from one himself (maybe also messages?)
+TODO: don't react to hello, world or goodbye from one oneself (maybe also messages?)
 
-TODO: 15.12.2017 printing might throw an exception when File doesn't exist
+TODO: 15.12.2017 printing might throw an exception when File doesn't exist yet (Exception on delete)
 
 TODO: 15.12.2017 GUI is missing an option to remove a single message, clearing the chat and re-adding most messages also has visible effects
 

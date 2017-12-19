@@ -12,11 +12,12 @@ import java.util.Map;
  * @since 27.08.2017
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class DataRepository {
+public class DataRepository implements Serializable{
 
     private static HashMap<String, Collection<String>> repositoryFiles = new HashMap<>();
 
     private String repositoryPath;
+
 
     public static Map<String, Collection<String>> getRepositoryFiles() {
         return repositoryFiles;

@@ -21,9 +21,12 @@ public class Main {
 
         AtomicInteger ai = new AtomicInteger(0);
         DataRepository dataRepository = new DataRepository(Paths.get("").toAbsolutePath().toString());
-        // TODO: 15.12.2017 try to read from files before creating
         contacts = new Contacts(ai, dataRepository);
         groups = new Groups(ai, dataRepository);
+
+        // TODO: 15.12.2017 try to read from files
+        contacts.readContacts();
+        groups.readGroups();
 
         protocol = new Protocol("Me", new CallbackListener(mainWindow, contacts, groups));
 
@@ -36,7 +39,8 @@ public class Main {
 
         mainWindow.addOnExitListener(() -> {
             protocol.stop();
-            contacts.print();
+            contacts.printContacts();
+            groups.printGroups();
         });
 
         mainWindow.addChatActionListener(new ChatActionListener() {
