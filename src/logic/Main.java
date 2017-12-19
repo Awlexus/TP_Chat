@@ -39,7 +39,9 @@ public class Main {
         });
 
         mainWindow.addOnExitListener(() -> {
+            System.out.println("Pre stop");
             protocol.stop();
+            System.out.println("after stop");
             contacts.printContacts();
             groups.printGroups();
         });

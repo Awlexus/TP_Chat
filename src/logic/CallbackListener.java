@@ -54,6 +54,9 @@ public class CallbackListener implements ProtocolCallback {
     @Override
     public void goodbye(@NotNull DatagramPacket packet) {
         Contact contact = contacts.getByIP(packet.getAddress());
+        // TODO: 19.12.2017 FIX THIS!
+        if (contact == null)
+            System.out.println("NULL_goodbye");
         mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM, contact.getUsername(),
                 "left the room", "",
                 contact.getColor()), contact.getId());
@@ -68,8 +71,11 @@ public class CallbackListener implements ProtocolCallback {
 
     @Override
     public void message(@NotNull DatagramPacket packet, @NotNull String message) {
-        // TODO: 19.12.2017 id is from static context of MAIN
+        System.out.println(currentChatId);
         Contact contact = contacts.getByID(currentChatId);
+        // TODO: 19.12.2017 FIX THIS!
+        if (contact == null)
+            System.out.println("NULL_message");
         mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,
                 contact.getUsername(),
                 message,

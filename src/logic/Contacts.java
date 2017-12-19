@@ -62,6 +62,8 @@ class Contacts {
 
         Contact newContact = new Contact(id, ip, username, color);
         this.contactList.add(newContact);
+
+        System.out.println(newContact);
         return newContact;
 
     }
