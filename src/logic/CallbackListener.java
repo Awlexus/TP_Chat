@@ -54,11 +54,11 @@ public class CallbackListener implements ProtocolCallback {
     @Override
     public void goodbye(@NotNull DatagramPacket packet) {
         Contact contact = contacts.getByIP(packet.getAddress());
-        // TODO: 19.12.2017 FIX THIS!
+        // TODO: 19.12.2017 debug output
         if (contact == null)
             System.out.println("NULL_goodbye");
-        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM, contact.getUsername(),
-                "left the room", "",
+        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.INFO, "ignored parameter",
+                contact.getUsername()+" has left the room.", "",
                 contact.getColor()), contact.getId());
         System.out.println("Goodbye");
     }
@@ -72,19 +72,19 @@ public class CallbackListener implements ProtocolCallback {
     @Override
     public void message(@NotNull DatagramPacket packet, @NotNull String message) {
         Contact contact = contacts.getByIP(packet.getAddress());
-        // todo debug output
-        if (contact == null)
-            System.out.println("NULL_message");
-        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,
+        if (contact == null) {
+            System.out.println("Message from unknown contact received: " + packet.getAddress());
+        } else { mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,
                 contact.getUsername(),
                 message,
                 "", contact.getColor()), contact.getId());
-
+        }
         System.out.println("Message");
     }
 
     @Override
     public boolean existsGroupWithId(@NotNull DatagramPacket packet, int id) {
+        // TODO: 19.12.2017 most likely should also return false, when a contact already uses this id
         return (groups.getByProtocolID(id) != null);
     }
 
@@ -110,6 +110,7 @@ public class CallbackListener implements ProtocolCallback {
 
     @Override
     public void groupMessage(@NotNull DatagramPacket packet, int groupId, @NotNull String message) {
+        // TODO: 19.12.2017 see todo
         int correspondingChatID = groups.getByProtocolID(groupId).getId();
         mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,
                 contacts.getByIP(packet.getAddress()).getUsername(), message,
