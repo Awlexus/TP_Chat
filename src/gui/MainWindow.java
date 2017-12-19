@@ -421,9 +421,8 @@ public class MainWindow extends JFrame {
                 }
 
             });
-
-
             this.settings = new JLabel(EmojiParser.parseToUnicode(":gear:"));
+            /*
             int settingsFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT / 4) * TOP_SCALE * UI_SCALING);
             this.settings.setFont(new Font(FONT, Font.PLAIN, settingsFontSize));
             this.settings.setLocation((int) (exit.getX() - UI_SCALING * 4 - 20 - settingsFontSize), (int) +UI_SCALING * 3);
@@ -445,7 +444,7 @@ public class MainWindow extends JFrame {
                 }
 
             });
-
+*/
             if (theme.getDark()) {
                 this.exit.setForeground(Color.white);
                 this.title.setForeground(Color.white);

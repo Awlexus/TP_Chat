@@ -33,7 +33,7 @@ public class Tester {
             @Override
             public void onContactClicked(ContactEvent e) {
                 mainWindow.setChatByUserId(e.getId());
-                mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.TO, "Test" + e.getId(), "hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo", null, Color.cyan), e.getId());
+                mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM, "Test" + e.getId(), "Hi!", null, Color.BLUE), e.getId());
             }
         });
 

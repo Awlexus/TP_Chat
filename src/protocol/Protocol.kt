@@ -96,7 +96,8 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
     private fun receiveGoodbye(packet: DatagramPacket) {
         // Goodbye (。･∀･)ﾉ゛
-        callback?.goodbye(packet)
+        if (packet.address.hostAddress != localhost.hostAddress)
+            callback?.goodbye(packet)
     }
 
     private fun receiveTyping(packet: DatagramPacket) {
