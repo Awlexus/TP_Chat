@@ -60,7 +60,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
                 text.startsWith(GROUP_CREATEGROUP) -> receiveGroupCreateGroup(packet)
                 text.startsWith(GROUP_DENYGROUP) -> receiveGroupDenyGroup(packet)
                 text.startsWith(GROUP_MESSAGE) -> receiveGroupMessage(packet)
-                else -> println(packet.getTextData()) // For debugging purposes
+                else -> println("looool:" + packet.getTextData()) // For debugging purposes
             }
         }
         socket.close()
@@ -77,7 +77,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
             return
 
         val username = packet.getMessage()
-        println("Hello from $username at ${packet.address.hostAddress}")
+        // println("Hello from $username at ${packet.address.hostAddress}")
 
         // Set reply text
         packet.data = "$WORLD $userName".toByteArray()
@@ -198,15 +198,17 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
      */
     fun sendGroupMessage(message: String, groupId: Int) {
         val text = "$GROUP_MESSAGE $groupId $message"
-        for (ip in arrayOf(localhost)) // TODO: replace with ids for groups
-            send(text, ip)
+        val idsFromGroup = callback?.getIpsFromGroup(groupId)
+        if (idsFromGroup != null)
+            for (ip in idsFromGroup)
+                send(text, ip)
     }
 
     /**
      * Send whether the client is typing
      */
     fun sendTyping(typing: Boolean, ip: InetAddress) {
-        send("$TYPING $typing ", ip)
+        send("$TYPING $typing", ip)
     }
 
     /**
@@ -227,6 +229,14 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun addToGroup(ip: InetAddress, groupId: Int) {
+        val text = "$ADD_TO_GROUP $groupId ${ip.hostAddress}"
+        val ipsFromGroup = callback?.getIpsFromGroup(groupId)
+        if (ipsFromGroup != null)
+            for (memberIp in ipsFromGroup)
+                send(text, memberIp)
     }
 
     constructor(userName: String) : this(4321, userName, null)

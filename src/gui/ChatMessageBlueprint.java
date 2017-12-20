@@ -1,14 +1,14 @@
 package gui;
 
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.io.Serializable;
 
 /**
  * @author Matteo Cosi
  * @since 02.12.2017
  */
-public class ChatMessageBlueprint {
+public class ChatMessageBlueprint implements Serializable{
     Chat.chatMessageType type;
     String name;
     String message;

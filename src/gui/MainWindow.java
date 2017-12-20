@@ -5,9 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -96,6 +94,20 @@ public class MainWindow extends JFrame {
 
     public MainWindow(@Nullable Settings settings) {
         setupMainWindow(settings);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.isAltDown()){
+                    if(e.getKeyCode()== KeyEvent.VK_F4){
+                        System.out.println("exit");
+                        for (int i = 0; i < onExitListeners.size(); i++) {
+                            onExitListeners.get(i).onExitClicked();
+                        }
+                    }
+                }
+            }
+        });
 
     }
 
@@ -417,7 +429,6 @@ public class MainWindow extends JFrame {
                     for (int i = 0; i < onExitListeners.size(); i++) {
                         onExitListeners.get(i).onExitClicked();
                     }
-                    System.exit(0);
                 }
 
             });

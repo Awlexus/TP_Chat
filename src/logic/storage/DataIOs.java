@@ -10,7 +10,7 @@ import java.nio.file.Paths;
  *
  * This class consists exclusively of static methods that help printing and reading serialized Objects
  */
-final class DataIOs {
+public final class DataIOs {
 
     private DataIOs() {}
 
@@ -24,15 +24,12 @@ final class DataIOs {
      * @param data Object to print
      * @throws DataRepository.DataException validation failed, IOException
      */
-    static void print(String path, Serializable data) throws DataRepository.DataException {
+    public static void print(String path, Serializable data) throws DataRepository.DataException {
         validatePath(path);
-
         File file = new File(path);
-
         try {
             ObjectOutputStream oos = new ObjectOutputStream(
                     new FileOutputStream(file));
-
             oos.writeObject(data);
             oos.close();
         } catch (IOException e) {
@@ -49,7 +46,7 @@ final class DataIOs {
      * @return an Object
      * @throws DataRepository.DataException validation failed, IOException
      */
-    static Object read(String path) throws DataRepository.DataException {
+    public static Object read(String path) throws DataRepository.DataException {
         validatePath(path);
 
         File file = new File(path);

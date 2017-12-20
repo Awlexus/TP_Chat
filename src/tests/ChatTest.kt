@@ -11,6 +11,9 @@ import java.net.InetAddress
 fun main(args: Array<String>) {
     val set = HashMap<InetAddress, String>()
     val prot = Protocol("Matteo", object : ProtocolCallback {
+        override fun getIpsFromGroup(groupId: Int): Array<InetAddress> {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
 
         override fun hello(packet: DatagramPacket, username: String) {
             set[packet.address] = username

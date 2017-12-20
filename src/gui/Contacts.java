@@ -1,5 +1,7 @@
 package gui;
 
+import com.vdurmont.emoji.EmojiParser;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -207,14 +209,14 @@ class Contacts extends JPanel {
         }
 
         public void toggleContactWriting() {
-            isWriting = !isWriting;
+            this.isWriting = !isWriting;
             updateWriting();
         }
 
         public void updateWriting() {
             if (isWriting) {
                 lastMessage.setForeground(Color.GREEN);
-                lastMessage.setText("Schreibt...");
+                lastMessage.setText("schreibt...");
             } else {
                 lastMessage.setForeground(theme.getPrimaryColor());
                 lastMessage.setText("");
@@ -223,7 +225,8 @@ class Contacts extends JPanel {
         }
 
         public void setLastMessageText(String text){
-            lastMessage.setText(text);
+            lastMessage.setForeground(theme.getPrimaryColor());
+            lastMessage.setText(EmojiParser.parseToUnicode(text));
             repaint();
         }
 

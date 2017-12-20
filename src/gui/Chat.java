@@ -1,6 +1,7 @@
 package gui;
 
 import com.sun.deploy.util.ArrayUtil;
+import com.vdurmont.emoji.EmojiParser;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -37,11 +38,6 @@ public class Chat extends JPanel {
     private ArrayList<ChatActionListener> chatActionListeners;
     private ArrayList<ChatContent> chatContents;
 
-
-    JProgressBar chatMessagesLoadingProgress = new JProgressBar();
-
-
-    //TODO JProgressbarstyling
 
     /**
      * describes the direction of the text
@@ -133,6 +129,7 @@ public class Chat extends JPanel {
         JTextField textField;
         JButton send;
 
+
         public ChatControls(int width, int height) {
             this.setLayout(null);
             this.width = width;
@@ -216,6 +213,8 @@ public class Chat extends JPanel {
 
 
         ArrayList<ChatMessage> chatMessages;
+        JProgressBar chatMessagesLoadingProgress= new JProgressBar();
+
 
         public ChatContent(int width, int height) {
             this.setLayout(null);
@@ -232,6 +231,7 @@ public class Chat extends JPanel {
             ChatScrolling scrolling = new ChatScrolling(this);
             this.addMouseListener(scrolling);
             this.addMouseMotionListener(scrolling);
+            this.addMouseWheelListener(scrolling);
 
             chatMessagesLoadingProgress.setSize(width / 2, (int) (10 * UI_SCALING));
             chatMessagesLoadingProgress.setLocation(width / 4, height / 2 - (int) (10 * UI_SCALING) / 2);
@@ -249,6 +249,7 @@ public class Chat extends JPanel {
             ChatScrolling scrolling = new ChatScrolling(ChatContent.this);
             chatMessage.addMouseListener(scrolling);
             chatMessage.addMouseMotionListener(scrolling);
+            chatMessage.addMouseWheelListener(scrolling);
             repaintChatContent();
         }
 
@@ -265,6 +266,7 @@ public class Chat extends JPanel {
                 ChatScrolling scrolling = new ChatScrolling(ChatContent.this);
                 chatMessage.addMouseListener(scrolling);
                 chatMessage.addMouseMotionListener(scrolling);
+                chatMessage.addMouseWheelListener(scrolling);
                 if (i % 2 == 0) {
                     chatMessagesLoadingProgress.setValue(i);
                     chatMessagesLoadingProgress.repaint();
@@ -372,7 +374,7 @@ public class Chat extends JPanel {
                 }
                 Font messageFont = new Font(MainWindow.FONT, 0, (int) (UI_SCALING * 10 / 2));
                 textArea = new JTextArea();
-                textArea.setText(formatTextForChat(message, messageFont, this.width - (int) (UI_SCALING * 8) - margin * 4));
+                textArea.setText(formatTextForChat(EmojiParser.parseToUnicode(message), messageFont, this.width - (int) (UI_SCALING * 8) - margin * 4));
                 textArea.setEditable(false);
                 textArea.setBackground(theme.getPrimaryColorLight());
                 textArea.setFont(messageFont);
@@ -385,6 +387,7 @@ public class Chat extends JPanel {
                 ChatScrolling scrolling = new ChatScrolling(ChatContent.this);
                 textArea.addMouseListener(scrolling);
                 textArea.addMouseMotionListener(scrolling);
+                textArea.addMouseWheelListener(scrolling);
 
                 timestamp = new JLabel(date);
                 //TODO 7 positioning

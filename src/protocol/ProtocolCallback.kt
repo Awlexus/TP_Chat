@@ -83,5 +83,6 @@ interface ProtocolCallback {
      */
     fun groupMessage(packet: DatagramPacket, groupId: Int, message: String)
 
+    fun getIpsFromGroup(groupId: Int): Array<InetAddress>
 
 }

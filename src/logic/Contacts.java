@@ -1,5 +1,6 @@
 package logic;
 
+import logic.storage.DataIOs;
 import logic.storage.DataRepository;
 
 import java.awt.*;
@@ -10,16 +11,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 class Contacts {
 
-    // todo make private
-    public ArrayList<Contact> contactList = new ArrayList<>();
+    private ArrayList<Contact> contactList = new ArrayList<>();
 
     private final AtomicInteger ai;
-    private final DataRepository dataRepository;
     private CallbackListener parent;
+    private String repositoryPath;
 
-    public Contacts(AtomicInteger ai, DataRepository dataRepository) {
+    public Contacts(AtomicInteger ai, String repositoryPath) {
         this.ai = ai;
-        this.dataRepository = dataRepository;
+        this.repositoryPath = repositoryPath;
     }
 
     public void setParent(CallbackListener parent) {
@@ -28,17 +28,17 @@ class Contacts {
 
     synchronized public void printContacts() {
         try {
-            // TODO: 15.12.2017 Might throw an exception when File doesn't exist
-            dataRepository.deleteFile("contacts.ser");
-            dataRepository.print("contacts.ser", this.contactList);
+            DataIOs.print(repositoryPath+"\\Contacts.ser", contactList);
         } catch (DataRepository.DataException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
             System.out.println("Printing failed");
         }
     }
 
     synchronized public void readContacts() {
         try {
-            ArrayList newContactList = ((ArrayList) dataRepository.read("contacts.ser"));
+            ArrayList newContactList = ((ArrayList) DataIOs.read(repositoryPath+"\\Contacts.ser"));
             contactList.clear();
 
             for (Object o : newContactList)
@@ -61,7 +61,7 @@ class Contacts {
         while (parent.isUsedID(id))
             id = ai.incrementAndGet();
 
-        Contact newContact = new Contact(id, ip, username, color);
+        Contact newContact = new Contact(id, ip, username, color, new ArrayList<>());
         this.contactList.add(newContact);
 
         System.out.println(newContact);

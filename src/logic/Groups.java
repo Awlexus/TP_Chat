@@ -1,5 +1,6 @@
 package logic;
 
+import logic.storage.DataIOs;
 import logic.storage.DataRepository;
 
 import java.util.ArrayList;
@@ -10,12 +11,12 @@ public class Groups {
     private ArrayList<Group> groupList = new ArrayList<>();
 
     private final AtomicInteger ai;
-    private final DataRepository dataRepository;
     private CallbackListener parent;
+    private String repositoryPath;
 
-    public Groups(AtomicInteger ai, DataRepository dataRepository) {
+    public Groups(AtomicInteger ai, String repositoryPath) {
         this.ai = ai;
-        this.dataRepository = dataRepository;
+        this.repositoryPath = repositoryPath;
     }
 
     public void setParent(CallbackListener parent) {
@@ -24,10 +25,7 @@ public class Groups {
 
     public void printGroups() {
         try {
-            // TODO: 15.12.2017 Might throw an exception when File doesn't exist
-            dataRepository.deleteFile("Groups.ser");
-            System.out.println("Beep");
-            dataRepository.print("Groups.ser", this.groupList);
+            DataIOs.print(repositoryPath+"\\Groups.ser", groupList);
         } catch (DataRepository.DataException e) {
             System.out.println("Printing failed");
         }
@@ -35,7 +33,7 @@ public class Groups {
 
     synchronized public void readGroups() {
         try {
-            ArrayList newContactList = ((ArrayList) dataRepository.read("groups.ser"));
+            ArrayList newContactList = ((ArrayList) DataIOs.read(repositoryPath+"\\Groups.ser"));
             groupList.clear();
 
             for (Object o : newContactList) {

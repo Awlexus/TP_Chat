@@ -6,7 +6,6 @@ import gui.MainWindow;
 import org.jetbrains.annotations.NotNull;
 import protocol.ProtocolCallback;
 
-import java.awt.*;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -31,42 +30,49 @@ public class CallbackListener implements ProtocolCallback {
 
     @Override
     public void hello(@NotNull DatagramPacket packet, @NotNull String username) {
-        Contact contact = contacts.createContact(packet.getAddress(), username,
-                new Color((int)(Math.random() * 0x1000000)));
+        Contact contact = contacts.createContact(packet.getAddress(), username, UserColors.getRandomColor());
         // debug
         if (contact == null) throw new RuntimeException();
-        mainWindow.addContact(contact.getUsername(), "added you", contact.getColor(), contact.getId());
+        mainWindow.addContact(contact.getUsername(), "is now online", contact.getColor(), contact.getId());
         mainWindow.addNewChatById(contact.getId());
-        System.out.println("Hello");
+
+        if (!contact.getMessages().isEmpty())
+            mainWindow.addMessages((contact.getMessages().toArray(new ChatMessageBlueprint[contact.getMessages().size()])), contact.getId());
     }
 
     @Override
     public void world(@NotNull DatagramPacket packet, @NotNull String username) {
         Contact contact = contacts.createContact(packet.getAddress(), username,
-                new Color((int)(Math.random() * 0x1000000)));
+                UserColors.getRandomColor());
         // debug
         if (contact == null) throw new RuntimeException();
         mainWindow.addNewChatById(contact.getId());
-        mainWindow.addContact(contact.getUsername(), "added you", contact.getColor(), contact.getId());
-        System.out.println("World");
+        mainWindow.addContact(contact.getUsername(), "is now online", contact.getColor(), contact.getId());
+
+        if (!contact.getMessages().isEmpty())
+            mainWindow.addMessages((contact.getMessages().toArray(new ChatMessageBlueprint[contact.getMessages().size()])), contact.getId());
     }
 
     @Override
     public void goodbye(@NotNull DatagramPacket packet) {
         Contact contact = contacts.getByIP(packet.getAddress());
-        // TODO: 19.12.2017 debug output
-        if (contact == null)
-            System.out.println("NULL_goodbye");
-        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.INFO, "ignored parameter",
-                contact.getUsername()+" has left the room.", "",
+        // debug
+        if (contact == null) {
+            System.out.println("contact = null");
+            return;
+        }mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.INFO, "ignored parameter",
+                contact.getUsername() + " has left the room.", "",
                 contact.getColor()), contact.getId());
-        System.out.println("Goodbye");
+        mainWindow.setLastMessageText("is now offline", contact.getId());
     }
 
     @Override
     public void typing(@NotNull DatagramPacket packet, boolean typing) {
-        // TODO: 15.12.2017 GUI is missing an option to remove a single message, clearing the chat and re-adding most messages also has visible effects
-        System.out.println("Typing");
+        if (typing) {
+            mainWindow.setContactWriting(contacts.getByIP(packet.getAddress()).getId());
+        } else {
+            mainWindow.removeContactWriting(contacts.getByIP(packet.getAddress()).getId());
+        }
     }
 
     @Override
@@ -74,12 +80,16 @@ public class CallbackListener implements ProtocolCallback {
         Contact contact = contacts.getByIP(packet.getAddress());
         if (contact == null) {
             System.out.println("Message from unknown contact received: " + packet.getAddress());
-        } else { mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,
-                contact.getUsername(),
-                message,
-                "", contact.getColor()), contact.getId());
+        } else {
+            ChatMessageBlueprint chatMessageBlueprint = new ChatMessageBlueprint(Chat.chatMessageType.FROM,
+                    contact.getUsername(),
+                    message, "", contact.getColor());
+
+            mainWindow.addMessage(chatMessageBlueprint, contact.getId());
+            mainWindow.setLastMessageText(message, contact.getId());
+
+            contact.getMessages().add(chatMessageBlueprint);
         }
-        System.out.println("Message");
     }
 
     @Override
@@ -119,5 +129,11 @@ public class CallbackListener implements ProtocolCallback {
 
     public boolean isUsedID(int id) {
         return (contacts.getByID(id) != null || groups.getByID(id) != null);
+    }
+
+    @NotNull
+    @Override
+    public InetAddress[] getIpsFromGroup(int groupId) {
+        return new InetAddress[0];
     }
 }
