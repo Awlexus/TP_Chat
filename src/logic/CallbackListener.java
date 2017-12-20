@@ -37,7 +37,7 @@ public class CallbackListener implements ProtocolCallback {
         mainWindow.addNewChatById(contact.getId());
 
         if (!contact.getMessages().isEmpty())
-            mainWindow.addMessages(((ChatMessageBlueprint[]) contact.getMessages().toArray()), contact.getId());
+            mainWindow.addMessages((contact.getMessages().toArray(new ChatMessageBlueprint[contact.getMessages().size()])), contact.getId());
     }
 
     @Override
