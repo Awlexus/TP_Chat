@@ -50,7 +50,8 @@ public class CallbackListener implements ProtocolCallback {
         mainWindow.addContact(contact.getUsername(), "is now online", contact.getColor(), contact.getId());
 
         if (!contact.getMessages().isEmpty())
-            mainWindow.addMessages((contact.getMessages().toArray(new ChatMessageBlueprint[contact.getMessages().size()])), contact.getId());    }
+            mainWindow.addMessages((contact.getMessages().toArray(new ChatMessageBlueprint[contact.getMessages().size()])), contact.getId());
+    }
 
     @Override
     public void goodbye(@NotNull DatagramPacket packet) {
@@ -58,17 +59,20 @@ public class CallbackListener implements ProtocolCallback {
         // debug
         if (contact == null) throw new RuntimeException();
         mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.INFO, "ignored parameter",
-                contact.getUsername()+" has left the room.", "",
+                contact.getUsername() + " has left the room.", "",
                 contact.getColor()), contact.getId());
         mainWindow.setLastMessageText("is now offline", contact.getId());
     }
 
     @Override
     public void typing(@NotNull DatagramPacket packet, boolean typing) {
-        if (typing)
+        if (typing) {
             mainWindow.setContactWriting(contacts.getByIP(packet.getAddress()).getId());
-        else
+            System.out.println("writing");
+        } else {
             mainWindow.removeContactWriting(contacts.getByIP(packet.getAddress()).getId());
+            System.out.println("not writing");
+        }
     }
 
     @Override

@@ -214,7 +214,7 @@ class Contacts extends JPanel {
         public void updateWriting() {
             if (isWriting) {
                 lastMessage.setForeground(Color.GREEN);
-                lastMessage.setText("Schreibt...");
+                lastMessage.setText("schreibt...");
             } else {
                 lastMessage.setForeground(theme.getPrimaryColor());
                 lastMessage.setText("");
