@@ -67,9 +67,11 @@ public class CallbackListener implements ProtocolCallback {
     @Override
     public void typing(@NotNull DatagramPacket packet, boolean typing) {
         if (typing) {
-            //TODO wtf
-        } else {
             mainWindow.setContactWriting(contacts.getByIP(packet.getAddress()).getId());
+            System.out.println("writing");
+        } else {
+            mainWindow.removeContactWriting(contacts.getByIP(packet.getAddress()).getId());
+            System.out.println("not writing");
         }
     }
 
