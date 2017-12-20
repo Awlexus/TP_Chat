@@ -126,4 +126,10 @@ public class CallbackListener implements ProtocolCallback {
     public boolean isUsedID(int id) {
         return (contacts.getByID(id) != null || groups.getByID(id) != null);
     }
+
+    @NotNull
+    @Override
+    public InetAddress[] getIpsFromGroup(int groupId) {
+        return new InetAddress[0];
+    }
 }
