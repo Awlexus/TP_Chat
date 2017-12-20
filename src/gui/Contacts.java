@@ -207,7 +207,7 @@ class Contacts extends JPanel {
         }
 
         public void toggleContactWriting() {
-            isWriting = !isWriting;
+            this.isWriting = !isWriting;
             updateWriting();
         }
 

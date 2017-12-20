@@ -21,21 +21,12 @@ public class Tester {
         mainWindow.addContact("Test1", "hallo1fffff", Color.BLUE, 1);
         mainWindow.addContact("Test2", "hallo1fffff", Color.BLUE, 2);
 
-        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM, "Test", "hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo", null, Color.cyan), 0);
-        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM, "Test", "hhhhhhhhhhhhhaaaaaaaaaaaaaaaalllllllllllllloooooo ooo", null, Color.cyan), 0);
-
 
         mainWindow.addNewChatById(1);
         mainWindow.addNewChatById(2);
         mainWindow.setChatByUserId(2);
 
-        mainWindow.addOnContactClickedListener(new OnContactClickedListener() {
-            @Override
-            public void onContactClicked(ContactEvent e) {
-                mainWindow.setChatByUserId(e.getId());
-                mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM, "Test" + e.getId(), "Hi!", null, Color.BLUE), e.getId());
-            }
-        });
+
 
         /*
         String[] fontFamilies = GraphicsEnvironment.
@@ -51,7 +42,7 @@ public class Tester {
 
 
 
-        String str = "An :man_in_tuxedo:awesome :beer:string &#128516;with a few :wink:emojis!";
+        String str = "An :man_in_tuxedo: awesome :beer:string &#128516;with a few :wink:emojis!";
         String result = EmojiParser.parseToUnicode(str);
 
         System.out.println(result);

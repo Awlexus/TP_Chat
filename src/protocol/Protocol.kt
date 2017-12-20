@@ -60,7 +60,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
                 text.startsWith(GROUP_CREATEGROUP) -> receiveGroupCreateGroup(packet)
                 text.startsWith(GROUP_DENYGROUP) -> receiveGroupDenyGroup(packet)
                 text.startsWith(GROUP_MESSAGE) -> receiveGroupMessage(packet)
-                else -> println(packet.getTextData()) // For debugging purposes
+                else -> println("looool:" + packet.getTextData()) // For debugging purposes
             }
         }
         socket.close()
@@ -77,7 +77,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
             return
 
         val username = packet.getMessage()
-        println("Hello from $username at ${packet.address.hostAddress}")
+        // println("Hello from $username at ${packet.address.hostAddress}")
 
         // Set reply text
         packet.data = "$WORLD $userName".toByteArray()

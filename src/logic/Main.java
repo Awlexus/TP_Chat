@@ -18,7 +18,7 @@ public class Main {
     private static Protocol protocol;
 
     public static void main(String[] args) {
-        String username = "Maxi";
+        String username = "Matteo";
 
         mainWindow = new MainWindow(null);
 
@@ -30,11 +30,14 @@ public class Main {
         contacts = new Contacts(ai, repositoryPath);
         groups = new Groups(ai, repositoryPath);
 
+
+
+        callbackListener = new CallbackListener(mainWindow, contacts, groups);
+
         // TODO: 15.12.2017 try to read from files
         contacts.readContacts();
         groups.readGroups();
 
-        callbackListener = new CallbackListener(mainWindow, contacts, groups);
         protocol = new Protocol(username, callbackListener);
 
         protocol.hello();

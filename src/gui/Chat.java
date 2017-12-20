@@ -1,6 +1,7 @@
 package gui;
 
 import com.sun.deploy.util.ArrayUtil;
+import com.vdurmont.emoji.EmojiParser;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -372,7 +373,7 @@ public class Chat extends JPanel {
                 }
                 Font messageFont = new Font(MainWindow.FONT, 0, (int) (UI_SCALING * 10 / 2));
                 textArea = new JTextArea();
-                textArea.setText(formatTextForChat(message, messageFont, this.width - (int) (UI_SCALING * 8) - margin * 4));
+                textArea.setText(formatTextForChat(EmojiParser.parseToUnicode(message), messageFont, this.width - (int) (UI_SCALING * 8) - margin * 4));
                 textArea.setEditable(false);
                 textArea.setBackground(theme.getPrimaryColorLight());
                 textArea.setFont(messageFont);

@@ -26,13 +26,10 @@ public final class DataIOs {
      */
     public static void print(String path, Serializable data) throws DataRepository.DataException {
         validatePath(path);
-
         File file = new File(path);
-
         try {
             ObjectOutputStream oos = new ObjectOutputStream(
                     new FileOutputStream(file));
-
             oos.writeObject(data);
             oos.close();
         } catch (IOException e) {
