@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
 /**
  * @author Matteo Cosi
@@ -46,7 +47,25 @@ class ChatScrolling extends MouseAdapter {
             }
         }
         fromCords = toCords;
-
     }
 
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        System.out.println(e.getWheelRotation());
+        if (e.getWheelRotation() > 0) {
+            if (content.isRelocateValid(true)) {
+                for (int i = 0; i < content.chatMessages.size(); i++) {
+                    Chat.ChatContent.ChatMessage relocate = content.chatMessages.get(i);
+                    relocate.setLocation(relocate.getX(), relocate.getY() - e.getScrollAmount()*15);
+                }
+            }
+        } else {
+            if (content.isRelocateValid(false)) {
+                for (int i = 0; i < content.chatMessages.size(); i++) {
+                    Chat.ChatContent.ChatMessage relocate = content.chatMessages.get(i);
+                    relocate.setLocation(relocate.getX(), relocate.getY() +e.getScrollAmount()*15);
+                }
+            }
+        }
+    }
 }
