@@ -24,9 +24,12 @@ public class Tester {
 
         mainWindow.addNewChatById(1);
         mainWindow.addNewChatById(2);
-        mainWindow.setChatByUserId(2);
-
-
+        mainWindow.setChatByUserId(1);
+        ChatMessageBlueprint[] blueprints= new ChatMessageBlueprint[100];
+        for (int i = 0; i < 100; i++) {
+            blueprints[i]=new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test","lool","",Color.cyan.darker());
+        }
+        mainWindow.addMessages(blueprints,1);
 
         /*
         String[] fontFamilies = GraphicsEnvironment.
