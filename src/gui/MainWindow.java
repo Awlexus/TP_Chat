@@ -429,7 +429,6 @@ public class MainWindow extends JFrame {
                     for (int i = 0; i < onExitListeners.size(); i++) {
                         onExitListeners.get(i).onExitClicked();
                     }
-                    System.exit(0);
                 }
 
             });

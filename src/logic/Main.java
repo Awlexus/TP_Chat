@@ -49,6 +49,7 @@ public class Main {
             protocol.stop();
             contacts.printContacts();
             groups.printGroups();
+            System.exit(0);
         });
 
         mainWindow.addChatActionListener(new ChatActionListener() {
