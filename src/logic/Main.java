@@ -1,6 +1,7 @@
 package logic;
 
 import gui.*;
+import logic.storage.UserUtil;
 import protocol.Protocol;
 
 import java.awt.*;
@@ -17,7 +18,7 @@ public class Main {
     private static Protocol protocol;
 
     public static void main(String[] args) {
-        String username = "NichtAron";
+        String username = UserUtil.INSTANCE.getUsername();
 
         mainWindow = new MainWindow(null);
 
@@ -73,8 +74,10 @@ public class Main {
 
             @Override
             public void onEditTextChanged(TextChangedEvent e) {
-                if (!e.getText().isEmpty())
-                    protocol.sendTyping(true, contacts.getByID(callbackListener.currentChatId).getIp());
+                Contact contact = contacts.getByID(callbackListener.currentChatId);
+                if (!e.getText().isEmpty() && contact != null) {
+                    protocol.sendTyping(true, contact.getIp());
+                }
             }
         });
     }
