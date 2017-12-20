@@ -2,6 +2,8 @@ package gui;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
+
 /**
  * @author Matteo Cosi
  * @since 02.12.2017
@@ -9,14 +11,24 @@ import org.jetbrains.annotations.Nullable;
 public class ChatMessageBlueprint {
     Chat.chatMessageType type;
     String name;
-    Message message;
+    String message;
     String date;
+    Color color;
 
-    public ChatMessageBlueprint(Chat.chatMessageType type, String name, Message message, String date) {
+    public ChatMessageBlueprint(Chat.chatMessageType type, String name, String message, String date,Color color) {
         this.type = type;
         this.name = name;
         this.message = message;
         this.date = date;
+        this.color=color;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public Chat.chatMessageType getType() {
@@ -35,11 +47,11 @@ public class ChatMessageBlueprint {
         this.name = name;
     }
 
-    public Message getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(Message message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 

@@ -1,34 +1,34 @@
 package protocol
 
+import com.vdurmont.emoji.EmojiParser
 import java.lang.Math.abs
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
 
 /**
  * Created by Awlex on 01.12.2017.
  */
 
-fun DatagramPacket.getTextData(): String {
-    val index = data.indexOf(0)
-    return String(data).substring(0, if (index == -1) data.size else index)
-}
-
-fun DatagramPacket.getMessage(): String {
-    return getTextData().split(Regex("\\s+"), 2)[1]
-}
+fun DatagramPacket.getTextData(): String = String(this.data, this.offset, this.length)
 
 
-class Protocol(val port: Int = 4321, val userName: String = "") {
+fun DatagramPacket.getMessage(): String = getTextData().split(Regex("\\s+"), 2)[1]
+
+
+class Protocol(val port: Int = 4321, val userName: String = "", val callback: ProtocolCallback?) {
 
     private val BUFFERSIZE = 1024
 
     // Addresses
     private val localhost = InetAddress.getLocalHost()
-    private val broadcastAddress = NetworkInterface.getByInetAddress(localhost).interfaceAddresses[0].broadcast
+    val broadcastAddress = NetworkInterface.getByInetAddress(localhost).interfaceAddresses[0].broadcast
+        get
 
     // This socket is responsible for sending and receiving discovery packages
     private val socket = DatagramSocket(port)
@@ -37,17 +37,19 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
     private val discoveryThread = thread(start = true, isDaemon = true, name = "Discovery-Thread", block = {
 
         // This package serves as buffer
-        val packet = DatagramPacket(kotlin.ByteArray(BUFFERSIZE), BUFFERSIZE)
+        val byteArray = ByteArray(BUFFERSIZE)
 
         while (!Thread.interrupted()) {
 
             // Wait until we receive a package
+            val packet = DatagramPacket(byteArray, BUFFERSIZE)
             socket.receive(packet)
 
             // Extract Data
             val text = packet.getTextData()
 
             // Check whether this is a request or an answer
+
             when {
                 text.startsWith(HELLO) -> receiveHello(packet)
                 text.startsWith(WORLD) -> receiveWorld(packet)
@@ -65,11 +67,18 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
     })
 
     // Group creation
-    private var randId = -1
-    private var reply = false
-    private var acceptDeny = false
+    private var randId = AtomicInteger(-1)
+    private var reply = AtomicBoolean(false)
+    private var acceptDeny = AtomicBoolean(false)
 
     private fun receiveHello(packet: DatagramPacket) {
+
+        if (packet.address.hostAddress == localhost.hostAddress)
+            return
+
+        val username = packet.getMessage()
+        println("Hello from $username at ${packet.address.hostAddress}")
+
         // Set reply text
         packet.data = "$WORLD $userName".toByteArray()
 
@@ -77,43 +86,57 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         socket.send(packet)
 
         // TODO: Save Ip and username
+        callback?.hello(packet, username)
     }
 
     private fun receiveWorld(packet: DatagramPacket) {
-        println("Made a new friend called ${packet.getMessage()} at ${packet.address.hostAddress}")
+        val username = packet.getMessage()
+        callback?.world(packet, username)
     }
 
     private fun receiveGoodbye(packet: DatagramPacket) {
         // Goodbye (。･∀･)ﾉ゛
-        println("Goodbye ${packet.address.hostAddress}")
+        if (packet.address.hostAddress != localhost.hostAddress)
+            callback?.goodbye(packet)
     }
 
     private fun receiveTyping(packet: DatagramPacket) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        callback?.typing(packet, packet.getMessage().toBoolean())
     }
 
     private fun receiveMessage(packet: DatagramPacket) {
-        var message = packet.getTextData()
-        message = message.substring(message.indexOf(' '))
-        println("${packet.address.hostAddress}: $message")
+        val message = EmojiParser.parseToUnicode(packet.getMessage())
+        callback?.message(packet, message)
     }
 
     private fun receiveGroupExistsGroup(packet: DatagramPacket) {
-        println("Request for creating a group with ID ${packet.getMessage()} by ${packet.address.hostAddress}")
+        val id = packet.getMessage()
+        if (callback?.existsGroupWithId(packet, id.toInt()) == true)
+            send("$GROUP_DENYGROUP $id")
     }
 
     private fun receiveGroupCreateGroup(packet: DatagramPacket) {
-        println("group with ID ${packet.getMessage().split(" ")[0]} created by ${packet.address.hostAddress}")
-        println("Members: ${packet.getMessage().split(Regex("\\s+"), 2)[1]}")
+        val data = packet.getMessage().split(Regex("\\s+"))
+        val id = data[0]
+        val members = Array<InetAddress>(data.size - 1, { index -> InetAddress.getByName(data[index + 1]) })
+
+        callback?.createGroup(packet, id.toInt(), members)
     }
 
     private fun receiveGroupDenyGroup(packet: DatagramPacket) {
-        if (acceptDeny)
-            reply = false
+        if (acceptDeny.get() && packet.getMessage().toInt() == randId.get()) {
+            reply.set(false)
+            discoveryThread.interrupt()
+        }
+        callback?.denyGroup(packet)
     }
 
     private fun receiveGroupMessage(packet: DatagramPacket) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val data = packet.getMessage().split(Regex("\\s+"), 2)
+        val groupId = data[0]
+        val message = data[1]
+
+        callback?.groupMessage(packet, groupId.toInt(), message)
     }
 
     /**
@@ -142,19 +165,21 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
 
         do {
             // Reset State
-            reply = false
-            acceptDeny = false
+            reply.set(false)
 
             // Generate Random number
-            randId = abs(rand.nextInt() % Short.MAX_VALUE)
+            randId.set(abs(rand.nextInt() % Short.MAX_VALUE))
 
             // Ask if a group this ID is known
-            acceptDeny = true
+            acceptDeny.set(true)
             send("EG $randId", broadcastAddress)
 
             // Wait for replies
-            Thread.sleep(500)
-        } while (reply)
+            try {
+                Thread.sleep(500)
+            } catch (ignored: InterruptedException) {
+            }
+        } while (reply.get())
 
         // Generate message
         val text = "CG $randId ${
@@ -165,6 +190,7 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
         others.forEach {
             send(text, it)
         }
+        acceptDeny.set(false)
     }
 
     /**
@@ -176,20 +202,34 @@ class Protocol(val port: Int = 4321, val userName: String = "") {
             send(text, ip)
     }
 
+    /**
+     * Send whether the client is typing
+     */
+    fun sendTyping(typing: Boolean, ip: InetAddress) {
+        send("$TYPING $typing ", ip)
+    }
 
     /**
      * Send a text to a IP-Adress
      */
     fun send(text: String, ip: InetAddress = broadcastAddress) {
-        socket.send(DatagramPacket(text.toByteArray(), text.length, ip, port))
+        socket.send(DatagramPacket(text.toByteArray(), text.toByteArray().size, ip, port))
     }
 
     /**
      * Stops the auto-discovery protocol and broadcasts a Goodbye
      */
     fun stop() {
-        socket.send(DatagramPacket(GOODBYE.toByteArray(), GOODBYE.length, broadcastAddress, port))
         discoveryThread.interrupt()
+        socket.send(DatagramPacket(GOODBYE.toByteArray(), GOODBYE.length, broadcastAddress, port))
+        try {
+            socket.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
+    constructor(userName: String) : this(4321, userName, null)
+
+    constructor(userName: String, protocolCallback: ProtocolCallback) : this(4321, userName, protocolCallback)
 }

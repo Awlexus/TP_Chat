@@ -10,10 +10,10 @@ public class Settings {
     Theme theme;
     String font;
 
-    public Settings(double uiScaling, double topScaling, Theme theme, String font) {
+    public Settings(double uiScaling, double topScaling, Theme.Themes theme, String font) {
         this.uiScaling = uiScaling;
         this.topScaling = topScaling;
-        this.theme = theme;
+        this.theme = new Theme(theme);
         this.font = font;
     }
 
@@ -47,5 +47,18 @@ public class Settings {
 
     public void setFont(String font) {
         this.font = font;
+    }
+
+    @Override
+    public String toString() {
+        return "Settings: " +"\n"+
+                "\tUIScaling:" +"\n"+
+                "\t\t"+uiScaling+"\n"+
+                "\tTopScaling:" +"\n"+
+                "\t\t"+topScaling+ "\n"+
+                "\ttheme:" +"\n"+
+                "\t\t"+theme+"\n"+
+                "\tfont:" +"\n"+
+                "\t\t"+font;
     }
 }

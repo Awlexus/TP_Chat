@@ -6,6 +6,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import static gui.MainWindow.UI_SCALING;
+import static gui.MainWindow.theme;
+
 /**
  * @author Matteo Cosi
  * @since 30.11.2017
@@ -18,16 +21,15 @@ class Contacts extends JPanel {
     ArrayList<Contact> contactArrayList = null;
 
 
-
     ArrayList<OnContactClickedListener> onContactClickedListener;
 
 
     Contacts() {
         contactArrayList = new ArrayList<>();
         onContactClickedListener = new ArrayList<>();
-        setBackground(MainWindow.theme.getPrimaryColorLight());
+        setBackground(MainWindow.theme.getPrimaryColorDark());
         setBorder(BorderFactory.createMatteBorder(
-                0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+                0, (int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
 
     }
 
@@ -51,22 +53,22 @@ class Contacts extends JPanel {
         return ret;
     }
 
-    public void addContact(String name, String lastMessage, int id) {
-        Contact c = new Contact(name, lastMessage, getWidth(), getWidth() / 3, id);
+    public void addContact(String name, String lastMessage, int id, Color color) {
+        Contact c = new Contact(name, lastMessage, getWidth(), getWidth() / 3, id, color);
         c.setLocation(0, (getWidth() / 3) * contactArrayList.size());
-        ContactScrolling scrolling=new ContactScrolling(c,this);
+        ContactScrolling scrolling = new ContactScrolling(c, this);
         c.addMouseListener(scrolling);
         c.addMouseMotionListener(scrolling);
         contactArrayList.add(c);
         this.add(c);
     }
 
-    public void addContact(String name, String lastMessage) {
-        int id=contactArrayList.size();
-        while (alreadyExistsContactId(id)){
+    public void addContact(String name, String lastMessage, Color color) {
+        int id = contactArrayList.size();
+        while (alreadyExistsContactId(id)) {
             id++;
         }
-        this.addContact(name, lastMessage,id);
+        this.addContact(name, lastMessage, id, color);
     }
 
     public ArrayList<Contact> getContactArrayList() {
@@ -89,17 +91,44 @@ class Contacts extends JPanel {
         return true;
     }
 
+    public void setContactWriting(int id) {
+        for (Contact contact : contactArrayList) {
+            if (contact.getId() == id)
+                contact.setContactWriting();
+        }
+    }
+
+    public void removeContactWriting(int id) {
+        for (Contact contact : contactArrayList) {
+            if (contact.getId() == id)
+                contact.removeContactWriting();
+        }
+    }
+
+    public void toggleContactWriting(int id) {
+        for (Contact contact : contactArrayList) {
+            if (contact.getId() == id)
+                contact.toggleContactWriting();
+        }
+    }
+    public void setLastMessageText(String text,int id) {
+        for (Contact contact : contactArrayList) {
+            if (contact.getId() == id)
+                contact.setLastMessageText(text);
+        }
+    }
+
     public void removeContact(int id) {
-        boolean found=false;
+        boolean found = false;
         for (int i = 0; i < contactArrayList.size(); i++) {
             Contact c = contactArrayList.get(i);
-            if(found){
-                c.setLocation(c.getX(),c.getY()-c.getHeight());
+            if (found) {
+                c.setLocation(c.getX(), c.getY() - c.getHeight());
             }
-            if(c.getId()==id){
+            if (c.getId() == id) {
                 contactArrayList.remove(i);
                 this.remove(c);
-                found=true;
+                found = true;
                 i--;
             }
         }
@@ -115,13 +144,23 @@ class Contacts extends JPanel {
         int height;
         int id;
         boolean isSelected = false;
+        Color nameColor = theme.getAccentColor();
+        boolean isWriting = false;
 
-        public Contact(String name, String lastMessage, int width, int height, int id) {
+        public Contact(String name, String lastMessage, int width, int height, int id, Color color) {
             this.id = id;
+            if (id <= 0) {
+                throw new RuntimeException("ID VON KONTAKT KLEINER 0");
+            }
             this.name = new JLabel(name);
             if (lastMessage.length() > 20) {
                 lastMessage = lastMessage.substring(0, 16) + "...";
             }
+            setBorder(BorderFactory.createMatteBorder(
+                    0, (int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
+            if (color != null)
+                this.nameColor = color;
+
             this.lastMessage = new JLabel(lastMessage);
             this.width = width;
             this.height = height;
@@ -131,17 +170,17 @@ class Contacts extends JPanel {
         }
 
         private void setupContactUI() {
-            setBorder(BorderFactory.createMatteBorder(
-                    0, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, (int) MainWindow.UI_SCALING, MainWindow.theme.getPrimaryColorDark()));
             this.setBackground(MainWindow.theme.getPrimaryColorLight());
+
+
             name.setFont(new Font(MainWindow.FONT, 0, height / 2));
             name.setSize(name.getPreferredSize());
-            name.setLocation((int) (MainWindow.UI_SCALING * 2), 0);
+            name.setLocation((int) (UI_SCALING * 2), 0);
             name.setForeground(Color.BLACK);
 
             lastMessage.setFont(new Font(MainWindow.FONT, 0, height / 4));
             lastMessage.setSize(lastMessage.getPreferredSize());
-            lastMessage.setLocation((int) (MainWindow.UI_SCALING * 6), name.getHeight());
+            lastMessage.setLocation((int) (UI_SCALING * 6), name.getHeight());
             lastMessage.setForeground(MainWindow.theme.getPrimaryColor());
 
             arrow = new JLabel(">");
@@ -157,6 +196,37 @@ class Contacts extends JPanel {
             this.add(arrow);
         }
 
+        public void setContactWriting() {
+            isWriting = true;
+            updateWriting();
+        }
+
+        public void removeContactWriting() {
+            isWriting = false;
+            updateWriting();
+        }
+
+        public void toggleContactWriting() {
+            isWriting = !isWriting;
+            updateWriting();
+        }
+
+        public void updateWriting() {
+            if (isWriting) {
+                lastMessage.setForeground(Color.GREEN);
+                lastMessage.setText("Schreibt...");
+            } else {
+                lastMessage.setForeground(theme.getPrimaryColor());
+                lastMessage.setText("");
+            }
+            repaint();
+        }
+
+        public void setLastMessageText(String text){
+            lastMessage.setText(text);
+            repaint();
+        }
+
         public void setSelected(boolean selected) {
             isSelected = selected;
         }
@@ -167,6 +237,14 @@ class Contacts extends JPanel {
 
         public String getName() {
             return this.name.getText();
+        }
+
+        public void removeColorName() {
+            name.setForeground(Color.black);
+        }
+
+        public void colorName() {
+            name.setForeground(nameColor);
         }
     }
 }
