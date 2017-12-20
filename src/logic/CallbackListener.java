@@ -57,8 +57,10 @@ public class CallbackListener implements ProtocolCallback {
     public void goodbye(@NotNull DatagramPacket packet) {
         Contact contact = contacts.getByIP(packet.getAddress());
         // debug
-        if (contact == null) throw new RuntimeException();
-        mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.INFO, "ignored parameter",
+        if (contact == null) {
+            System.out.println("contact = null");
+            return;
+        }mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.INFO, "ignored parameter",
                 contact.getUsername() + " has left the room.", "",
                 contact.getColor()), contact.getId());
         mainWindow.setLastMessageText("is now offline", contact.getId());
