@@ -37,9 +37,7 @@ public class CallbackListener implements ProtocolCallback {
         mainWindow.addContact(contact.getUsername(), "is now online", contact.getColor(), contact.getId());
         mainWindow.addNewChatById(contact.getId());
 
-        for (ChatMessageBlueprint chatMessageBlueprint : contact.getMessages()) {
-            mainWindow.addMessage(chatMessageBlueprint, contact.getId());
-        }
+        mainWindow.addMessages(((ChatMessageBlueprint[]) contact.getMessages().toArray()), contact.getId());
     }
 
     @Override
@@ -51,9 +49,7 @@ public class CallbackListener implements ProtocolCallback {
         mainWindow.addNewChatById(contact.getId());
         mainWindow.addContact(contact.getUsername(), "is now online", contact.getColor(), contact.getId());
 
-        for (ChatMessageBlueprint chatMessageBlueprint : contact.getMessages()) {
-            mainWindow.addMessage(chatMessageBlueprint, contact.getId());
-        }
+        mainWindow.addMessages(((ChatMessageBlueprint[]) contact.getMessages().toArray()), contact.getId());
     }
 
     @Override
