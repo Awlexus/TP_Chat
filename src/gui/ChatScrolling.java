@@ -51,7 +51,6 @@ class ChatScrolling extends MouseAdapter {
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        System.out.println(e.getWheelRotation());
         if (e.getWheelRotation() > 0) {
             if (content.isRelocateValid(true)) {
                 for (int i = 0; i < content.chatMessages.size(); i++) {

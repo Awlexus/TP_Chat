@@ -223,6 +223,7 @@ class Contacts extends JPanel {
         }
 
         public void setLastMessageText(String text){
+            lastMessage.setForeground(theme.getPrimaryColor());
             lastMessage.setText(text);
             repaint();
         }
