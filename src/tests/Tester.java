@@ -1,13 +1,9 @@
 package tests;
 
 
-import com.vdurmont.emoji.Emoji;
-import com.vdurmont.emoji.EmojiManager;
 import com.vdurmont.emoji.EmojiParser;
-import gui.*;
 
 import java.awt.*;
-import java.util.Collection;
 
 /**
  * @author Matteo Cosi
@@ -15,7 +11,7 @@ import java.util.Collection;
  */
 public class Tester {
     public static void main(String[] args) {
-
+/*
         MainWindow mainWindow = new MainWindow(null);
 
         mainWindow.addContact("Test1", "hallo1fffff", Color.BLUE, 1);
@@ -46,8 +42,7 @@ public class Tester {
                 e.printStackTrace();
             }
         }
-
-        /*
+*/
         String[] fontFamilies = GraphicsEnvironment.
                 getLocalGraphicsEnvironment().
                 getAvailableFontFamilyNames();
@@ -57,7 +52,6 @@ public class Tester {
                 System.out.println(font.getFontName());
             }
         }
-/*
 
 
 
@@ -65,6 +59,5 @@ public class Tester {
         String result = EmojiParser.parseToUnicode(str);
 
         System.out.println(result);
-*/
     }
 }

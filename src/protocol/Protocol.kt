@@ -233,10 +233,10 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
     fun addToGroup(ip: InetAddress, groupId: Int) {
         val text = "$ADD_TO_GROUP $groupId ${ip.hostAddress}"
-        val idsFromGroup = callback?.getIpsFromGroup(groupId)
-        if (idsFromGroup != null)
-            for (ip in idsFromGroup)
-                send(text, ip)
+        val ipsFromGroup = callback?.getIpsFromGroup(groupId)
+        if (ipsFromGroup != null)
+            for (memberIp in ipsFromGroup)
+                send(text, memberIp)
     }
 
     constructor(userName: String) : this(4321, userName, null)
