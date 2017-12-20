@@ -31,8 +31,7 @@ public class CallbackListener implements ProtocolCallback {
 
     @Override
     public void hello(@NotNull DatagramPacket packet, @NotNull String username) {
-        Contact contact = contacts.createContact(packet.getAddress(), username,
-                new Color((int)(Math.random() * 0x1000000)));
+        Contact contact = contacts.createContact(packet.getAddress(), username, UserColors.getRandomColor());
         // debug
         if (contact == null) throw new RuntimeException();
         mainWindow.addContact(contact.getUsername(), "is now online", contact.getColor(), contact.getId());
@@ -46,7 +45,7 @@ public class CallbackListener implements ProtocolCallback {
     @Override
     public void world(@NotNull DatagramPacket packet, @NotNull String username) {
         Contact contact = contacts.createContact(packet.getAddress(), username,
-                new Color((int)(Math.random() * 0x1000000)));
+                UserColors.getRandomColor());
         // debug
         if (contact == null) throw new RuntimeException();
         mainWindow.addNewChatById(contact.getId());
@@ -60,12 +59,12 @@ public class CallbackListener implements ProtocolCallback {
     @Override
     public void goodbye(@NotNull DatagramPacket packet) {
         Contact contact = contacts.getByIP(packet.getAddress());
-        // TODO: 19.12.2017 debug output
-        if (contact == null)
-            System.out.println("NULL_goodbye");
+        // debug
+        if (contact == null) throw new RuntimeException();
         mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.INFO, "ignored parameter",
                 contact.getUsername()+" has left the room.", "",
                 contact.getColor()), contact.getId());
+        mainWindow.setLastMessageText("is now offline", contact.getId());
     }
 
     @Override

@@ -1,13 +1,13 @@
-TODO: Save messages
+DONE TODO: Save messages
 
-TODO: 15.12.2017 try to read from files before creating
+DONE TODO: 15.12.2017 try to read from files before creating
     Contacts
     Groups
     Older Messages
 
 DONE TODO: don't react to hello, world or goodbye from one oneself (maybe also messages?)
 
-TODO: 15.12.2017 printing might throw an exception when File doesn't exist yet (Exception on delete)
+DONE TODO: 15.12.2017 printing might throw an exception when File doesn't exist yet (Exception on delete)
 
 DISMISSED TODO: 15.12.2017 GUI is missing an option to remove a single message, clearing the chat and re-adding most messages also has visible effects
 
@@ -21,6 +21,6 @@ TODO: Callback: existsGroupWithID
 
 TODO: Maybe a groupID to chatID translation table is needed
 
-TODO: send "typing"
+DONE TODO: send "typing"
 
-TODO: Protocol.typing is missing
+DONE TODO: Protocol.typing is missing

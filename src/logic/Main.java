@@ -1,7 +1,6 @@
 package logic;
 
 import gui.*;
-import logic.storage.DataRepository;
 import protocol.Protocol;
 
 import java.awt.*;
