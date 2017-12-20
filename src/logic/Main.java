@@ -17,7 +17,7 @@ public class Main {
     private static Protocol protocol;
 
     public static void main(String[] args) {
-        String username = "NichtAron";
+        String username = "Matteo";
 
         mainWindow = new MainWindow(null);
 

@@ -31,6 +31,22 @@ public class Tester {
         }
         mainWindow.addMessages(blueprints,1);
 
+        while (true){
+            mainWindow.setContactWriting(1);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            mainWindow.removeContactWriting(1);
+            mainWindow.setLastMessageText("hallo",1);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         /*
         String[] fontFamilies = GraphicsEnvironment.
                 getLocalGraphicsEnvironment().
