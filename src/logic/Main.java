@@ -5,6 +5,7 @@ import logic.storage.DataRepository;
 import protocol.Protocol;
 
 import java.awt.*;
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,19 +18,24 @@ public class Main {
     private static Protocol protocol;
 
     public static void main(String[] args) {
+        String username = "Maxi";
+
         mainWindow = new MainWindow(null);
 
         AtomicInteger ai = new AtomicInteger(0);
-        DataRepository dataRepository = new DataRepository(Paths.get("").toAbsolutePath().toString());
-        contacts = new Contacts(ai, dataRepository);
-        groups = new Groups(ai, dataRepository);
+
+        String repositoryPath = Paths.get("").toAbsolutePath().toString()+"\\savefiles";
+        new File(repositoryPath).mkdir();
+
+        contacts = new Contacts(ai, repositoryPath);
+        groups = new Groups(ai, repositoryPath);
 
         // TODO: 15.12.2017 try to read from files
         contacts.readContacts();
         groups.readGroups();
 
         callbackListener = new CallbackListener(mainWindow, contacts, groups);
-        protocol = new Protocol("Me", callbackListener);
+        protocol = new Protocol(username, callbackListener);
 
         protocol.hello();
 
@@ -39,9 +45,7 @@ public class Main {
         });
 
         mainWindow.addOnExitListener(() -> {
-            System.out.println("Pre stop");
             protocol.stop();
-            System.out.println("after stop");
             contacts.printContacts();
             groups.printGroups();
         });
@@ -54,11 +58,11 @@ public class Main {
                 mainWindow.addMessage(
                         new ChatMessageBlueprint(
                                 Chat.chatMessageType.TO,
-                                "Me", e.getMessage(),
+                                username, e.getMessage(),
                                 null, Color.GREEN), 1);
                 e.getTextField().setText("");
-                //protocol.send(e.getMessage(), contacts.getByID(callbackListener.currentChatId).getIp());
                 protocol.message(e.getMessage(), contacts.getByID(callbackListener.currentChatId).getIp());
+                // TODO: 20.12.2017 send typing = false
             }
 
             @Override

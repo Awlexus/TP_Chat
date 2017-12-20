@@ -5,8 +5,6 @@ TODO: 15.12.2017 try to read from files before creating
     Groups
     Older Messages
 
-TODO: send "typing"
-
 DONE TODO: don't react to hello, world or goodbye from one oneself (maybe also messages?)
 
 TODO: 15.12.2017 printing might throw an exception when File doesn't exist yet (Exception on delete)
@@ -20,3 +18,9 @@ TODO: Testing, testing, testing...
 TODO: GroupMessage can arrive before knowing a group, when the message has already been sent
 
 TODO: Callback: existsGroupWithID
+
+TODO: Maybe a groupID to chatID translation table is needed
+
+TODO: send "typing"
+
+TODO: Protocol.typing is missing

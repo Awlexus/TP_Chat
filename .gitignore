@@ -31,6 +31,7 @@ cmake-build-debug/
 
 ## File-based project format:
 *.iws
+*.ser
 
 ## Plugin-specific files:
 
