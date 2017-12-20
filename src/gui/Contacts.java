@@ -1,5 +1,7 @@
 package gui;
 
+import com.vdurmont.emoji.EmojiParser;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -224,7 +226,7 @@ class Contacts extends JPanel {
 
         public void setLastMessageText(String text){
             lastMessage.setForeground(theme.getPrimaryColor());
-            lastMessage.setText(text);
+            lastMessage.setText(EmojiParser.parseToUnicode(text));
             repaint();
         }
 
