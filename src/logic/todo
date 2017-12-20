@@ -24,3 +24,5 @@ TODO: Maybe a groupID to chatID translation table is needed
 DONE TODO: send "typing"
 
 DONE TODO: Protocol.typing is missing
+
+TODO Sending a Typing throws an Exception when no chat is selected yet

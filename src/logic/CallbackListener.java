@@ -6,7 +6,6 @@ import gui.MainWindow;
 import org.jetbrains.annotations.NotNull;
 import protocol.ProtocolCallback;
 
-import java.awt.*;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -37,7 +36,8 @@ public class CallbackListener implements ProtocolCallback {
         mainWindow.addContact(contact.getUsername(), "is now online", contact.getColor(), contact.getId());
         mainWindow.addNewChatById(contact.getId());
 
-        mainWindow.addMessages(((ChatMessageBlueprint[]) contact.getMessages().toArray()), contact.getId());
+        if (!contact.getMessages().isEmpty())
+            mainWindow.addMessages(((ChatMessageBlueprint[]) contact.getMessages().toArray()), contact.getId());
     }
 
     @Override
@@ -49,8 +49,8 @@ public class CallbackListener implements ProtocolCallback {
         mainWindow.addNewChatById(contact.getId());
         mainWindow.addContact(contact.getUsername(), "is now online", contact.getColor(), contact.getId());
 
-        mainWindow.addMessages(((ChatMessageBlueprint[]) contact.getMessages().toArray()), contact.getId());
-    }
+        if (!contact.getMessages().isEmpty())
+            mainWindow.addMessages(((ChatMessageBlueprint[]) contact.getMessages().toArray()), contact.getId());    }
 
     @Override
     public void goodbye(@NotNull DatagramPacket packet) {

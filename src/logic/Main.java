@@ -17,7 +17,7 @@ public class Main {
     private static Protocol protocol;
 
     public static void main(String[] args) {
-        String username = "Maxi";
+        String username = "NichtAron";
 
         mainWindow = new MainWindow(null);
 
@@ -53,7 +53,7 @@ public class Main {
         mainWindow.addChatActionListener(new ChatActionListener() {
             @Override
             public void onSendPressed(SendEvent e) {
-                if (e.getMessage().equals("") || callbackListener.currentChatId == -1)
+                if (e.getMessage().isEmpty() || callbackListener.currentChatId == -1)
                     return;
 
                 Contact contact = contacts.getByID(callbackListener.currentChatId);
@@ -73,7 +73,7 @@ public class Main {
 
             @Override
             public void onEditTextChanged(TextChangedEvent e) {
-                if (!e.getText().equals(""))
+                if (!e.getText().isEmpty())
                     protocol.sendTyping(true, contacts.getByID(callbackListener.currentChatId).getIp());
             }
         });
