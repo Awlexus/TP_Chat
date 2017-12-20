@@ -208,7 +208,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
      * Send whether the client is typing
      */
     fun sendTyping(typing: Boolean, ip: InetAddress) {
-        send("$TYPING $typing ", ip)
+        send("$TYPING $typing", ip)
     }
 
     /**
