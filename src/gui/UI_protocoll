@@ -36,6 +36,12 @@ HOW TO USE MainWindow
     addContact(name, lastMessage,id) -> Add a contact to the contact list WARNING: id >0
     clearContacts(); -> removes all contacts
     removeContact(id); -> removes a specific contact
+    setContactWriting(int id)
+    removeContactWriting(int id)
+    toggleContactWriting(int id)
+    setLastMessageText(String text,int id)
+
+
 
     addMessage() -> add one text at the bottom of the screen
     addMessages() -> add N messages at the bottom of the screen WITHOUT repainting each time.

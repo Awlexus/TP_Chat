@@ -96,7 +96,8 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
     private fun receiveGoodbye(packet: DatagramPacket) {
         // Goodbye (。･∀･)ﾉ゛
-        callback?.goodbye(packet)
+        if (packet.address.hostAddress != localhost.hostAddress)
+            callback?.goodbye(packet)
     }
 
     private fun receiveTyping(packet: DatagramPacket) {
@@ -219,8 +220,13 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
      * Stops the auto-discovery protocol and broadcasts a Goodbye
      */
     fun stop() {
-        socket.send(DatagramPacket(GOODBYE.toByteArray(), GOODBYE.length, broadcastAddress, port))
         discoveryThread.interrupt()
+        socket.send(DatagramPacket(GOODBYE.toByteArray(), GOODBYE.length, broadcastAddress, port))
+        try {
+            socket.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     constructor(userName: String) : this(4321, userName, null)

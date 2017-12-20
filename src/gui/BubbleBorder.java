@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
 
+import static gui.MainWindow.UI_SCALING;
+
 /**
  * @author Matteo Cosi
  * @since 01.12.2017
@@ -83,18 +85,18 @@ class BubbleBorder extends AbstractBorder {
              bubble = new RoundRectangle2D.Double(
                     strokePad +pointerSize,
                     strokePad,
-                    width -(thickness + pointerSize),
+                    width -(thickness + pointerSize)-2,
                     height,
                     radii,
                     radii);
-            pointer.addPoint(pointerSize+strokePad,
-                    (int) (2+MainWindow.UI_SCALING*3));
+            pointer.addPoint((int) (pointerSize+strokePad),
+                    (int) (2+ UI_SCALING*3));
             // right point
-            pointer.addPoint(pointerSize+strokePad,
-                    (int) (10+MainWindow.UI_SCALING*4));
+            pointer.addPoint((int) (pointerSize+strokePad),
+                    (int) (10+ UI_SCALING*4));
             // bottom point
-            pointer.addPoint(0,
-                    (int) (2+MainWindow.UI_SCALING*3));
+            pointer.addPoint((int) (0+UI_SCALING),
+                    (int) (2+ UI_SCALING*3));
         } else if (type == Chat.chatMessageType.TO) {
             bubble = new RoundRectangle2D.Double(
                     strokePad,
@@ -104,13 +106,13 @@ class BubbleBorder extends AbstractBorder {
                     radii,
                     radii);
             pointer.addPoint((int) bubble.getWidth(),
-                    (int) (2+MainWindow.UI_SCALING*3));
+                    (int) (2+ UI_SCALING*3));
             // right point
             pointer.addPoint((int) bubble.getWidth(),
-                    (int) (10+MainWindow.UI_SCALING*4));
+                    (int) (10+ UI_SCALING*4));
             // bottom point
-            pointer.addPoint((int) bubble.getWidth()+pointerSize,
-                    (int) (2+MainWindow.UI_SCALING*3));
+            pointer.addPoint((int) bubble.getWidth()+pointerSize-2,
+                    (int) (2+ UI_SCALING*3));
         }else{
              bubble = new RoundRectangle2D.Double(
                     strokePad ,

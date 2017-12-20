@@ -290,6 +290,21 @@ public class MainWindow extends JFrame {
     }
 
 
+    public void setContactWriting(int id){
+        contacts.setContactWriting(id);
+    }
+
+    public void removeContactWriting(int id){
+        contacts.removeContactWriting(id);
+    }
+
+    public void toggleContactWriting(int id){
+        contacts.toggleContactWriting(id);
+    }
+    public void setLastMessageText(String text,int id){
+        contacts.setLastMessageText(text,id);
+    }
+
     /**
      * adds a new text at the bottom of the screen
      *
@@ -406,9 +421,8 @@ public class MainWindow extends JFrame {
                 }
 
             });
-
-
             this.settings = new JLabel(EmojiParser.parseToUnicode(":gear:"));
+            /*
             int settingsFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT / 4) * TOP_SCALE * UI_SCALING);
             this.settings.setFont(new Font(FONT, Font.PLAIN, settingsFontSize));
             this.settings.setLocation((int) (exit.getX() - UI_SCALING * 4 - 20 - settingsFontSize), (int) +UI_SCALING * 3);
@@ -430,7 +444,7 @@ public class MainWindow extends JFrame {
                 }
 
             });
-
+*/
             if (theme.getDark()) {
                 this.exit.setForeground(Color.white);
                 this.title.setForeground(Color.white);
