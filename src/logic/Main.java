@@ -18,23 +18,21 @@ public class Main {
     private static Protocol protocol;
 
     public static void main(String[] args) {
-        String username = "Matteo";
+        String username = "Maxi";
 
         mainWindow = new MainWindow(null);
 
         AtomicInteger ai = new AtomicInteger(0);
 
         String repositoryPath = Paths.get("").toAbsolutePath().toString()+"\\savefiles";
+        //noinspection ResultOfMethodCallIgnored
         new File(repositoryPath).mkdir();
 
         contacts = new Contacts(ai, repositoryPath);
         groups = new Groups(ai, repositoryPath);
 
-
-
         callbackListener = new CallbackListener(mainWindow, contacts, groups);
 
-        // TODO: 15.12.2017 try to read from files
         contacts.readContacts();
         groups.readGroups();
 
@@ -58,19 +56,26 @@ public class Main {
             public void onSendPressed(SendEvent e) {
                 if (e.getMessage().equals("") || callbackListener.currentChatId == -1)
                     return;
-                mainWindow.addMessage(
-                        new ChatMessageBlueprint(
-                                Chat.chatMessageType.TO,
-                                username, e.getMessage(),
-                                null, Color.GREEN), 1);
+
+                Contact contact = contacts.getByID(callbackListener.currentChatId);
+
+                ChatMessageBlueprint chatMessageBlueprint = new ChatMessageBlueprint(
+                        Chat.chatMessageType.TO,
+                        username, e.getMessage(),
+                        null, Color.GREEN);
+                mainWindow.addMessage(chatMessageBlueprint, contact.getId());
+                contact.getMessages().add(chatMessageBlueprint);
+
                 e.getTextField().setText("");
-                protocol.message(e.getMessage(), contacts.getByID(callbackListener.currentChatId).getIp());
-                // TODO: 20.12.2017 send typing = false
+                mainWindow.setLastMessageText(e.getMessage(), contact.getId());
+                protocol.sendTyping(false, contact.getIp());
+                protocol.message(e.getMessage(), contact.getIp());
             }
 
             @Override
             public void onEditTextChanged(TextChangedEvent e) {
-                // TODO: 15.12.2017 send "typing"
+                if (!e.getText().equals(""))
+                    protocol.sendTyping(true, contacts.getByID(callbackListener.currentChatId).getIp());
             }
         });
     }

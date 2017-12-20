@@ -35,9 +35,12 @@ public class CallbackListener implements ProtocolCallback {
                 new Color((int)(Math.random() * 0x1000000)));
         // debug
         if (contact == null) throw new RuntimeException();
-        mainWindow.addContact(contact.getUsername(), "added you", contact.getColor(), contact.getId());
+        mainWindow.addContact(contact.getUsername(), "is now online", contact.getColor(), contact.getId());
         mainWindow.addNewChatById(contact.getId());
-        System.out.println("Hello");
+
+        for (ChatMessageBlueprint chatMessageBlueprint : contact.getMessages()) {
+            mainWindow.addMessage(chatMessageBlueprint, contact.getId());
+        }
     }
 
     @Override
@@ -47,8 +50,11 @@ public class CallbackListener implements ProtocolCallback {
         // debug
         if (contact == null) throw new RuntimeException();
         mainWindow.addNewChatById(contact.getId());
-        mainWindow.addContact(contact.getUsername(), "added you", contact.getColor(), contact.getId());
-        System.out.println("World");
+        mainWindow.addContact(contact.getUsername(), "is now online", contact.getColor(), contact.getId());
+
+        for (ChatMessageBlueprint chatMessageBlueprint : contact.getMessages()) {
+            mainWindow.addMessage(chatMessageBlueprint, contact.getId());
+        }
     }
 
     @Override
@@ -60,13 +66,14 @@ public class CallbackListener implements ProtocolCallback {
         mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.INFO, "ignored parameter",
                 contact.getUsername()+" has left the room.", "",
                 contact.getColor()), contact.getId());
-        System.out.println("Goodbye");
     }
 
     @Override
     public void typing(@NotNull DatagramPacket packet, boolean typing) {
-        // TODO: 15.12.2017 GUI is missing an option to remove a single message, clearing the chat and re-adding most messages also has visible effects
-        System.out.println("Typing");
+        if (typing)
+            mainWindow.setContactWriting(contacts.getByIP(packet.getAddress()).getId());
+        else
+            mainWindow.removeContactWriting(contacts.getByIP(packet.getAddress()).getId());
     }
 
     @Override
@@ -74,12 +81,16 @@ public class CallbackListener implements ProtocolCallback {
         Contact contact = contacts.getByIP(packet.getAddress());
         if (contact == null) {
             System.out.println("Message from unknown contact received: " + packet.getAddress());
-        } else { mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,
-                contact.getUsername(),
-                message,
-                "", contact.getColor()), contact.getId());
+        } else {
+            ChatMessageBlueprint chatMessageBlueprint = new ChatMessageBlueprint(Chat.chatMessageType.FROM,
+                    contact.getUsername(),
+                    message, "", contact.getColor());
+
+            mainWindow.addMessage(chatMessageBlueprint, contact.getId());
+            mainWindow.setLastMessageText(message, contact.getId());
+
+            contact.getMessages().add(chatMessageBlueprint);
         }
-        System.out.println("Message");
     }
 
     @Override

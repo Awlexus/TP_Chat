@@ -62,7 +62,7 @@ class Contacts {
         while (parent.isUsedID(id))
             id = ai.incrementAndGet();
 
-        Contact newContact = new Contact(id, ip, username, color);
+        Contact newContact = new Contact(id, ip, username, color, new ArrayList<>());
         this.contactList.add(newContact);
 
         System.out.println(newContact);
