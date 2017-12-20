@@ -153,9 +153,9 @@ public class Chat extends JPanel {
                     for (int i = 0; i < chatActionListeners.size(); i++) {
                         chatActionListeners.get(i).onEditTextChanged(new TextChangedEvent(textField));
                     }
-                    if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                         for (int i = 0; i < chatActionListeners.size(); i++) {
-                            chatActionListeners.get(i).onSendPressed(new SendEvent(textField,textField.getText(),textField));
+                            chatActionListeners.get(i).onSendPressed(new SendEvent(textField, textField.getText(), textField));
                         }
                     }
                 }
@@ -213,7 +213,7 @@ public class Chat extends JPanel {
 
 
         ArrayList<ChatMessage> chatMessages;
-        JProgressBar chatMessagesLoadingProgress= new JProgressBar();
+        JProgressBar chatMessagesLoadingProgress = new JProgressBar();
 
 
         public ChatContent(int width, int height) {
@@ -380,8 +380,10 @@ public class Chat extends JPanel {
                 textArea.setFont(messageFont);
                 textArea.setSize(textArea.getPreferredSize());
                 if (type == chatMessageType.INFO) {
-                    textArea.setLocation(margin * 6, margin * 2);
+                    textArea.setLocation(width / 2 - textArea.getSize().width / 2, (int) (margin * 2 + UI_SCALING * 2));
                     textArea.setForeground(Color.GRAY);
+                    textArea.setAlignmentX(CENTER_ALIGNMENT);
+                    textArea.setForeground(theme.getAccentColor());
                 } else
                     textArea.setLocation(nameLabel.getX() + margin * 2, nameLabel.getY() + nameLabel.getHeight() + margin);
                 ChatScrolling scrolling = new ChatScrolling(ChatContent.this);
@@ -393,17 +395,11 @@ public class Chat extends JPanel {
                 //TODO 7 positioning
 
                 //calc Height from text length
-                height = textArea.getLocation().y + textArea.getHeight() + timestamp.getHeight();
+                height = textArea.getLocation().y + textArea.getHeight();
                 this.setSize(width, height);
 
-                Color borderColor;
-                switch (this.getType()) {
-                    case INFO:
-                        borderColor = theme.getAccentColor();
-                        break;
-                    default:
-                        borderColor = theme.getPrimaryColorDark();
-                }
+                Color borderColor = theme.getPrimaryColorDark();
+
 
                 this.setBackground(theme.getPrimaryColorLight());
                 this.setOpaque(false);

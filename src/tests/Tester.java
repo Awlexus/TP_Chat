@@ -2,6 +2,9 @@ package tests;
 
 
 import com.vdurmont.emoji.EmojiParser;
+import gui.Chat;
+import gui.ChatMessageBlueprint;
+import gui.MainWindow;
 
 import java.awt.*;
 
@@ -11,7 +14,7 @@ import java.awt.*;
  */
 public class Tester {
     public static void main(String[] args) {
-/*
+
         MainWindow mainWindow = new MainWindow(null);
 
         mainWindow.addContact("Test1", "hallo1fffff", Color.BLUE, 1);
@@ -23,7 +26,7 @@ public class Tester {
         mainWindow.setChatByUserId(1);
         ChatMessageBlueprint[] blueprints= new ChatMessageBlueprint[100];
         for (int i = 0; i < 100; i++) {
-            blueprints[i]=new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test","lool","",Color.cyan.darker());
+            blueprints[i]=new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test","This is a info message","",Color.cyan.darker());
         }
         mainWindow.addMessages(blueprints,1);
 
@@ -42,7 +45,8 @@ public class Tester {
                 e.printStackTrace();
             }
         }
-*/
+
+/*
         String[] fontFamilies = GraphicsEnvironment.
                 getLocalGraphicsEnvironment().
                 getAvailableFontFamilyNames();
@@ -59,5 +63,6 @@ public class Tester {
         String result = EmojiParser.parseToUnicode(str);
 
         System.out.println(result);
+        */
     }
 }
