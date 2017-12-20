@@ -198,7 +198,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
      */
     fun sendGroupMessage(message: String, groupId: Int) {
         val text = "$GROUP_MESSAGE $groupId $message"
-        for (ip in arrayOf(localhost)) // TODO: replace with ids for groups
+        for (ip in callback?.getIdsFromGroup(groupId))
             send(text, ip)
     }
 
@@ -227,6 +227,12 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun addToGroup(ip: InetAddress, groupId: Int) {
+        val text = "$ADD_TO_GROUP $groupId ${ip.hostAddress}"
+        for (ip in callback?.getIdsFromGroup(groupId))
+            send(text, ip)
     }
 
     constructor(userName: String) : this(4321, userName, null)
