@@ -11,8 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 class Contacts {
 
-    // todo make private
-    public ArrayList<Contact> contactList = new ArrayList<>();
+    private ArrayList<Contact> contactList = new ArrayList<>();
 
     private final AtomicInteger ai;
     private CallbackListener parent;
