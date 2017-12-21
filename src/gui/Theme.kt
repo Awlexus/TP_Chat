@@ -26,7 +26,8 @@ data class Theme(var primaryColor: Color, var primaryColorDark: Color, var prima
         ULTRA_DARK(Color(0x303030), Color(0x000000), Color(0x888888), Color(0x29B6F6), true),
         DEEP_PURPLE(Color(0x673AB7), Color(0x512DA8), Color(0xB39DDB), Color(0xFFEB3B), true),
         GRAY_TEAL(Color(0x9E9E9E), Color(0x616161), Color(0xEEEEEE), Color(0x009688), true),
-        MILAN(Color(0x303030), Color(0x111111), Color(0xA0A0A0), Color(0xFF0000), true)
+        MILAN(Color(0x303030), Color(0x111111), Color(0xA0A0A0), Color(0xFF0000), true),
+        DARKBLUE(Color(0x1A237E), Color(0x3F51B5), Color(0xC5CAE9),Color(0xE8EAF6), true);
     }
 
     /**

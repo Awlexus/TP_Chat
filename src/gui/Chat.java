@@ -377,7 +377,9 @@ public class Chat extends JPanel {
                 this.message = message;
                 this.date = date;
                 this.type = type;
-                this.width = ChatContent.this.getWidth() * 3 / 5;
+
+                if (type != chatMessageType.INFO)
+                    this.width = ChatContent.this.getWidth() * 3 / 5;
                 this.setLayout(null);
 
                 if (color != null)
@@ -396,11 +398,19 @@ public class Chat extends JPanel {
                         nameLabel.setLocation((int) (UI_SCALING * 2), (int) (UI_SCALING * 2));
                 }
                 Font messageFont = new Font(MainWindow.FONT, 0, (int) (UI_SCALING * 10 / 2));
+
                 textArea = new JTextArea();
+                if(type == chatMessageType.INFO){
+                    this.width = (int) textArea.getFontMetrics(messageFont).getStringBounds(message, textArea.getGraphics()).getWidth()+margin*8+100;
+                    if(this.width>ChatContent.this.getWidth() * 3 / 5)
+                        this.width=ChatContent.this.getWidth() * 3 / 5;
+                }
+
                 textArea.setText(formatTextForChat(EmojiParser.parseToUnicode(message), messageFont, this.width - (int) (UI_SCALING * 8) - margin * 4));
                 textArea.setEditable(false);
-                textArea.setBackground(theme.getPrimaryColorLight());
+                textArea.setBackground(theme.getPrimaryColorLight().darker());
                 textArea.setFont(messageFont);
+
                 textArea.setSize(textArea.getPreferredSize());
                 if (type == chatMessageType.INFO) {
                     textArea.setLocation(width / 2 - textArea.getSize().width / 2, (int) (margin * 2 + UI_SCALING * 2));
@@ -435,12 +445,13 @@ public class Chat extends JPanel {
                 Color borderColor = theme.getPrimaryColorDark();
 
 
-                this.setBackground(theme.getPrimaryColorLight());
-                this.setOpaque(false);
+                this.setBackground(theme.getPrimaryColorLight().darker());
+                this.setOpaque(true);
 
-                AbstractBorder brdr = new BubbleBorder(this.type, borderColor, (int) (UI_SCALING), (int) (UI_SCALING * 2), (int) (UI_SCALING * 4));
-                this.setBorder(brdr);
-
+                if (type != chatMessageType.INFO) {
+                    AbstractBorder brdr = new BubbleBorder(this.type, borderColor, (int) (UI_SCALING), (int) (UI_SCALING * 2), (int) (UI_SCALING * 4));
+                    this.setBorder(brdr);
+                }
 
                 this.add(nameLabel);
                 this.add(textArea);

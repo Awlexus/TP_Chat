@@ -26,7 +26,7 @@ public class Tester {
         mainWindow.setChatByUserId(1);
         ChatMessageBlueprint[] blueprints= new ChatMessageBlueprint[100];
         for (int i = 0; i < 100; i++) {
-            blueprints[i]=new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Test","This is a info message","",Color.cyan.darker());
+            blueprints[i]=new ChatMessageBlueprint(Chat.chatMessageType.INFO,"Test","This is a info message","",Color.blue.darker());
         }
         mainWindow.addMessages(blueprints,1);
 

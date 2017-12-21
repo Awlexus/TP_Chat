@@ -48,7 +48,7 @@ public class MainWindow extends JFrame {
     /**
      * Theme for this GUI
      */
-    public static Theme theme = new Theme(Theme.Themes.MILAN);
+    public static Theme theme = new Theme(Theme.Themes.DARKBLUE);
 
     /**
      * Used to drag & drop the top bar
