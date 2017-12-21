@@ -153,9 +153,20 @@ public class Chat extends JPanel {
                     for (int i = 0; i < chatActionListeners.size(); i++) {
                         chatActionListeners.get(i).onEditTextChanged(new TextChangedEvent(textField));
                     }
-                    if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                         for (int i = 0; i < chatActionListeners.size(); i++) {
-                            chatActionListeners.get(i).onSendPressed(new SendEvent(textField,textField.getText(),textField));
+                            chatActionListeners.get(i).onSendPressed(new SendEvent(textField, textField.getText(), textField));
+                        }
+                    }
+                }
+
+                public void keyPressed(KeyEvent e) {
+                    if (e.isAltDown()) {
+                        if (e.getKeyCode() == KeyEvent.VK_F4) {
+                            System.out.println("exit");
+                            for (int i = 0; i < MainWindow.onExitListeners.size(); i++) {
+                                MainWindow.onExitListeners.get(i).onExitClicked();
+                            }
                         }
                     }
                 }
@@ -198,7 +209,19 @@ public class Chat extends JPanel {
                         send.setForeground(Color.black);
                 }
             });
+            send.addKeyListener(new KeyAdapter() {
 
+                public void keyPressed(KeyEvent e) {
+                    if (e.isAltDown()) {
+                        if (e.getKeyCode() == KeyEvent.VK_F4) {
+                            System.out.println("exit");
+                            for (int i = 0; i < MainWindow.onExitListeners.size(); i++) {
+                                MainWindow.onExitListeners.get(i).onExitClicked();
+                            }
+                        }
+                    }
+                }
+            });
 
             this.add(textField);
             this.add(send);
@@ -213,7 +236,7 @@ public class Chat extends JPanel {
 
 
         ArrayList<ChatMessage> chatMessages;
-        JProgressBar chatMessagesLoadingProgress= new JProgressBar();
+        JProgressBar chatMessagesLoadingProgress = new JProgressBar();
 
 
         public ChatContent(int width, int height) {
@@ -354,7 +377,9 @@ public class Chat extends JPanel {
                 this.message = message;
                 this.date = date;
                 this.type = type;
-                this.width = ChatContent.this.getWidth() * 3 / 5;
+
+                if (type != chatMessageType.INFO)
+                    this.width = ChatContent.this.getWidth() * 3 / 5;
                 this.setLayout(null);
 
                 if (color != null)
@@ -373,44 +398,60 @@ public class Chat extends JPanel {
                         nameLabel.setLocation((int) (UI_SCALING * 2), (int) (UI_SCALING * 2));
                 }
                 Font messageFont = new Font(MainWindow.FONT, 0, (int) (UI_SCALING * 10 / 2));
+
                 textArea = new JTextArea();
+                if(type == chatMessageType.INFO){
+                    this.width = (int) textArea.getFontMetrics(messageFont).getStringBounds(message, textArea.getGraphics()).getWidth()+margin*8+100;
+                    if(this.width>ChatContent.this.getWidth() * 3 / 5)
+                        this.width=ChatContent.this.getWidth() * 3 / 5;
+                }
+
                 textArea.setText(formatTextForChat(EmojiParser.parseToUnicode(message), messageFont, this.width - (int) (UI_SCALING * 8) - margin * 4));
                 textArea.setEditable(false);
-                textArea.setBackground(theme.getPrimaryColorLight());
+                textArea.setBackground(theme.getPrimaryColorLight().darker());
                 textArea.setFont(messageFont);
+
                 textArea.setSize(textArea.getPreferredSize());
                 if (type == chatMessageType.INFO) {
-                    textArea.setLocation(margin * 6, margin * 2);
+                    textArea.setLocation(width / 2 - textArea.getSize().width / 2, (int) (margin * 2 + UI_SCALING * 2));
                     textArea.setForeground(Color.GRAY);
+                    textArea.setAlignmentX(CENTER_ALIGNMENT);
+                    textArea.setForeground(theme.getAccentColor());
                 } else
                     textArea.setLocation(nameLabel.getX() + margin * 2, nameLabel.getY() + nameLabel.getHeight() + margin);
                 ChatScrolling scrolling = new ChatScrolling(ChatContent.this);
                 textArea.addMouseListener(scrolling);
                 textArea.addMouseMotionListener(scrolling);
                 textArea.addMouseWheelListener(scrolling);
-
+                textArea.addKeyListener(new KeyAdapter() {
+                    public void keyPressed(KeyEvent e) {
+                        if (e.isAltDown()) {
+                            if (e.getKeyCode() == KeyEvent.VK_F4) {
+                                System.out.println("exit");
+                                for (int i = 0; i < MainWindow.onExitListeners.size(); i++) {
+                                    MainWindow.onExitListeners.get(i).onExitClicked();
+                                }
+                            }
+                        }
+                    }
+                });
                 timestamp = new JLabel(date);
                 //TODO 7 positioning
 
                 //calc Height from text length
-                height = textArea.getLocation().y + textArea.getHeight() + timestamp.getHeight();
+                height = textArea.getLocation().y + textArea.getHeight();
                 this.setSize(width, height);
 
-                Color borderColor;
-                switch (this.getType()) {
-                    case INFO:
-                        borderColor = theme.getAccentColor();
-                        break;
-                    default:
-                        borderColor = theme.getPrimaryColorDark();
+                Color borderColor = theme.getPrimaryColorDark();
+
+
+                this.setBackground(theme.getPrimaryColorLight().darker());
+                this.setOpaque(true);
+
+                if (type != chatMessageType.INFO) {
+                    AbstractBorder brdr = new BubbleBorder(this.type, borderColor, (int) (UI_SCALING), (int) (UI_SCALING * 2), (int) (UI_SCALING * 4));
+                    this.setBorder(brdr);
                 }
-
-                this.setBackground(theme.getPrimaryColorLight());
-                this.setOpaque(false);
-
-                AbstractBorder brdr = new BubbleBorder(this.type, borderColor, (int) (UI_SCALING), (int) (UI_SCALING * 2), (int) (UI_SCALING * 4));
-                this.setBorder(brdr);
-
 
                 this.add(nameLabel);
                 this.add(textArea);

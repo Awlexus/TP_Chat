@@ -48,7 +48,7 @@ public class MainWindow extends JFrame {
     /**
      * Theme for this GUI
      */
-    public static Theme theme = new Theme(Theme.Themes.MILAN);
+    public static Theme theme = new Theme(Theme.Themes.DARKBLUE);
 
     /**
      * Used to drag & drop the top bar
@@ -89,26 +89,12 @@ public class MainWindow extends JFrame {
 
     SettingsWindow settingsWindow;
     private ArrayList<SettingsActionListener> settingsActionListeners;
-    private ArrayList<OnExitListener> onExitListeners;
+    public static ArrayList<OnExitListener> onExitListeners;
 
 
     public MainWindow(@Nullable Settings settings) {
         setupMainWindow(settings);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if(e.isAltDown()){
-                    if(e.getKeyCode()== KeyEvent.VK_F4){
-                        System.out.println("exit");
-                        for (int i = 0; i < onExitListeners.size(); i++) {
-                            onExitListeners.get(i).onExitClicked();
-                        }
-                    }
-                }
-            }
-        });
-
     }
 
     private void setupMainWindow(@Nullable Settings settings) {
@@ -140,7 +126,7 @@ public class MainWindow extends JFrame {
         c.setLayout(null);
 
         //instantiate the panels
-        topBar = new TopBar("TP_Chat");
+        topBar = new TopBar("UatsApp");
         contacts = setupContactsPanel();
         chat = setupChatPanel();
 
@@ -386,11 +372,11 @@ public class MainWindow extends JFrame {
 
         TopBar(String title) {
             setSize((int) (W_WIDTH * UI_SCALING), (int) (TOP_HEIGHT * TOP_SCALE * UI_SCALING));
-            setBackground(theme.getPrimaryColorDark());
+            setBackground(theme.getPrimaryColorDark().darker());
             setLayout(null);
 
             this.title = new JLabel(title);
-            int titleFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT / 6) * TOP_SCALE * UI_SCALING);
+            int titleFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT /4) * TOP_SCALE * UI_SCALING);
             this.title.setFont(new Font(FONT, 0, titleFontSize));
             this.title.setLocation((int) (5 * UI_SCALING), (int) +UI_SCALING * 2);
             this.title.setSize(this.title.getPreferredSize());

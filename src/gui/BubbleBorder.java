@@ -6,6 +6,7 @@ import java.awt.geom.Area;
 import java.awt.geom.RoundRectangle2D;
 
 import static gui.MainWindow.UI_SCALING;
+import static gui.MainWindow.theme;
 
 /**
  * @author Matteo Cosi
@@ -130,7 +131,7 @@ class BubbleBorder extends AbstractBorder {
 
         Component parent = c.getParent();
         if (parent != null) {
-            Color bg = parent.getBackground();
+            Color bg = theme.getPrimaryColorLight();
             Rectangle rect = new Rectangle(0, 0, width, height);
             Area borderRegion = new Area(rect);
             borderRegion.subtract(area);
