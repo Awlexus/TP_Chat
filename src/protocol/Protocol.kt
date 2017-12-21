@@ -17,7 +17,6 @@ import kotlin.concurrent.thread
 
 fun DatagramPacket.getTextData() = String(this.data, this.offset, this.length)
 
-
 fun DatagramPacket.getMessage() = getTextData().split(Regex("\\s+"), 2)[1]
 
 class Protocol(val port: Int = 4321, val userName: String = "", val callback: ProtocolCallback?) {
@@ -42,12 +41,13 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
             // Wait until we receive a package
             val packet = DatagramPacket(byteArray, BUFFERSIZE)
-            socket.receive(packet)
-
+            try {
+                socket.receive(packet)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             // Extract Data
             val text = packet.getTextData()
-
-            // Check whether this is a request or an answer
 
             when {
                 text.startsWith(HELLO) -> receiveHello(packet)
