@@ -126,7 +126,7 @@ public class MainWindow extends JFrame {
         c.setLayout(null);
 
         //instantiate the panels
-        topBar = new TopBar("TP_Chat");
+        topBar = new TopBar("UatsApp");
         contacts = setupContactsPanel();
         chat = setupChatPanel();
 
@@ -372,11 +372,11 @@ public class MainWindow extends JFrame {
 
         TopBar(String title) {
             setSize((int) (W_WIDTH * UI_SCALING), (int) (TOP_HEIGHT * TOP_SCALE * UI_SCALING));
-            setBackground(theme.getPrimaryColorDark());
+            setBackground(theme.getPrimaryColorDark().darker());
             setLayout(null);
 
             this.title = new JLabel(title);
-            int titleFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT / 6) * TOP_SCALE * UI_SCALING);
+            int titleFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT /4) * TOP_SCALE * UI_SCALING);
             this.title.setFont(new Font(FONT, 0, titleFontSize));
             this.title.setLocation((int) (5 * UI_SCALING), (int) +UI_SCALING * 2);
             this.title.setSize(this.title.getPreferredSize());
