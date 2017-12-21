@@ -89,26 +89,12 @@ public class MainWindow extends JFrame {
 
     SettingsWindow settingsWindow;
     private ArrayList<SettingsActionListener> settingsActionListeners;
-    private ArrayList<OnExitListener> onExitListeners;
+    public static ArrayList<OnExitListener> onExitListeners;
 
 
     public MainWindow(@Nullable Settings settings) {
         setupMainWindow(settings);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if(e.isAltDown()){
-                    if(e.getKeyCode()== KeyEvent.VK_F4){
-                        System.out.println("exit");
-                        for (int i = 0; i < onExitListeners.size(); i++) {
-                            onExitListeners.get(i).onExitClicked();
-                        }
-                    }
-                }
-            }
-        });
-
     }
 
     private void setupMainWindow(@Nullable Settings settings) {

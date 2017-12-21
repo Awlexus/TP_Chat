@@ -159,6 +159,17 @@ public class Chat extends JPanel {
                         }
                     }
                 }
+
+                public void keyPressed(KeyEvent e) {
+                    if (e.isAltDown()) {
+                        if (e.getKeyCode() == KeyEvent.VK_F4) {
+                            System.out.println("exit");
+                            for (int i = 0; i < MainWindow.onExitListeners.size(); i++) {
+                                MainWindow.onExitListeners.get(i).onExitClicked();
+                            }
+                        }
+                    }
+                }
             });
 
 
@@ -198,7 +209,19 @@ public class Chat extends JPanel {
                         send.setForeground(Color.black);
                 }
             });
+            send.addKeyListener(new KeyAdapter() {
 
+                public void keyPressed(KeyEvent e) {
+                    if (e.isAltDown()) {
+                        if (e.getKeyCode() == KeyEvent.VK_F4) {
+                            System.out.println("exit");
+                            for (int i = 0; i < MainWindow.onExitListeners.size(); i++) {
+                                MainWindow.onExitListeners.get(i).onExitClicked();
+                            }
+                        }
+                    }
+                }
+            });
 
             this.add(textField);
             this.add(send);
@@ -390,7 +413,18 @@ public class Chat extends JPanel {
                 textArea.addMouseListener(scrolling);
                 textArea.addMouseMotionListener(scrolling);
                 textArea.addMouseWheelListener(scrolling);
-
+                textArea.addKeyListener(new KeyAdapter() {
+                    public void keyPressed(KeyEvent e) {
+                        if (e.isAltDown()) {
+                            if (e.getKeyCode() == KeyEvent.VK_F4) {
+                                System.out.println("exit");
+                                for (int i = 0; i < MainWindow.onExitListeners.size(); i++) {
+                                    MainWindow.onExitListeners.get(i).onExitClicked();
+                                }
+                            }
+                        }
+                    }
+                });
                 timestamp = new JLabel(date);
                 //TODO 7 positioning
 
