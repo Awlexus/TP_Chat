@@ -4,9 +4,9 @@ import java.net.DatagramPacket
 import java.net.InetAddress
 import java.util.*
 
-fun getMacAddress(packet: DatagramPacket) = getMacAdress(packet.address)
+fun getMacAddress(packet: DatagramPacket) = getMacAddress(packet.address)
 
-fun getMacAdress(ip: InetAddress): String? {
+fun getMacAddress(ip: InetAddress): String? {
     Runtime.getRuntime().exec("arp -a")
     Scanner(Runtime.getRuntime().exec("arp -a ${ip.hostAddress}").inputStream).useDelimiter("\\A").use {
         val reg = Regex("([0-9a-fA-F]{2}-?){6}")

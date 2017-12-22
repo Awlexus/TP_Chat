@@ -139,4 +139,9 @@ public class CallbackListener implements ProtocolCallback {
     public InetAddress[] getIpsFromGroup(int groupId) {
         return new InetAddress[0];
     }
+
+    @Override
+    public void groupCreated(int randId, @NotNull InetAddress[] others) {
+
+    }
 }
