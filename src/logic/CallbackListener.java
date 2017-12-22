@@ -5,6 +5,7 @@ import gui.ChatMessageBlueprint;
 import gui.MainWindow;
 import org.jetbrains.annotations.NotNull;
 import protocol.ProtocolCallback;
+import protocol.ProtocolUtilsKt;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -30,7 +31,8 @@ public class CallbackListener implements ProtocolCallback {
 
     @Override
     public void hello(@NotNull DatagramPacket packet, @NotNull String username) {
-        Contact contact = contacts.createContact(packet.getAddress(), username, UserColors.getRandomColor());
+        Contact contact = contacts.getOrCreateContact(ProtocolUtilsKt.getMacAddress(packet),
+                packet.getAddress(), username, UserColors.getRandomColor());
         // debug
         if (contact == null) throw new RuntimeException();
         mainWindow.addContact(contact.getUsername(), "is now online", contact.getColor(), contact.getId());
@@ -42,8 +44,8 @@ public class CallbackListener implements ProtocolCallback {
 
     @Override
     public void world(@NotNull DatagramPacket packet, @NotNull String username) {
-        Contact contact = contacts.createContact(packet.getAddress(), username,
-                UserColors.getRandomColor());
+        Contact contact = contacts.getOrCreateContact(ProtocolUtilsKt.getMacAddress(packet),
+                packet.getAddress(), username, UserColors.getRandomColor());
         // debug
         if (contact == null) throw new RuntimeException();
         mainWindow.addNewChatById(contact.getId());
@@ -55,7 +57,8 @@ public class CallbackListener implements ProtocolCallback {
 
     @Override
     public void goodbye(@NotNull DatagramPacket packet) {
-        Contact contact = contacts.getByIP(packet.getAddress());
+        Contact contact = contacts.getByMacAddress(packet);
+
         // debug
         if (contact == null) {
             System.out.println("contact = null");
@@ -69,15 +72,15 @@ public class CallbackListener implements ProtocolCallback {
     @Override
     public void typing(@NotNull DatagramPacket packet, boolean typing) {
         if (typing) {
-            mainWindow.setContactWriting(contacts.getByIP(packet.getAddress()).getId());
+            mainWindow.setContactWriting(contacts.getByMacAddress(packet).getId());
         } else {
-            mainWindow.removeContactWriting(contacts.getByIP(packet.getAddress()).getId());
+            mainWindow.removeContactWriting(contacts.getByMacAddress(packet).getId());
         }
     }
 
     @Override
     public void message(@NotNull DatagramPacket packet, @NotNull String message) {
-        Contact contact = contacts.getByIP(packet.getAddress());
+        Contact contact = contacts.getByMacAddress(packet);
         if (contact == null) {
             System.out.println("Message from unknown contact received: " + packet.getAddress());
         } else {
@@ -102,7 +105,7 @@ public class CallbackListener implements ProtocolCallback {
     public void createGroup(@NotNull DatagramPacket packet, int id, @NotNull InetAddress[] members) {
         ArrayList<Contact> membersAsContacts = new ArrayList<>();
         for (InetAddress memberAddress : members) {
-            Contact contact = contacts.getByIP(memberAddress);
+            Contact contact = contacts.getByMacAddress(ProtocolUtilsKt.getMacAddress(memberAddress));
 
             // This should NEVER be true
             if (contact == null)
@@ -123,8 +126,8 @@ public class CallbackListener implements ProtocolCallback {
         // TODO: 19.12.2017 see todo
         int correspondingChatID = groups.getByProtocolID(groupId).getId();
         mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,
-                contacts.getByIP(packet.getAddress()).getUsername(), message,
-                "", contacts.getByIP(packet.getAddress()).getColor()), correspondingChatID);
+                contacts.getByMacAddress(packet).getUsername(), message,
+                "", contacts.getByMacAddress(packet).getColor()), correspondingChatID);
     }
 
     public boolean isUsedID(int id) {

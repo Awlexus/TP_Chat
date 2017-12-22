@@ -76,8 +76,8 @@ public class Main {
             @Override
             public void onEditTextChanged(TextChangedEvent e) {
                 Contact contact = contacts.getByID(callbackListener.currentChatId);
-                if (!e.getText().isEmpty() && contact != null) {
-                    protocol.sendTyping(true, contact.getIp());
+                if (contact != null) {
+                    protocol.sendTyping(!e.getText().isEmpty(), contact.getIp());
                 }
             }
         });

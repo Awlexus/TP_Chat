@@ -2,8 +2,10 @@ package logic;
 
 import logic.storage.DataIOs;
 import logic.storage.DataRepository;
+import protocol.ProtocolUtilsKt;
 
 import java.awt.*;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -51,17 +53,19 @@ class Contacts {
         }
     }
 
-    synchronized Contact createContact(InetAddress ip, String username, Color color) {
-        if (getByIP(ip) != null)
-            return getByIP(ip);
-        if (getByUsername(username) != null)
-            return getByUsername(username);
+    synchronized Contact getOrCreateContact(String macaddress, InetAddress ip, String username, Color color) {
+        if (getByMacAddress(macaddress) != null) {
+            Contact contact = getByMacAddress(macaddress);
+            contact.setIp(ip);
+            contact.setUsername(username);
+            return contact;
+        }
 
         int id = ai.incrementAndGet();
         while (parent.isUsedID(id))
             id = ai.incrementAndGet();
 
-        Contact newContact = new Contact(id, ip, username, color, new ArrayList<>());
+        Contact newContact = new Contact(macaddress, id, ip, username, color, new ArrayList<>());
         this.contactList.add(newContact);
 
         System.out.println(newContact);
@@ -77,19 +81,15 @@ class Contacts {
         return null;
     }
 
-    Contact getByUsername(String username) {
+    Contact getByMacAddress(String macaddress) {
         for (Object o : this.contactList) {
-            if (((Contact) o).getUsername().equals(username))
+            if (((Contact) o).getMacaddr().equals(macaddress))
                 return ((Contact) o);
         }
         return null;
     }
 
-    Contact getByIP(InetAddress ip) {
-        for (Object o : this.contactList) {
-            if (((Contact) o).getIp().equals(ip))
-                return ((Contact) o);
-        }
-        return null;
+    Contact getByMacAddress(DatagramPacket packet) {
+        return getByMacAddress(ProtocolUtilsKt.getMacAddress(packet));
     }
 }

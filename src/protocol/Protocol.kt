@@ -15,10 +15,6 @@ import kotlin.concurrent.thread
  * Created by Awlex on 01.12.2017.
  */
 
-fun DatagramPacket.getTextData() = String(this.data, this.offset, this.length)
-
-fun DatagramPacket.getMessage() = getTextData().split(Regex("\\s+"), 2)[1]
-
 class Protocol(val port: Int = 4321, val userName: String = "", val callback: ProtocolCallback?) {
 
     private val BUFFERSIZE = 1024
@@ -237,8 +233,6 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
             for (memberIp in ipsFromGroup)
                 send(text, memberIp)
     }
-
-    fun getMacAddress(packet: DatagramPacket) = String(NetworkInterface.getByInetAddress(packet.address).hardwareAddress)
 
     constructor(userName: String) : this(4321, userName, null)
 
