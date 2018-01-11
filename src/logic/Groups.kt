@@ -52,7 +52,7 @@ class Groups(private val ai: AtomicInteger, private val repositoryPath: String) 
 
     }
 
-    internal fun getByID(id: Int) = groupList.find { it.id == id }
+    internal fun getByID(id: Int) = groupList.find { it.id == id }!!
 
     internal fun getByProtocolID(protocolID: Int) = groupList.find { it.protocolID == protocolID }
 }
