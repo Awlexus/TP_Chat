@@ -9,7 +9,7 @@ import java.net.DatagramPacket
 import java.net.InetAddress
 import java.util.*
 
-class CallbackListener internal constructor(private val mainWindow: MainWindow,
+class CallbackListener (private val mainWindow: MainWindow,
                                             private val contacts: Contacts,
                                             private val groups: Groups) : ProtocolCallback {
     var currentChatId = -1

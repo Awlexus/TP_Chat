@@ -8,7 +8,7 @@ import java.net.DatagramPacket
 import java.net.InetAddress
 import java.util.concurrent.atomic.AtomicInteger
 
-internal class Contacts(private val ai: AtomicInteger, private val repositoryPath: String) {
+class Contacts(private val ai: AtomicInteger, private val repositoryPath: String) {
 
     private val contactList = ArrayList<Contact>()
     private var parent: CallbackListener? = null
