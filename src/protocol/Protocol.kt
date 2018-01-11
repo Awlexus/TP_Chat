@@ -1,7 +1,6 @@
 package protocol
 
 import com.vdurmont.emoji.EmojiParser
-import java.lang.Math.abs
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
@@ -14,10 +13,6 @@ import kotlin.concurrent.thread
 /**
  * Created by Awlex on 01.12.2017.
  */
-
-fun DatagramPacket.getTextData() = String(this.data, this.offset, this.length)
-
-fun DatagramPacket.getMessage() = getTextData().split(Regex("\\s+"), 2)[1]
 
 class Protocol(val port: Int = 4321, val userName: String = "", val callback: ProtocolCallback?) {
 
@@ -159,37 +154,43 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
      * Research this here
      * https://docs.google.com/document/d/1Rlr0l2YYXf594fVcFG7vmmmJhar2uk9tj4fGYFio3Jc/edit?usp=sharing
      */
-    fun createGroup(vararg others: InetAddress = arrayOf(localhost)) {
+    fun createGroup(vararg others: InetAddress = arrayOf(localhost)): Int {
         val rand = Random()
+        thread(start = true, block = {
+            do {
+                // Reset State
+                reply.set(false)
 
-        do {
-            // Reset State
-            reply.set(false)
+                // Generate Random number
+                randId.set(Math.abs(rand.nextInt() % Short.MAX_VALUE))
 
-            // Generate Random number
-            randId.set(abs(rand.nextInt() % Short.MAX_VALUE))
+                // Ask if a group this ID is known
+                acceptDeny.set(true)
+                send("EG $randId", broadcastAddress)
 
-            // Ask if a group this ID is known
-            acceptDeny.set(true)
-            send("EG $randId", broadcastAddress)
+                // Wait for replies
+                try {
+                    Thread.sleep(500)
+                } catch (ignored: InterruptedException) {
+                }
+            } while (reply.get())
 
-            // Wait for replies
-            try {
-                Thread.sleep(500)
-            } catch (ignored: InterruptedException) {
+            // Generate message
+            val text = "CG $randId ${
+            others.joinToString(separator = " ", transform = { it.hostAddress }) // Join each IP
+            }"
+
+            // Send to all
+            others.forEach {
+                send(text, it)
             }
-        } while (reply.get())
+            acceptDeny.set(false)
 
-        // Generate message
-        val text = "CG $randId ${
-        others.joinToString(separator = " ", transform = { it.hostAddress }) // Join each IP
-        }"
+            callback?.groupCreated(randId.get(), others)
+        })
 
-        // Send to all
-        others.forEach {
-            send(text, it)
-        }
-        acceptDeny.set(false)
+
+        return randId.get()
     }
 
     /**
@@ -237,8 +238,6 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
             for (memberIp in ipsFromGroup)
                 send(text, memberIp)
     }
-
-    fun getMacAddress(packet: DatagramPacket) = String(NetworkInterface.getByInetAddress(packet.address).hardwareAddress)
 
     constructor(userName: String) : this(4321, userName, null)
 

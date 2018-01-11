@@ -11,6 +11,10 @@ import java.net.InetAddress
 fun main(args: Array<String>) {
     val set = HashMap<InetAddress, String>()
     val prot = Protocol("Matteo", object : ProtocolCallback {
+        override fun groupCreated(randId: Int, others: Array<out InetAddress>) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
         override fun getIpsFromGroup(groupId: Int): Array<InetAddress> {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
@@ -36,7 +40,7 @@ fun main(args: Array<String>) {
         }
 
         override fun typing(packet: DatagramPacket, typing: Boolean) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun message(packet: DatagramPacket, message: String) {

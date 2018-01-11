@@ -63,7 +63,8 @@ interface ProtocolCallback {
      * A group has been created and we are (probably) part of it.
      *
      * @param packet Contains information about the sender
-     * @param username Name of the person that send the packet
+     * @param id Group id
+     * @param members The other persons in this this groups
      */
     fun createGroup(packet: DatagramPacket, id: Int, members: Array<InetAddress>)
 
@@ -84,5 +85,6 @@ interface ProtocolCallback {
     fun groupMessage(packet: DatagramPacket, groupId: Int, message: String)
 
     fun getIpsFromGroup(groupId: Int): Array<InetAddress>
+    fun groupCreated(randId: Int, others: Array<out InetAddress>)
 
 }

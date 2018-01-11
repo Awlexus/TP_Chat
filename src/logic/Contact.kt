@@ -6,5 +6,6 @@ import java.io.Serializable
 import java.net.InetAddress
 
 data class Contact(
-        val id: Int, val ip: InetAddress, val username: String, val color: Color, val messages: ArrayList<ChatMessageBlueprint>
+        val macaddr: String, val id: Int, var ip: InetAddress, var username: String, val color: Color,
+        val messages: ArrayList<ChatMessageBlueprint>
 ) : Serializable

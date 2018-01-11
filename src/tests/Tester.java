@@ -16,7 +16,7 @@ public class Tester {
     public static void main(String[] args) {
 
         MainWindow mainWindow = new MainWindow(null);
-
+/*
         mainWindow.addContact("Test1", "hallo1fffff", Color.BLUE, 1);
         mainWindow.addContact("Test2", "hallo1fffff", Color.BLUE, 2);
 
@@ -46,7 +46,7 @@ public class Tester {
             }
         }
 
-/*
+ */
         String[] fontFamilies = GraphicsEnvironment.
                 getLocalGraphicsEnvironment().
                 getAvailableFontFamilyNames();
@@ -63,6 +63,6 @@ public class Tester {
         String result = EmojiParser.parseToUnicode(str);
 
         System.out.println(result);
-        */
+
     }
 }
