@@ -180,8 +180,8 @@ class Contacts extends JPanel {
             name.setLocation((int) (UI_SCALING * 2), 0);
             name.setForeground(Color.BLACK);
 
-            lastMessage.setFont(new Font(MainWindow.FONT, 0, height / 4));
-            lastMessage.setSize(lastMessage.getPreferredSize());
+            lastMessage.setFont(new Font(MainWindow.FONT, 0, height / 5));
+            lastMessage.setSize(lastMessage.getPreferredSize().width,lastMessage.getPreferredSize().height+10);
             lastMessage.setLocation((int) (UI_SCALING * 6), name.getHeight());
             lastMessage.setForeground(MainWindow.theme.getPrimaryColor());
 
