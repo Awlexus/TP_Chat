@@ -54,7 +54,7 @@ internal class Contacts(private val ai: AtomicInteger, private val repositoryPat
             return it
         }
 
-        while (parent!!.isUsedID(ai.incrementAndGet())) ;
+        while (parent!!.isUsedID(ai.getAndIncrement())) ;
 
         val newContact = Contact(macaddress, ai.get(), ip, username, color, ArrayList())
         this.contactList.add(newContact)
