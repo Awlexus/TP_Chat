@@ -13,10 +13,12 @@ abstract class SerializableList<T : IndexableData> : ArrayList<T>() {
     val path = "${Paths.get("").toAbsolutePath()}${File.separatorChar}savefiles${File.separatorChar}${javaClass.simpleName}.ser"
     val indexer = AtomicInteger(0)
 
+    @Synchronized
     fun save() {
         DataIOs.print(path, this)
     }
 
+    @Synchronized
     fun read() {
         clear()
 
