@@ -41,20 +41,23 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+
             // Extract Data
             val text = packet.getTextData()
 
-            when {
-                text.startsWith(HELLO) -> receiveHello(packet)
-                text.startsWith(WORLD) -> receiveWorld(packet)
-                text.startsWith(GOODBYE) -> receiveGoodbye(packet)
-                text.startsWith(MESSAGE) -> receiveMessage(packet)
-                text.startsWith(TYPING) -> receiveTyping(packet)
-                text.startsWith(GROUP_EXISTSGROUP) -> receiveGroupExistsGroup(packet)
-                text.startsWith(GROUP_CREATEGROUP) -> receiveGroupCreateGroup(packet)
-                text.startsWith(GROUP_DENYGROUP) -> receiveGroupDenyGroup(packet)
-                text.startsWith(GROUP_MESSAGE) -> receiveGroupMessage(packet)
-                else -> println("looool:" + packet.getTextData()) // For debugging purposes
+            if (!text.isBlank()) {
+                when {
+                    text.startsWith(HELLO) -> receiveHello(packet)
+                    text.startsWith(WORLD) -> receiveWorld(packet)
+                    text.startsWith(GOODBYE) -> receiveGoodbye(packet)
+                    text.startsWith(MESSAGE) -> receiveMessage(packet)
+                    text.startsWith(TYPING) -> receiveTyping(packet)
+                    text.startsWith(GROUP_EXISTSGROUP) -> receiveGroupExistsGroup(packet)
+                    text.startsWith(GROUP_CREATEGROUP) -> receiveGroupCreateGroup(packet)
+                    text.startsWith(GROUP_DENYGROUP) -> receiveGroupDenyGroup(packet)
+                    text.startsWith(GROUP_MESSAGE) -> receiveGroupMessage(packet)
+                    else -> println("Unidentified message received ${packet.getTextData()}")
+                }
             }
         }
         socket.close()
@@ -71,7 +74,6 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
             return
 
         val username = packet.getMessage()
-        // println("Hello from $username at ${packet.address.hostAddress}")
 
         // Set reply text
         packet.data = "$WORLD $userName".toByteArray()

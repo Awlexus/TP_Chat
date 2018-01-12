@@ -1,5 +1,6 @@
 package tests
 
+import logic.storage.UserUtil
 import protocol.Protocol
 import protocol.ProtocolCallback
 import java.net.DatagramPacket
@@ -10,7 +11,8 @@ import java.net.InetAddress
  */
 fun main(args: Array<String>) {
     val set = HashMap<InetAddress, String>()
-    val prot = Protocol("Matteo", object : ProtocolCallback {
+
+    Protocol(UserUtil.username, object : ProtocolCallback {
         override fun groupCreated(randId: Int, others: Array<out InetAddress>) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
@@ -63,14 +65,15 @@ fun main(args: Array<String>) {
             TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
-    })
-    prot.hello()
-    do {
-        val line = readLine()!!
-        if (line == "exit")
-            continue
-        prot.message(line, prot.broadcastAddress)
-    } while (line != "exit")
+    }).apply {
+        hello()
+        do {
+            val line = readLine()!!
+            if (line == "exit")
+                continue
+            message(line, broadcastAddress)
+        } while (line != "exit")
 
-    prot.stop()
+        stop()
+    }
 }
