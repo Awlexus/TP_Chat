@@ -3,6 +3,9 @@ package gui;
 import com.sun.deploy.util.ArrayUtil;
 import com.vdurmont.emoji.EmojiParser;
 import org.jetbrains.annotations.Nullable;
+import protocol.ProtocolConstantsKt;
+import sun.misc.IOUtils;
+import sun.nio.ch.IOUtil;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -12,9 +15,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Array;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -44,9 +49,9 @@ public class Chat extends JPanel {
     private ArrayList<ChatContent> chatContents;
 
     public void clearChatById(int id) {
-        ChatContent chatContent= new ChatContent(getChatContents().get(id).width,
+        ChatContent chatContent = new ChatContent(getChatContents().get(id).width,
                 getChatContents().get(id).height);
-        getChatContents().add(id,chatContent);
+        getChatContents().add(id, chatContent);
     }
 
 
@@ -190,7 +195,7 @@ public class Chat extends JPanel {
 
             send = new JButton("SENDE");
             send.setFont(new Font(MainWindow.FONT, 0, (int) (this.height * 3 / 5 - UI_SCALING * 8)));
-            send.setSize((int) ((width * 2 / 6 - UI_SCALING * 6)*2/3), textField.getHeight());
+            send.setSize((int) ((width * 2 / 6 - UI_SCALING * 6) * 2 / 3), textField.getHeight());
             send.setLocation((int) (textField.getWidth() + UI_SCALING * 6), height / 2 - textField.getHeight() / 2);
             send.setBackground(theme.getPrimaryColorDark());
             if (theme.getDark())
@@ -246,8 +251,8 @@ public class Chat extends JPanel {
             }
             attach = new JButton(new ImageIcon(buttonIcon));
             attach.setFont(new Font(MainWindow.FONT, 0, (int) (this.height * 3 / 5 - UI_SCALING * 8)));
-            attach.setSize((int) ((width * 2 / 6 - UI_SCALING * 6)) /3, textField.getHeight());
-            attach.setLocation((int) (send.getX()+ send.getWidth() + UI_SCALING * 3), height / 2 - textField.getHeight() / 2);
+            attach.setSize((int) ((width * 2 / 6 - UI_SCALING * 6)) / 3, textField.getHeight());
+            attach.setLocation((int) (send.getX() + send.getWidth() + UI_SCALING * 3), height / 2 - textField.getHeight() / 2);
             attach.setBackground(theme.getPrimaryColorDark());
             attach.setBorderPainted(false);
             if (theme.getDark())
@@ -261,15 +266,24 @@ public class Chat extends JPanel {
                     JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 
                     int returnValue = jfc.showOpenDialog(null);
-                    // int returnValue = jfc.showSaveDialog(null);
 
                     if (returnValue == JFileChooser.APPROVE_OPTION) {
                         File selectedFile = jfc.getSelectedFile();
-                        System.out.println(selectedFile.getAbsolutePath());
-                    }
 
-                    for (int i = 0; i < chatActionListeners.size(); i++) {
-                        chatActionListeners.get(i).onSendPressed(new SendEvent(attach, textField.getText(), textField));
+                        Path path = Paths.get(selectedFile.getAbsolutePath());
+                        StringBuilder bytes = new StringBuilder();
+                        try {
+                            byte[] data = Files.readAllBytes(path);
+                            for (int i = 0; i < data.length; i++) {
+                                bytes.append(data[i]);
+                            }
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                        }
+
+                        for (int i = 0; i < chatActionListeners.size(); i++) {
+                            chatActionListeners.get(i).onSendPressed(new SendEvent(attach, bytes.toString(), null));
+                        }
                     }
                 }
 
@@ -483,10 +497,10 @@ public class Chat extends JPanel {
                 Font messageFont = new Font(MainWindow.FONT, 0, (int) (UI_SCALING * 10 / 2));
 
                 textArea = new JTextArea();
-                if(type == chatMessageType.INFO){
-                    this.width = (int) textArea.getFontMetrics(messageFont).getStringBounds(message, textArea.getGraphics()).getWidth()+margin*8+100;
-                    if(this.width>ChatContent.this.getWidth() * 3 / 5)
-                        this.width=ChatContent.this.getWidth() * 3 / 5;
+                if (type == chatMessageType.INFO) {
+                    this.width = (int) textArea.getFontMetrics(messageFont).getStringBounds(message, textArea.getGraphics()).getWidth() + margin * 8 + 100;
+                    if (this.width > ChatContent.this.getWidth() * 3 / 5)
+                        this.width = ChatContent.this.getWidth() * 3 / 5;
                 }
 
                 textArea.setText(formatTextForChat(EmojiParser.parseToUnicode(message), messageFont, this.width - (int) (UI_SCALING * 8) - margin * 4));
@@ -519,10 +533,13 @@ public class Chat extends JPanel {
                     }
                 });
                 timestamp = new JLabel(date);
-                //TODO 7 positioning
-
-                //calc Height from text length
                 height = textArea.getLocation().y + textArea.getHeight();
+                this.setSize(width, height);
+
+                this.add(textArea);
+                this.add(timestamp);
+
+
                 this.setSize(width, height);
 
                 Color borderColor = theme.getPrimaryColorDark();
@@ -537,8 +554,6 @@ public class Chat extends JPanel {
                 }
 
                 this.add(nameLabel);
-                this.add(textArea);
-                this.add(timestamp);
                 this.repaint();
             }
 

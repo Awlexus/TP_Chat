@@ -10,6 +10,7 @@ val GOODBYE = "Goodbye"
 
 val TYPING = "Typing"
 val MESSAGE = "MSG"
+val FILE = "File"
 
 val GROUP_EXISTSGROUP = "EG"
 val GROUP_CREATEGROUP = "CG"
