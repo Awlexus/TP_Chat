@@ -6,19 +6,16 @@ import protocol.Protocol
 import java.awt.Color
 import java.io.File
 import java.nio.file.Paths
-import java.util.concurrent.atomic.AtomicInteger
 
 val username = UserUtil.username
 
 val mainWindow = MainWindow(null)
 
-val ai = AtomicInteger(0)
-
 val repositoryPath = "${Paths.get("").toAbsolutePath()}\\savefiles"
 
-val contacts = Contacts(ai, repositoryPath)
+val contacts = Contacts()
 
-val groups = Groups(ai, repositoryPath)
+val groups = Groups()
 
 val callbackListener = CallbackListener(mainWindow, contacts, groups)
 
@@ -42,8 +39,8 @@ private fun addListener() {
 
     mainWindow.addOnExitListener {
         protocol.stop()
-        contacts.printContacts()
-        groups.printGroups()
+        contacts.save()
+        groups.save()
         System.exit(0)
     }
 
@@ -53,7 +50,7 @@ private fun addListener() {
             if (e.message.isEmpty() || callbackListener.currentChatId == -1)
                 return
 
-            val contact = contacts.getByID(callbackListener.currentChatId)
+            val contact = contacts.getById(callbackListener.currentChatId)
                     ?: return
 
             val chatMessageBlueprint = ChatMessageBlueprint(
@@ -69,7 +66,7 @@ private fun addListener() {
         }
 
         override fun onEditTextChanged(e: TextChangedEvent) {
-            val contact = contacts.getByID(callbackListener.currentChatId)
+            val contact = contacts.getById(callbackListener.currentChatId)
             if (contact != null) {
                 protocol.sendTyping(!e.text.isEmpty(), contact.ip)
             }
@@ -81,7 +78,7 @@ private fun loadData() {
     // Create Savefiles, if they do not exist
     File(repositoryPath).mkdir()
 
-    // Read contacts
-    contacts.readContacts()
-    groups.readGroups()
+    // Load data
+    contacts.read()
+    groups.read()
 }

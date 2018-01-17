@@ -4,8 +4,6 @@ import com.vdurmont.emoji.EmojiParser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import static gui.MainWindow.UI_SCALING;
@@ -44,7 +42,7 @@ class Contacts extends JPanel {
     }
 
     /**
-     * checks if the id exists
+     * checks if the contactId exists
      */
     public boolean alreadyExistsContactId(int id) {
         boolean ret = false;

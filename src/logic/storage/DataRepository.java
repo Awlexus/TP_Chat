@@ -1,6 +1,7 @@
 package logic.storage;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +13,7 @@ import java.util.Map;
  * @since 27.08.2017
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class DataRepository implements Serializable{
+public class DataRepository implements Serializable {
 
     private static HashMap<String, Collection<String>> repositoryFiles = new HashMap<>();
 
@@ -34,8 +35,12 @@ public class DataRepository implements Serializable{
         } catch (DataException e) {
             System.out.println(e.getMessage());
         } catch (ClassCastException e) {
-            System.out.println("ERROR: can't resolve repositoryFiles on given path ("+path+")" +
+            System.out.println("ERROR: can't resolve repositoryFiles on given path (" + path + ")" +
                     " as an HaspMap<String, ArrayList<String>>");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -44,6 +49,8 @@ public class DataRepository implements Serializable{
             DataIOs.print(path, repositoryFiles);
         } catch (DataException e) {
             System.out.println("Can't print repositoryFiles");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -54,19 +61,19 @@ public class DataRepository implements Serializable{
             repositoryFiles.put(repositoryPath, new ArrayList<>());
     }
 
-    public void print(String fileName, Serializable obj) throws DataException {
-        DataIOs.print(repositoryPath+"\\"+fileName, obj);
+    public void print(String fileName, Serializable obj) throws DataException, IOException {
+        DataIOs.print(repositoryPath + "\\" + fileName, obj);
 
         if (!repositoryFiles.get(repositoryPath).contains(fileName))
             repositoryFiles.get(repositoryPath).add(fileName);
     }
 
-    public Object read(String fileName) throws DataException {
-        return DataIOs.read(repositoryPath+"\\"+fileName);
+    public Object read(String fileName) throws DataException, IOException, ClassNotFoundException {
+        return DataIOs.read(repositoryPath + "\\" + fileName);
     }
 
     /**
-     * Removes this repository from the list, and deletes all of it's files.
+     * Removes this repository from the data, and deletes all of it's files.
      */
     public void deleteRepository() {
         clearRepository();
@@ -89,14 +96,14 @@ public class DataRepository implements Serializable{
     }
 
     /**
-     * Removes the given File from the list and deletes it.
+     * Removes the given File from the data and deletes it.
      *
      * @param fileName path of the File to delete
      * @throws DataException when deletion fails
      */
     public void deleteFile(String fileName) throws DataException {
-        if (!new File(repositoryPath+"\\"+fileName).delete())
-            throw new DataException("Can't delete File: "+fileName);
+        if (!new File(repositoryPath + "\\" + fileName).delete())
+            throw new DataException("Can't delete File: " + fileName);
         else
             repositoryFiles.get(repositoryPath).remove(fileName);
     }
@@ -106,8 +113,5 @@ public class DataRepository implements Serializable{
             super(msg);
         }
 
-        DataException(Exception e) {
-            super(e.getMessage());
-        }
     }
 }

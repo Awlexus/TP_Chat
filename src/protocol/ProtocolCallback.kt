@@ -50,10 +50,10 @@ interface ProtocolCallback {
     /**
      * Called when a ExistsGroup-packet was received
      *
-     * The callback has to return whether it's aware of a group with the given id
+     * The callback has to return whether it's aware of a group with the given contactId
      *
      * @param packet Contains information about the sender
-     * @param id The id whose existence has to be proven
+     * @param id The contactId whose existence has to be proven
      */
     fun existsGroupWithId(packet: DatagramPacket, id: Int): Boolean
 
@@ -63,7 +63,7 @@ interface ProtocolCallback {
      * A group has been created and we are (probably) part of it.
      *
      * @param packet Contains information about the sender
-     * @param id Group id
+     * @param id Group contactId
      * @param members The other persons in this this groups
      */
     fun createGroup(packet: DatagramPacket, id: Int, members: Array<InetAddress>)

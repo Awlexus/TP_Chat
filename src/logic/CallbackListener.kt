@@ -9,38 +9,32 @@ import java.net.DatagramPacket
 import java.net.InetAddress
 import java.util.*
 
-class CallbackListener (private val mainWindow: MainWindow,
-                                            private val contacts: Contacts,
-                                            private val groups: Groups) : ProtocolCallback {
+class CallbackListener(private val mainWindow: MainWindow,
+                       private val contacts: Contacts,
+                       private val groups: Groups) : ProtocolCallback {
     var currentChatId = -1
 
-    init {
-        contacts.setParent(this)
-        groups.setParent(this)
-    }
-
     override fun hello(packet: DatagramPacket, username: String) {
-        val (_, id, _, contactName, color, messages) =
-                contacts.getOrCreateContact(getMacAddress(packet)!!,
-                        packet.address, username, UserColors.randomColor)
+        val contact = contacts.getOrCreateContact(getMacAddress(packet)!!,
+                packet.address, username, UserColors.randomColor)
         // debug
-        mainWindow.addContact(contactName, "is now online", color, id)
-        mainWindow.addNewChatById(id)
+        mainWindow.addNewChatById(contact.id)
+        mainWindow.addContact(contact.username, "is now online", contact.color, contact.id)
 
-        if (!messages.isEmpty())
-            mainWindow.addMessages(messages.toTypedArray(), id)
+        if (!contact.messages.isEmpty())
+            mainWindow.addMessages(contact.messages.toTypedArray(), contact.id)
     }
 
     override fun world(packet: DatagramPacket, username: String) {
-        val (_, id, _, contactName, color, messages) = contacts.getOrCreateContact(getMacAddress(packet)!!,
+        val contact = contacts.getOrCreateContact(getMacAddress(packet)!!,
                 packet.address, username, UserColors.randomColor)
 
         // debug
-        mainWindow.addNewChatById(id)
-        mainWindow.addContact(contactName, "is now online", color, id)
+        mainWindow.addNewChatById(contact.id)
+        mainWindow.addContact(contact.username, "is now online", contact.color, contact.id)
 
-        if (!messages.isEmpty())
-            mainWindow.addMessages(messages.toTypedArray(), id)
+        if (!contact.messages.isEmpty())
+            mainWindow.addMessages(contact.messages.toTypedArray(), contact.id)
     }
 
     override fun goodbye(packet: DatagramPacket) {
@@ -80,7 +74,7 @@ class CallbackListener (private val mainWindow: MainWindow,
     }
 
     override fun existsGroupWithId(packet: DatagramPacket, id: Int): Boolean {
-        // TODO: 19.12.2017 most likely should also return false, when a contact already uses this id
+        // TODO: 19.12.2017 most likely should also return false, when a contact already uses this contactId
         // UPDATE: Nein!
         return groups.getByProtocolID(id) != null
     }
@@ -107,10 +101,10 @@ class CallbackListener (private val mainWindow: MainWindow,
                 "", contacts.getByMacAddress(packet)!!.color), correspondingChatID)
     }
 
-    fun isUsedID(id: Int) = contacts.getByID(id) != null
+    fun isUsedID(id: Int) = contacts.getById(id) != null
 
     override fun getIpsFromGroup(groupId: Int)
-            = groups.getByID(groupId).members.map { it.ip }.toTypedArray()
+            = groups.getById(groupId)?.members!!.map { it.ip }.toTypedArray()
 
     override fun groupCreated(randId: Int, others: Array<out InetAddress>) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
