@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
@@ -41,6 +42,12 @@ public class Chat extends JPanel {
 
     private ArrayList<ChatActionListener> chatActionListeners;
     private ArrayList<ChatContent> chatContents;
+
+    public void clearChatById(int id) {
+        ChatContent chatContent= new ChatContent(getChatContents().get(id).width,
+                getChatContents().get(id).height);
+        getChatContents().add(id,chatContent);
+    }
 
 
     /**
@@ -251,6 +258,16 @@ public class Chat extends JPanel {
             attach.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+
+                    int returnValue = jfc.showOpenDialog(null);
+                    // int returnValue = jfc.showSaveDialog(null);
+
+                    if (returnValue == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = jfc.getSelectedFile();
+                        System.out.println(selectedFile.getAbsolutePath());
+                    }
+
                     for (int i = 0; i < chatActionListeners.size(); i++) {
                         chatActionListeners.get(i).onSendPressed(new SendEvent(attach, textField.getText(), textField));
                     }
@@ -296,7 +313,7 @@ public class Chat extends JPanel {
     }
 
 
-    public static class ChatContent extends JPanel {
+    public class ChatContent extends JPanel {
         int width;
         int height;
 
@@ -522,7 +539,6 @@ public class Chat extends JPanel {
                 this.add(nameLabel);
                 this.add(textArea);
                 this.add(timestamp);
-                Chat.this.repaint();
                 this.repaint();
             }
 

@@ -338,9 +338,8 @@ public class MainWindow extends JFrame {
         return blueprints;
     }
 
-    public void clearChatbyId(int id){
-        chat.getChatContents().add(id,new Chat.ChatContent(chat.getChatContents().get(id).width,
-                chat.getChatContents().get(id).height));
+    public void clearChatById(int id){
+       chat.clearChatById(id);
     }
 
     public void addNewChatById(int id) {
