@@ -18,8 +18,8 @@ class CallbackListener(private val mainWindow: MainWindow,
         val contact = contacts.getOrCreateContact(getMacAddress(packet)!!,
                 packet.address, username, UserColors.randomColor)
         // debug
-        mainWindow.addContact(contact.username, "is now online", contact.color, contact.id)
         mainWindow.addNewChatById(contact.id)
+        mainWindow.addContact(contact.username, "is now online", contact.color, contact.id)
 
         if (!contact.messages.isEmpty())
             mainWindow.addMessages(contact.messages.toTypedArray(), contact.id)

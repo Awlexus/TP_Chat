@@ -11,11 +11,11 @@ import java.util.concurrent.atomic.AtomicInteger
 abstract class SerializableList<T : IndexableData> : ArrayList<T>() {
 
     val path = "${Paths.get("").toAbsolutePath()}${File.separatorChar}savefiles${File.separatorChar}${javaClass.simpleName}.ser"
-    val indexer = AtomicInteger(0)
+    val indexer = AtomicInteger(1)
 
     @Synchronized
     fun save() {
-        DataIOs.print(path, this)
+        DataIOs.print(path, ArrayList(this))
     }
 
     @Synchronized
@@ -25,7 +25,8 @@ abstract class SerializableList<T : IndexableData> : ArrayList<T>() {
         val file = File(path)
 
         try {
-            (DataIOs.read(path) as ArrayList<T>).forEach {
+            val savedIndexes = (DataIOs.read(path) as ArrayList<T>)
+            savedIndexes.forEach {
                 add(it)
             }
         } catch (e: FileNotFoundException) {
@@ -35,7 +36,9 @@ abstract class SerializableList<T : IndexableData> : ArrayList<T>() {
     }
 
     override fun add(element: T): Boolean {
-        element.id = indexer.getAndIncrement()
+        if (element.id == -1)
+            element.id = indexer.getAndIncrement()
+
         return super.add(element)
     }
 
