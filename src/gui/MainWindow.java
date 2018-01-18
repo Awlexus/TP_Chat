@@ -329,6 +329,18 @@ public class MainWindow extends JFrame {
         chat.setChatByUserId(id);
     }
 
+    public ChatMessageBlueprint[] getChatMessagesById(int id){
+        Chat.ChatContent.ChatMessage [] message = (Chat.ChatContent.ChatMessage[]) chat.getChatContents().get(id).chatMessages.toArray();
+        ChatMessageBlueprint [] blueprints = new ChatMessageBlueprint[message.length];
+        for (int i = 0; i < message.length; i++) {
+            blueprints[i]= new ChatMessageBlueprint(message[i].getType(),message[i].getName(),message[i].getMessage(),message[i].getDate(),message[i].getNameColor());
+        }
+        return blueprints;
+    }
+
+    public void clearChatById(int id){
+       chat.clearChatById(id);
+    }
 
     public void addNewChatById(int id) {
         chat.addNewUserChat(id);

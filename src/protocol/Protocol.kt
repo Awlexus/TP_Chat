@@ -19,7 +19,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
     private val BUFFERSIZE = 1024
 
     // Addresses
-    private val localhost = InetAddress.getLocalHost()
+    val localhost = InetAddress.getLocalHost()
     val broadcastAddress = NetworkInterface.getByInetAddress(localhost).interfaceAddresses[0].broadcast
         get
 
@@ -41,20 +41,25 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+
             // Extract Data
             val text = packet.getTextData()
 
-            when {
-                text.startsWith(HELLO) -> receiveHello(packet)
-                text.startsWith(WORLD) -> receiveWorld(packet)
-                text.startsWith(GOODBYE) -> receiveGoodbye(packet)
-                text.startsWith(MESSAGE) -> receiveMessage(packet)
-                text.startsWith(TYPING) -> receiveTyping(packet)
-                text.startsWith(GROUP_EXISTSGROUP) -> receiveGroupExistsGroup(packet)
-                text.startsWith(GROUP_CREATEGROUP) -> receiveGroupCreateGroup(packet)
-                text.startsWith(GROUP_DENYGROUP) -> receiveGroupDenyGroup(packet)
-                text.startsWith(GROUP_MESSAGE) -> receiveGroupMessage(packet)
-                else -> println("looool:" + packet.getTextData()) // For debugging purposes
+            println(text)
+
+            if (!text.isBlank()) {
+                when {
+                    text.startsWith(HELLO) -> receiveHello(packet)
+                    text.startsWith(WORLD) -> receiveWorld(packet)
+                    text.startsWith(GOODBYE) -> receiveGoodbye(packet)
+                    text.startsWith(MESSAGE) -> receiveMessage(packet)
+                    text.startsWith(TYPING) -> receiveTyping(packet)
+                    text.startsWith(GROUP_EXISTSGROUP) -> receiveGroupExistsGroup(packet)
+                    text.startsWith(GROUP_CREATEGROUP) -> receiveGroupCreateGroup(packet)
+                    text.startsWith(GROUP_DENYGROUP) -> receiveGroupDenyGroup(packet)
+                    text.startsWith(GROUP_MESSAGE) -> receiveGroupMessage(packet)
+                    else -> println("Unidentified message received ${packet.getTextData()}")
+                }
             }
         }
         socket.close()
@@ -71,7 +76,6 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
             return
 
         val username = packet.getMessage()
-        // println("Hello from $username at ${packet.address.hostAddress}")
 
         // Set reply text
         packet.data = "$WORLD $userName".toByteArray()
@@ -215,6 +219,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
      * Send a text to a IP-Adress
      */
     fun send(text: String, ip: InetAddress = broadcastAddress) {
+        println("\"$text\" to ${ip.hostAddress}")
         socket.send(DatagramPacket(text.toByteArray(), text.toByteArray().size, ip, port))
     }
 
@@ -224,11 +229,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
     fun stop() {
         discoveryThread.interrupt()
         socket.send(DatagramPacket(GOODBYE.toByteArray(), GOODBYE.length, broadcastAddress, port))
-        try {
-            socket.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        socket.disconnect()
     }
 
     fun addToGroup(ip: InetAddress, groupId: Int) {

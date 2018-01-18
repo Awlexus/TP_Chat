@@ -2,9 +2,7 @@ package tests;
 
 
 import com.vdurmont.emoji.EmojiParser;
-import gui.Chat;
-import gui.ChatMessageBlueprint;
-import gui.MainWindow;
+import gui.*;
 
 import java.awt.*;
 
@@ -16,6 +14,14 @@ public class Tester {
     public static void main(String[] args) {
 
         MainWindow mainWindow = new MainWindow(null);
+
+        mainWindow.addChatActionListener(new ChatActionAdapter() {
+            @Override
+            public void onSendPressed(SendEvent e) {
+                System.out.println(e.getMessage());
+                mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Ich",e.getMessage(),null,Color.cyan),0);
+            }
+        });
 /*
         mainWindow.addContact("Test1", "hallo1fffff", Color.BLUE, 1);
         mainWindow.addContact("Test2", "hallo1fffff", Color.BLUE, 2);

@@ -4,8 +4,6 @@ import com.vdurmont.emoji.EmojiParser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import static gui.MainWindow.UI_SCALING;
@@ -44,7 +42,7 @@ class Contacts extends JPanel {
     }
 
     /**
-     * checks if the id exists
+     * checks if the contactId exists
      */
     public boolean alreadyExistsContactId(int id) {
         boolean ret = false;
@@ -180,8 +178,8 @@ class Contacts extends JPanel {
             name.setLocation((int) (UI_SCALING * 2), 0);
             name.setForeground(Color.BLACK);
 
-            lastMessage.setFont(new Font(MainWindow.FONT, 0, height / 4));
-            lastMessage.setSize(lastMessage.getPreferredSize());
+            lastMessage.setFont(new Font(MainWindow.FONT, 0, height / 5));
+            lastMessage.setSize(lastMessage.getPreferredSize().width,lastMessage.getPreferredSize().height+10);
             lastMessage.setLocation((int) (UI_SCALING * 6), name.getHeight());
             lastMessage.setForeground(MainWindow.theme.getPrimaryColor());
 
