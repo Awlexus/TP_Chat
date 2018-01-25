@@ -37,12 +37,18 @@ private fun addListener() {
         callbackListener.currentChatId = e.id
     }
 
-    mainWindow.addOnExitListener {
-        protocol.stop()
-        contacts.save()
-        groups.save()
-        System.exit(0)
-    }
+    mainWindow.addMainWindowListener (object: MainWindowListener {
+        override fun onExitClicked() {
+            protocol.stop()
+            contacts.save()
+            groups.save()
+            System.exit(0)
+        }
+
+        override fun onNewGroupCreated(event: NewGroupEvent?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+    })
 
     mainWindow.addChatActionListener(object : ChatActionListener {
         override fun onSendPressed(e: SendEvent) {

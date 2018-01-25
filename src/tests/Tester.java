@@ -22,7 +22,20 @@ public class Tester {
                 mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Ich",e.getMessage(),null,Color.cyan),0);
             }
         });
-/*
+
+        mainWindow.addMainWindowListener(new MainWindowListener() {
+            @Override
+            public void onExitClicked() {
+
+            }
+
+            @Override
+            public void onNewGroupCreated(NewGroupEvent event) {
+                System.out.println(event.getNames());
+            }
+        });
+        /*
+
         mainWindow.addContact("Test1", "hallo1fffff", Color.BLUE, 1);
         mainWindow.addContact("Test2", "hallo1fffff", Color.BLUE, 2);
 
