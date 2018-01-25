@@ -6,6 +6,7 @@ import protocol.Protocol
 import java.awt.Color
 import java.io.File
 import java.nio.file.Paths
+import java.util.*
 
 val username = UserUtil.username
 
@@ -60,7 +61,7 @@ private fun addListener() {
                     ?: return
 
             val chatMessageBlueprint = ChatMessageBlueprint(
-                    Chat.chatMessageType.TO, username, e.message, null, Color.GREEN)
+                    Chat.chatMessageType.TO, username, e.message, Date().toString(), Color.GREEN)
 
             mainWindow.addMessage(chatMessageBlueprint, contact.id)
             contact.messages.add(chatMessageBlueprint)

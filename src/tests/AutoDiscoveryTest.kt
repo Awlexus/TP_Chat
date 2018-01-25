@@ -1,5 +1,6 @@
 package tests
 
+import logic.storage.UserUtil
 import protocol.Protocol
 import java.util.*
 
@@ -8,7 +9,7 @@ import java.util.*
  */
 
 fun main(args: Array<String>) {
-    val auto = Protocol(userName = "Awlex")
+    val auto = Protocol(UserUtil.username)
 
     auto.hello()
 
