@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 abstract class SerializableList<T : IndexableData> : ArrayList<T>() {
 
-    val path = "${Paths.get("").toAbsolutePath() + File.separatorChar + "savefiles" + File.separatorChar + javaClass.simpleName}.ser"
+    val path = "${Paths.get("").toAbsolutePath()}${File.separatorChar}savefiles${File.separatorChar}${javaClass.simpleName}.ser"
     val indexer = AtomicInteger(1)
 
     /**
