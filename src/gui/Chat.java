@@ -1,11 +1,7 @@
 package gui;
 
-import com.sun.deploy.util.ArrayUtil;
 import com.vdurmont.emoji.EmojiParser;
 import org.jetbrains.annotations.Nullable;
-import protocol.ProtocolConstantsKt;
-import sun.misc.IOUtils;
-import sun.nio.ch.IOUtil;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -13,15 +9,12 @@ import javax.swing.border.AbstractBorder;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static gui.MainWindow.UI_SCALING;
 import static gui.MainWindow.theme;
@@ -53,6 +46,7 @@ public class Chat extends JPanel {
                 getChatContents().get(id).height);
         getChatContents().add(id, chatContent);
     }
+
 
 
     /**
@@ -88,10 +82,19 @@ public class Chat extends JPanel {
 
     }
 
+
+    /**
+     * adds a new File at the bottom of the screen
+     */
+    public void addDatei(DateiMessageBlueprint blueprint, int id) {
+        chatContents.get(id).addDateiMessage(blueprint);
+    }//TODO
+
     /**
      * adds a new text at the bottom of the screen
      */
     public void addMessage(ChatMessageBlueprint blueprint, int id) {
+
         chatContents.get(id).addChatMessage(blueprint);
     }
 
@@ -149,6 +152,7 @@ public class Chat extends JPanel {
         JTextField textField;
         JButton send;
         JButton attach;
+        JButton audio;
 
         public ChatControls(int width, int height) {
             this.setLayout(null);
@@ -162,7 +166,7 @@ public class Chat extends JPanel {
 
             textField = new JTextField();
             textField.setFont(new Font(MainWindow.FONT, 0, (int) (this.height * 4 / 5 - UI_SCALING * 6)));
-            textField.setSize((int) (width * 4 / 6 - UI_SCALING * 6), textField.getPreferredSize().height);
+            textField.setSize((int) (width * 3 / 6 + UI_SCALING * 6), textField.getPreferredSize().height);
             textField.setLocation((int) UI_SCALING * 3, height / 2 - textField.getHeight() / 2);
             textField.setBorder(BorderFactory.createMatteBorder((int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, (int) UI_SCALING, theme.getPrimaryColorDark()));
             textField.setBackground(theme.getPrimaryColorLight());
@@ -184,8 +188,8 @@ public class Chat extends JPanel {
                     if (e.isAltDown()) {
                         if (e.getKeyCode() == KeyEvent.VK_F4) {
                             System.out.println("exit");
-                            for (int i = 0; i < MainWindow.onExitListeners.size(); i++) {
-                                MainWindow.onExitListeners.get(i).onExitClicked();
+                            for (int i = 0; i < MainWindow.mainWindowListeners.size(); i++) {
+                                MainWindow.mainWindowListeners.get(i).onExitClicked();
                             }
                         }
                     }
@@ -195,7 +199,7 @@ public class Chat extends JPanel {
 
             send = new JButton("SENDE");
             send.setFont(new Font(MainWindow.FONT, 0, (int) (this.height * 3 / 5 - UI_SCALING * 8)));
-            send.setSize((int) ((width * 2 / 6 - UI_SCALING * 6) * 2 / 3), textField.getHeight());
+            send.setSize((int) ((width * 2 / 6 - UI_SCALING * 6)*2  / 3), textField.getHeight());
             send.setLocation((int) (textField.getWidth() + UI_SCALING * 6), height / 2 - textField.getHeight() / 2);
             send.setBackground(theme.getPrimaryColorDark());
             if (theme.getDark())
@@ -235,8 +239,8 @@ public class Chat extends JPanel {
                     if (e.isAltDown()) {
                         if (e.getKeyCode() == KeyEvent.VK_F4) {
                             System.out.println("exit");
-                            for (int i = 0; i < MainWindow.onExitListeners.size(); i++) {
-                                MainWindow.onExitListeners.get(i).onExitClicked();
+                            for (int i = 0; i < MainWindow.mainWindowListeners.size(); i++) {
+                                MainWindow.mainWindowListeners.get(i).onExitClicked();
                             }
                         }
                     }
@@ -311,8 +315,63 @@ public class Chat extends JPanel {
                     if (e.isAltDown()) {
                         if (e.getKeyCode() == KeyEvent.VK_F4) {
                             System.out.println("exit");
-                            for (int i = 0; i < MainWindow.onExitListeners.size(); i++) {
-                                MainWindow.onExitListeners.get(i).onExitClicked();
+                            for (int i = 0; i < MainWindow.mainWindowListeners.size(); i++) {
+                                MainWindow.mainWindowListeners.get(i).onExitClicked();
+                            }
+                        }
+                    }
+                }
+            });
+
+            BufferedImage buttonIcon2 = null;
+            try {
+                buttonIcon2 = ImageIO.read(Chat.class.getResource("audio.png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            audio = new JButton(new ImageIcon(buttonIcon2));
+            audio.setFont(new Font(MainWindow.FONT, 0, (int) (this.height * 3 / 5 - UI_SCALING * 8)));
+            audio.setSize((int) ((width * 2 / 6 - UI_SCALING * 6)) / 3, textField.getHeight());
+            audio.setLocation((int) (attach.getX() + attach.getWidth() + UI_SCALING * 3), height / 2 - textField.getHeight() / 2);
+            audio.setBackground(theme.getPrimaryColorDark());
+            audio.setBorderPainted(false);
+            if (theme.getDark())
+                audio.setForeground(Color.white);
+            else
+                audio.setForeground(Color.black);
+
+            audio.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    //TODO 6 find a way to controll the button color on press
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    audio.setForeground(theme.getAccentColor());
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    if (theme.getDark())
+                        audio.setForeground(Color.white);
+                    else
+                        audio.setForeground(Color.black);
+                }
+            });
+            audio.addKeyListener(new KeyAdapter() {
+
+                public void keyPressed(KeyEvent e) {
+                    if (e.isAltDown()) {
+                        if (e.getKeyCode() == KeyEvent.VK_F4) {
+                            System.out.println("exit");
+                            for (int i = 0; i < MainWindow.mainWindowListeners.size(); i++) {
+                                MainWindow.mainWindowListeners.get(i).onExitClicked();
                             }
                         }
                     }
@@ -322,6 +381,7 @@ public class Chat extends JPanel {
             this.add(textField);
             this.add(send);
             this.add(attach);
+            this.add(audio);
         }
 
     }
@@ -360,6 +420,12 @@ public class Chat extends JPanel {
 
         }
 
+
+
+        public void addDateiMessage(DateiMessageBlueprint blueprint) {
+
+
+        }
         /**
          * adds a new text at the bottom of the screen
          */
@@ -457,6 +523,7 @@ public class Chat extends JPanel {
         }
 
 
+
         class ChatMessage extends JPanel {
             int width;
             int height;
@@ -525,8 +592,8 @@ public class Chat extends JPanel {
                         if (e.isAltDown()) {
                             if (e.getKeyCode() == KeyEvent.VK_F4) {
                                 System.out.println("exit");
-                                for (int i = 0; i < MainWindow.onExitListeners.size(); i++) {
-                                    MainWindow.onExitListeners.get(i).onExitClicked();
+                                for (int i = 0; i < MainWindow.mainWindowListeners.size(); i++) {
+                                    MainWindow.mainWindowListeners.get(i).onExitClicked();
                                 }
                             }
                         }

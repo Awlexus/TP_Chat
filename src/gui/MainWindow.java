@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  * @author Matteo Cosi
@@ -87,9 +86,9 @@ public class MainWindow extends JFrame {
      */
     public static Container c;
 
-    SettingsWindow settingsWindow;
-    private ArrayList<SettingsActionListener> settingsActionListeners;
-    public static ArrayList<OnExitListener> onExitListeners;
+    newGroupWindow newGroupWindow;
+
+    static ArrayList<MainWindowListener> mainWindowListeners;
 
 
     public MainWindow(@Nullable Settings settings) {
@@ -108,8 +107,7 @@ public class MainWindow extends JFrame {
             Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
             UI_SCALING= (dimension.width-200)/W_WIDTH;
         }
-        settingsActionListeners = new ArrayList<>();
-        onExitListeners = new ArrayList<>();
+        mainWindowListeners = new ArrayList<>();
 
         try {
             setUndecorated(true);
@@ -227,20 +225,13 @@ public class MainWindow extends JFrame {
     }
 
 
-    public void addSettingsActionListener(SettingsActionListener settingsActionListener) {
-        this.settingsActionListeners.add(settingsActionListener);
+
+    public void addMainWindowListener(MainWindowListener exitListener) {
+        mainWindowListeners.add(exitListener);
     }
 
-    public void removeSettingsActionListener(SettingsActionListener settingsActionListener) {
-        this.settingsActionListeners.remove(settingsActionListener);
-    }
-
-    public void addOnExitListener(OnExitListener exitListener) {
-        this.onExitListeners.add(exitListener);
-    }
-
-    public void removeOnExitListener(OnExitListener exitListener) {
-        this.onExitListeners.remove(exitListener);
+    public void removeMainWindowListener(MainWindowListener exitListener) {
+        mainWindowListeners.remove(exitListener);
     }
 
     /**
@@ -313,6 +304,16 @@ public class MainWindow extends JFrame {
         repaint();
     }
 
+    /**
+     * adds a new text at the bottom of the screen
+     *
+     * @param blueprint blueprint of all chat attributes
+     */
+    public void addDatei(DateiMessageBlueprint blueprint, int id) {
+        chat.addDatei(blueprint, id);
+        repaint();
+    }
+
 
     /**
      * adds n Messages without repainting every time, but only at the end
@@ -379,7 +380,7 @@ public class MainWindow extends JFrame {
 
         JLabel title;
         JLabel exit;
-        JLabel settings;
+        JLabel newGroup;
 
 
         TopBar(String title) {
@@ -406,10 +407,10 @@ public class MainWindow extends JFrame {
             });
 
 
-            this.exit = new JLabel("X");
+            this.exit = new JLabel("\u274C");
             int exitFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT / 6) * TOP_SCALE * UI_SCALING);
             this.exit.setFont(new Font(FONT, 0, exitFontSize));
-            this.exit.setLocation((int) (((W_WIDTH * UI_SCALING) - exitFontSize)), (int) +UI_SCALING * 2);
+            this.exit.setLocation((int) (((W_WIDTH * UI_SCALING) - (exitFontSize+ exitFontSize/2))), (int) +UI_SCALING * 2);
             this.exit.setSize(this.exit.getPreferredSize());
             this.exit.addMouseListener(new MouseAdapter() {
                 @Override
@@ -424,58 +425,57 @@ public class MainWindow extends JFrame {
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    for (int i = 0; i < onExitListeners.size(); i++) {
-                        onExitListeners.get(i).onExitClicked();
+                    for (int i = 0; i < mainWindowListeners.size(); i++) {
+                        mainWindowListeners.get(i).onExitClicked();
                     }
                 }
 
             });
-            this.settings = new JLabel(EmojiParser.parseToUnicode(":gear:"));
-            /*
+            this.newGroup = new JLabel(EmojiParser.parseToUnicode(":heavy_plus_sign:"));
+
             int settingsFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT / 4) * TOP_SCALE * UI_SCALING);
-            this.settings.setFont(new Font(FONT, Font.PLAIN, settingsFontSize));
-            this.settings.setLocation((int) (exit.getX() - UI_SCALING * 4 - 20 - settingsFontSize), (int) +UI_SCALING * 3);
-            this.settings.setSize(this.settings.getPreferredSize());
-            this.settings.addMouseListener(new MouseAdapter() {
+            this.newGroup.setFont(new Font(FONT, Font.PLAIN, settingsFontSize));
+            this.newGroup.setLocation((int) (exit.getX() - UI_SCALING * 4 - 20 - settingsFontSize), (int) +UI_SCALING * 3);
+            this.newGroup.setSize(this.newGroup.getPreferredSize());
+            this.newGroup.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    settings.setForeground(theme.getAccentColor());
+                    newGroup.setForeground(theme.getAccentColor());
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    settings.setForeground(Color.white);
+                    newGroup.setForeground(Color.white);
                 }
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    openSettings();
+                    openNewUserDialog();
                 }
 
             });
-*/
+
             if (theme.getDark()) {
                 this.exit.setForeground(Color.white);
                 this.title.setForeground(Color.white);
-                this.settings.setForeground(Color.white);
+                this.newGroup.setForeground(Color.white);
             } else {
                 this.exit.setForeground(Color.black);
                 this.title.setForeground(Color.black);
-                this.settings.setForeground(Color.black);
+                this.newGroup.setForeground(Color.black);
             }
 
             this.add(this.title);
             this.add(this.exit);
-            this.add(this.settings);
+            this.add(this.newGroup);
 
         }
 
 
     }
 
-    private void openSettings() {
-        settingsWindow = new SettingsWindow(this, settingsActionListeners);
-        Dialog dialog = new Dialog(this, "Neustarten", "Neustarten damit die Einstellungen geladen werden");
+    private void openNewUserDialog() {
+        newGroupWindow = new newGroupWindow(this, mainWindowListeners);
     }
 
 
