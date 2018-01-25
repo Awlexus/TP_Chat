@@ -19,7 +19,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
     private val BUFFERSIZE = 1024
 
     // Addresses
-    val localhost = InetAddress.getLocalHost()
+    private val localhost = InetAddress.getLocalHost()
     val broadcastAddress = NetworkInterface.getByInetAddress(localhost).interfaceAddresses[0].broadcast
         get
 
@@ -45,7 +45,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
             // Extract Data
             val text = packet.getTextData()
 
-            println(text)
+            println("'$text' from ${packet.address.hostAddress} ")
 
             if (!text.isBlank()) {
                 when {
@@ -58,7 +58,7 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
                     text.startsWith(GROUP_CREATEGROUP) -> receiveGroupCreateGroup(packet)
                     text.startsWith(GROUP_DENYGROUP) -> receiveGroupDenyGroup(packet)
                     text.startsWith(GROUP_MESSAGE) -> receiveGroupMessage(packet)
-                    else -> println("Unidentified message received ${packet.getTextData()}")
+                    else -> println("Unidentified message received: '${packet.getTextData()}'")
                 }
             }
         }
@@ -181,8 +181,8 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
             // Generate message
             val text = "CG $randId ${
-            others.joinToString(separator = " ", transform = { it.hostAddress }) // Join each IP
-            }"
+            others.joinToString(separator = " ", transform = { it.hostAddress })  // Join each IP
+            } $localhost"
 
             // Send to all
             others.forEach {
@@ -192,7 +192,6 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
 
             callback?.groupCreated(randId.get(), others)
         })
-
 
         return randId.get()
     }
@@ -219,7 +218,6 @@ class Protocol(val port: Int = 4321, val userName: String = "", val callback: Pr
      * Send a text to a IP-Adress
      */
     fun send(text: String, ip: InetAddress = broadcastAddress) {
-        println("\"$text\" to ${ip.hostAddress}")
         socket.send(DatagramPacket(text.toByteArray(), text.toByteArray().size, ip, port))
     }
 

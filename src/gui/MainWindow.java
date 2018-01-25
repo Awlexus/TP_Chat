@@ -5,9 +5,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  * @author Matteo Cosi
@@ -104,9 +105,9 @@ public class MainWindow extends JFrame {
             TOP_SCALE = settings.getTopScaling();
             FONT = settings.getFont();
             theme = settings.getTheme();
-        }else{
+        } else {
             Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-            UI_SCALING= (dimension.width-200)/W_WIDTH;
+            UI_SCALING = (dimension.width - 200) / W_WIDTH;
         }
         settingsActionListeners = new ArrayList<>();
         onExitListeners = new ArrayList<>();
@@ -288,19 +289,20 @@ public class MainWindow extends JFrame {
     }
 
 
-    public void setContactWriting(int id){
+    public void setContactWriting(int id) {
         contacts.setContactWriting(id);
     }
 
-    public void removeContactWriting(int id){
+    public void removeContactWriting(int id) {
         contacts.removeContactWriting(id);
     }
 
-    public void toggleContactWriting(int id){
+    public void toggleContactWriting(int id) {
         contacts.toggleContactWriting(id);
     }
-    public void setLastMessageText(String text,int id){
-        contacts.setLastMessageText(text,id);
+
+    public void setLastMessageText(String text, int id) {
+        contacts.setLastMessageText(text, id);
     }
 
     /**
@@ -329,17 +331,16 @@ public class MainWindow extends JFrame {
         chat.setChatByUserId(id);
     }
 
-    public ChatMessageBlueprint[] getChatMessagesById(int id){
-        Chat.ChatContent.ChatMessage [] message = (Chat.ChatContent.ChatMessage[]) chat.getChatContents().get(id).chatMessages.toArray();
-        ChatMessageBlueprint [] blueprints = new ChatMessageBlueprint[message.length];
-        for (int i = 0; i < message.length; i++) {
-            blueprints[i]= new ChatMessageBlueprint(message[i].getType(),message[i].getName(),message[i].getMessage(),message[i].getDate(),message[i].getNameColor());
+    public ChatMessageBlueprint[] getChatMessagesById(int id) {
+        ArrayList<ChatMessageBlueprint> blueprints = new ArrayList<>();
+        for (Chat.ChatContent.ChatMessage mesg : chat.getChatContents().get(id).chatMessages) {
+            blueprints.add(new ChatMessageBlueprint(mesg.getType(), mesg.getName(), mesg.getMessage(), mesg.getDate(), mesg.getNameColor()));
         }
-        return blueprints;
+        return blueprints.toArray(new ChatMessageBlueprint[blueprints.size()]);
     }
 
-    public void clearChatById(int id){
-       chat.clearChatById(id);
+    public void clearChatById(int id) {
+        chat.clearChatById(id);
     }
 
     public void addNewChatById(int id) {
@@ -388,7 +389,7 @@ public class MainWindow extends JFrame {
             setLayout(null);
 
             this.title = new JLabel(title);
-            int titleFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT /4) * TOP_SCALE * UI_SCALING);
+            int titleFontSize = (int) ((TOP_HEIGHT - TOP_HEIGHT / 4) * TOP_SCALE * UI_SCALING);
             this.title.setFont(new Font(FONT, 0, titleFontSize));
             this.title.setLocation((int) (5 * UI_SCALING), (int) +UI_SCALING * 2);
             this.title.setSize(this.title.getPreferredSize());

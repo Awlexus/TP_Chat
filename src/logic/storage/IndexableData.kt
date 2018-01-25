@@ -8,9 +8,4 @@ import java.io.Serializable
 abstract class IndexableData : Serializable {
 
     var id: Int = -1
-        set(value) {
-            if (field == -1) {
-                field = value
-            }
-        }
 }
