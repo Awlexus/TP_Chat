@@ -45,9 +45,7 @@ public final class DataIOs {
      */
     public static Object read(String path) throws IOException, ClassNotFoundException, DataRepository.DataException {
         validatePath(path);
-
         File file = new File(path);
-
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
 
         return ois.readObject();

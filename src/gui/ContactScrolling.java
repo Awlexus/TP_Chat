@@ -86,18 +86,18 @@ import java.awt.event.MouseEvent;
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        Point toCords = e.getPoint();
-        int offset = toCords.y - fromCords.y;
-        boolean scrollDown = true;
-        if (offset > 0)
-            scrollDown = false;
-        if (this.contacts.isRelocateValid(scrollDown)) {
-            for (int i = 0; i < this.contacts.contactArrayList.size(); i++) {
-                Contacts.Contact relocate = this.contacts.contactArrayList.get(i);
-                relocate.setLocation(relocate.getX(), relocate.getY() + offset);
+            Point toCords = e.getPoint();
+            int offset = toCords.y - fromCords.y;
+            boolean scrollDown = true;
+            if (offset > 0)
+                scrollDown = false;
+            if (this.contacts.isRelocateValid(scrollDown)) {
+                for (int i = 0; i < this.contacts.contactArrayList.size(); i++) {
+                    Contacts.Contact relocate = this.contacts.contactArrayList.get(i);
+                    relocate.setLocation(relocate.getX(), relocate.getY() + offset);
 
 
+                }
             }
-        }
     }
 }

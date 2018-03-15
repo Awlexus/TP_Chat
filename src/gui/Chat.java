@@ -246,7 +246,6 @@ public class Chat extends JPanel {
                     }
                 }
             });
-
             BufferedImage buttonIcon = null;
             try {
                 buttonIcon = ImageIO.read(Chat.class.getResource("attach.png"));
@@ -263,17 +262,13 @@ public class Chat extends JPanel {
                 attach.setForeground(Color.white);
             else
                 attach.setForeground(Color.black);
-
             attach.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-
                     int returnValue = jfc.showOpenDialog(null);
-
                     if (returnValue == JFileChooser.APPROVE_OPTION) {
                         File selectedFile = jfc.getSelectedFile();
-
                         Path path = Paths.get(selectedFile.getAbsolutePath());
                         StringBuilder bytes = new StringBuilder();
                         try {
@@ -284,7 +279,6 @@ public class Chat extends JPanel {
                         } catch (IOException e1) {
                             e1.printStackTrace();
                         }
-
                         for (int i = 0; i < chatActionListeners.size(); i++) {
                             chatActionListeners.get(i).onSendPressed(new SendEvent(attach, bytes.toString(), null));
                         }

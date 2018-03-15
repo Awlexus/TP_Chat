@@ -30,7 +30,7 @@ data class DateiMessageBlueprint(val type: Chat.chatMessageType, val name: Strin
 
     val audio: AudioData?
         get() {
-            return if (fileEnding == "mp3" || fileEnding == "wav"|| fileEnding == "wav") {
+            return if (fileEnding == "mp3" || fileEnding == "wav") {
                 AudioData(bytes)
             } else
                 null

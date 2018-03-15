@@ -19,7 +19,7 @@ public class Tester {
             @Override
             public void onSendPressed(SendEvent e) {
                 System.out.println(e.getMessage());
-                mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.FROM,"Ich",e.getMessage(),null,Color.cyan),0);
+                mainWindow.addMessage(new ChatMessageBlueprint(Chat.chatMessageType.TO,"Ich",e.getMessage(),null,Color.cyan),0);
             }
         });
 
