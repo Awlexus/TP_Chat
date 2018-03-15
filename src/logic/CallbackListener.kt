@@ -21,7 +21,7 @@ class CallbackListener(private val mainWindow: MainWindow,
         mainWindow.addNewChatById(contact.id)
         mainWindow.addContact(contact.username, "is now online", contact.color, contact.id)
 
-        if (!contact.messages.isEmpty())
+        if (!contact.messages.isEmpty() && mainWindow.getChatMessagesById(contact.id).isEmpty())
             mainWindow.addMessages(contact.messages.toTypedArray(), contact.id)
     }
 

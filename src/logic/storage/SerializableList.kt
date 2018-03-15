@@ -13,11 +13,17 @@ abstract class SerializableList<T : IndexableData> : ArrayList<T>() {
     val path = "${Paths.get("").toAbsolutePath()}${File.separatorChar}savefiles${File.separatorChar}${javaClass.simpleName}.ser"
     val indexer = AtomicInteger(1)
 
+    /**
+     * Saves the Contents to savefiles/classname.ser
+     */
     @Synchronized
     fun save() {
         DataIOs.print(path, ArrayList(this))
     }
 
+    /**
+     * Clears current contents and reads them from savefiles/classname.ser
+     */
     @Synchronized
     fun read() {
         clear()
@@ -35,6 +41,7 @@ abstract class SerializableList<T : IndexableData> : ArrayList<T>() {
         }
     }
 
+
     override fun add(element: T): Boolean {
         if (element.id == -1)
             element.id = indexer.getAndIncrement()
@@ -42,6 +49,9 @@ abstract class SerializableList<T : IndexableData> : ArrayList<T>() {
         return super.add(element)
     }
 
+    /**
+     * Finds an object by its id
+     */
     fun getById(id: Int) = find { it.id == id }
 
 }
